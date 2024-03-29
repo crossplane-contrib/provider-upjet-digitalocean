@@ -1,4 +1,4 @@
-module github.com/upbound/upjet-provider-template
+module github.com/crossplane-contrib/provider-digitalocean
 
 go 1.19
 

@@ -23,8 +23,8 @@ import (
 	"github.com/crossplane/upjet/pkg/terraform"
 	ctrl "sigs.k8s.io/controller-runtime"
 
-	v1alpha1 "github.com/upbound/upjet-provider-template/apis/null/v1alpha1"
-	features "github.com/upbound/upjet-provider-template/internal/features"
+	v1alpha1 "github.com/crossplane-contrib/provider-digitalocean/apis/null/v1alpha1"
+	features "github.com/crossplane-contrib/provider-digitalocean/internal/features"
 )
 
 // Setup adds a controller that reconciles Resource managed resources.
