@@ -2,7 +2,7 @@
 # Setup Project
 
 PROJECT_NAME ?= provider-digitalocean
-PROJECT_REPO ?= github.com/crossplane-contrib/$(PROJECT_NAME)
+PROJECT_REPO ?= github.com/straw-hat-team/$(PROJECT_NAME)
 
 export TERRAFORM_VERSION ?= 1.2.1
 
@@ -168,7 +168,7 @@ CROSSPLANE_NAMESPACE = upbound-system
 
 # This target requires the following environment variables to be set:
 # - UPTEST_EXAMPLE_LIST, a comma-separated list of examples to test
-#   To ensure the proper functioning of the end-to-end test resource pre-deletion hook, it is crucial to arrange your resources appropriately. 
+#   To ensure the proper functioning of the end-to-end test resource pre-deletion hook, it is crucial to arrange your resources appropriately.
 #   You can check the basic implementation here: https://github.com/upbound/uptest/blob/main/internal/digitaloceans/01-delete.yaml.tmpl.
 # - UPTEST_CLOUD_CREDENTIALS (optional), multiple sets of AWS IAM User credentials specified as key=value pairs.
 #   The support keys are currently `DEFAULT` and `PEER`. So, an example for the value of this env. variable is:
