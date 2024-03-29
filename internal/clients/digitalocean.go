@@ -57,16 +57,28 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string) terr
 		if err != nil {
 			return ps, errors.Wrap(err, errExtractCredentials)
 		}
-		creds := map[string]string{}
-		if err := json.Unmarshal(data, &creds); err != nil {
+
+		if err := json.Unmarshal(data, &ps.Configuration); err != nil {
 			return ps, errors.Wrap(err, errUnmarshalCredentials)
 		}
 
-		// Set credentials in Terraform provider configuration.
-		/*ps.Configuration = map[string]any{
-			"username": creds["username"],
-			"password": creds["password"],
-		}*/
+		//creds := map[string]any{}
+		//if err := json.Unmarshal(data, &creds); err != nil {
+		//	return ps, errors.Wrap(err, errUnmarshalCredentials)
+		//}
+		//// Set credentials in Terraform provider configuration.
+		//ps.Configuration = map[string]any{
+		//	"token":               creds["token"],
+		//	"spaces_access_id":    creds["spaces_access_id"],
+		//	"spaces_secret_key":   creds["spaces_secret_key"],
+		//	"api_endpoint":        creds["api_endpoint"],
+		//	"spaces_endpoint":     creds["spaces_endpoint"],
+		//	"requests_per_second": creds["requests_per_second"],
+		//	"http_retry_max":      creds["http_retry_max"],
+		//	"http_retry_wait_min": creds["http_retry_wait_min"],
+		//	"http_retry_wait_max": creds["http_retry_wait_max"],
+		//}
+
 		return ps, nil
 	}
 }
