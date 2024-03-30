@@ -1,0 +1,12 @@
+apiVersion: networking.digitalocean.crossplane.io/v1alpha1
+kind: Domain
+metadata:
+  annotations:
+    meta.upbound.io/example-id: networking/v1alpha1/domain
+  labels:
+    testing.upbound.io/example-name: default
+  name: default
+spec:
+  forProvider:
+    ipAddress: ${digitalocean_droplet.foo.ipv4_address}
+    name: example.com

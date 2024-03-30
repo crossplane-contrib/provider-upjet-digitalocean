@@ -1,0 +1,39 @@
+apiVersion: networking.digitalocean.crossplane.io/v1alpha1
+kind: Loadbalancer
+metadata:
+  annotations:
+    meta.upbound.io/example-id: networking/v1alpha1/loadbalancer
+  labels:
+    testing.upbound.io/example-name: public
+  name: public
+spec:
+  forProvider:
+    dropletIdsRefs:
+    - name: web
+    forwardingRule:
+    - entryPort: 80
+      entryProtocol: http
+      targetPort: 80
+      targetProtocol: http
+    healthcheck:
+    - port: 22
+      protocol: tcp
+    name: loadbalancer-1
+    region: nyc3
+
+---
+
+apiVersion: compute.digitalocean.crossplane.io/v1alpha1
+kind: Droplet
+metadata:
+  annotations:
+    meta.upbound.io/example-id: networking/v1alpha1/loadbalancer
+  labels:
+    testing.upbound.io/example-name: web
+  name: web
+spec:
+  forProvider:
+    image: ubuntu-18-04-x64
+    name: web-1
+    region: nyc3
+    size: s-1vcpu-1gb
