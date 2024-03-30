@@ -9,6 +9,7 @@ import (
 
 	"github.com/crossplane/upjet/pkg/controller"
 
+	project "github.com/crossplane-contrib/provider-digitalocean/internal/controller/project/project"
 	providerconfig "github.com/crossplane-contrib/provider-digitalocean/internal/controller/providerconfig"
 )
 
@@ -16,6 +17,7 @@ import (
 // the supplied manager.
 func Setup(mgr ctrl.Manager, o controller.Options) error {
 	for _, setup := range []func(ctrl.Manager, controller.Options) error{
+		project.Setup,
 		providerconfig.Setup,
 	} {
 		if err := setup(mgr, o); err != nil {
