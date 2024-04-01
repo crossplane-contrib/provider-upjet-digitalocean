@@ -1,4 +1,4 @@
-module github.com/crossplane-contrib/provider-digitalocean
+module github.com/straw-hat-team/provider-digitalocean
 
 go 1.19
 

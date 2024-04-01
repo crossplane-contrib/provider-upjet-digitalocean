@@ -7,14 +7,14 @@ package config
 import (
 	// Note(turkenh): we are importing this to embed provider schema document
 	_ "embed"
-	"github.com/crossplane-contrib/provider-digitalocean/config/project"
+	"github.com/straw-hat-team/provider-digitalocean/config/project"
 
 	ujconfig "github.com/crossplane/upjet/pkg/config"
 )
 
 const (
 	resourcePrefix = "digitalocean"
-	modulePath     = "github.com/crossplane-contrib/provider-digitalocean"
+	modulePath     = "github.com/straw-hat-team/provider-digitalocean"
 )
 
 //go:embed schema.json

@@ -9,8 +9,8 @@ import (
 
 	"github.com/crossplane/upjet/pkg/controller"
 
-	project "github.com/crossplane-contrib/provider-digitalocean/internal/controller/project/project"
-	providerconfig "github.com/crossplane-contrib/provider-digitalocean/internal/controller/providerconfig"
+	project "github.com/straw-hat-team/provider-digitalocean/internal/controller/project/project"
+	providerconfig "github.com/straw-hat-team/provider-digitalocean/internal/controller/providerconfig"
 )
 
 // Setup creates all controllers with the supplied logger and adds them to

@@ -3,4 +3,4 @@ kind: Provider
 metadata:
   name: provider-digitalocean
 spec:
-  package: crossplane-contrib/provider-digitalocean:v0.1.0
+  package: straw-hat-team/provider-digitalocean:v0.1.0
