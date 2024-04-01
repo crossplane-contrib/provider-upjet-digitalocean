@@ -20,17 +20,22 @@ import (
 type ProjectInitParameters struct {
 
 	// the description of the project
+	// the description of the project
 	Description *string `json:"description,omitempty" tf:"description,omitempty"`
 
+	// the environment of the project's resources. The possible values are: Development, Staging, Production)
 	// the environment of the project's resources
 	Environment *string `json:"environment,omitempty" tf:"environment,omitempty"`
 
+	// a boolean indicating whether or not the project is the default project. (Default: "false")
 	// determine if the project is the default or not.
 	IsDefault *bool `json:"isDefault,omitempty" tf:"is_default,omitempty"`
 
+	// the purpose of the project, (Default: "Web Application")
 	// the purpose of the project
 	Purpose *string `json:"purpose,omitempty" tf:"purpose,omitempty"`
 
+	// a list of uniform resource names (URNs) for the resources associated with the project
 	// the resources associated with the project
 	Resources []*string `json:"resources,omitempty" tf:"resources,omitempty"`
 }
@@ -38,31 +43,41 @@ type ProjectInitParameters struct {
 type ProjectObservation struct {
 
 	// the date and time when the project was created, (ISO8601)
+	// the date and time when the project was created, (ISO8601)
 	CreatedAt *string `json:"createdAt,omitempty" tf:"created_at,omitempty"`
 
 	// the description of the project
+	// the description of the project
 	Description *string `json:"description,omitempty" tf:"description,omitempty"`
 
+	// the environment of the project's resources. The possible values are: Development, Staging, Production)
 	// the environment of the project's resources
 	Environment *string `json:"environment,omitempty" tf:"environment,omitempty"`
 
+	// The id of the project
 	ID *string `json:"id,omitempty" tf:"id,omitempty"`
 
+	// a boolean indicating whether or not the project is the default project. (Default: "false")
 	// determine if the project is the default or not.
 	IsDefault *bool `json:"isDefault,omitempty" tf:"is_default,omitempty"`
 
 	// the id of the project owner.
+	// the id of the project owner.
 	OwnerID *float64 `json:"ownerId,omitempty" tf:"owner_id,omitempty"`
 
 	// the unique universal identifier of the project owner.
+	// the unique universal identifier of the project owner.
 	OwnerUUID *string `json:"ownerUuid,omitempty" tf:"owner_uuid,omitempty"`
 
+	// the purpose of the project, (Default: "Web Application")
 	// the purpose of the project
 	Purpose *string `json:"purpose,omitempty" tf:"purpose,omitempty"`
 
+	// a list of uniform resource names (URNs) for the resources associated with the project
 	// the resources associated with the project
 	Resources []*string `json:"resources,omitempty" tf:"resources,omitempty"`
 
+	// the date and time when the project was last updated, (ISO8601)
 	// the date and time when the project was last updated, (ISO8601)
 	UpdatedAt *string `json:"updatedAt,omitempty" tf:"updated_at,omitempty"`
 }
@@ -70,21 +85,26 @@ type ProjectObservation struct {
 type ProjectParameters struct {
 
 	// the description of the project
+	// the description of the project
 	// +kubebuilder:validation:Optional
 	Description *string `json:"description,omitempty" tf:"description,omitempty"`
 
+	// the environment of the project's resources. The possible values are: Development, Staging, Production)
 	// the environment of the project's resources
 	// +kubebuilder:validation:Optional
 	Environment *string `json:"environment,omitempty" tf:"environment,omitempty"`
 
+	// a boolean indicating whether or not the project is the default project. (Default: "false")
 	// determine if the project is the default or not.
 	// +kubebuilder:validation:Optional
 	IsDefault *bool `json:"isDefault,omitempty" tf:"is_default,omitempty"`
 
+	// the purpose of the project, (Default: "Web Application")
 	// the purpose of the project
 	// +kubebuilder:validation:Optional
 	Purpose *string `json:"purpose,omitempty" tf:"purpose,omitempty"`
 
+	// a list of uniform resource names (URNs) for the resources associated with the project
 	// the resources associated with the project
 	// +kubebuilder:validation:Optional
 	Resources []*string `json:"resources,omitempty" tf:"resources,omitempty"`
@@ -115,7 +135,7 @@ type ProjectStatus struct {
 
 // +kubebuilder:object:root=true
 
-// Project is the Schema for the Projects API. <no value>
+// Project is the Schema for the Projects API.
 // +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"

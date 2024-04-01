@@ -4,18 +4,18 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.13.0
-  name: resources.null.digitalocean.upbound.io
+  name: projects.project.crossplane.io
 spec:
-  group: null.digitalocean.upbound.io
+  group: project.crossplane.io
   names:
     categories:
     - crossplane
     - managed
     - digitalocean
-    kind: Resource
-    listKind: ResourceList
-    plural: resources
-    singular: resource
+    kind: Project
+    listKind: ProjectList
+    plural: projects
+    singular: project
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -34,10 +34,7 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Resource is the Schema for the Resources API. The null_resource
-          resource implements the standard resource lifecycle but takes no further
-          action. The triggers argument allows specifying an arbitrary set of values
-          that, when changed, will cause the resource to be replaced.
+        description: Project is the Schema for the Projects API.
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -52,7 +49,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: ResourceSpec defines the desired state of Resource
+            description: ProjectSpec defines the desired state of Project
             properties:
               deletionPolicy:
                 default: Delete
@@ -69,13 +66,31 @@ spec:
                 type: string
               forProvider:
                 properties:
-                  triggers:
-                    additionalProperties:
+                  description:
+                    description: the description of the project the description of
+                      the project
+                    type: string
+                  environment:
+                    description: 'the environment of the project''s resources. The
+                      possible values are: Development, Staging, Production) the environment
+                      of the project''s resources'
+                    type: string
+                  isDefault:
+                    description: 'a boolean indicating whether or not the project
+                      is the default project. (Default: "false") determine if the
+                      project is the default or not.'
+                    type: boolean
+                  purpose:
+                    description: 'the purpose of the project, (Default: "Web Application")
+                      the purpose of the project'
+                    type: string
+                  resources:
+                    description: a list of uniform resource names (URNs) for the resources
+                      associated with the project the resources associated with the
+                      project
+                    items:
                       type: string
-                    description: A map of arbitrary strings that, when changed, will
-                      force the null resource to be replaced, re-running any associated
-                      provisioners.
-                    type: object
+                    type: array
                 type: object
               initProvider:
                 description: THIS IS A BETA FIELD. It will be honored unless the Management
@@ -89,13 +104,31 @@ spec:
                   for example because of an external controller is managing them,
                   like an autoscaler.
                 properties:
-                  triggers:
-                    additionalProperties:
+                  description:
+                    description: the description of the project the description of
+                      the project
+                    type: string
+                  environment:
+                    description: 'the environment of the project''s resources. The
+                      possible values are: Development, Staging, Production) the environment
+                      of the project''s resources'
+                    type: string
+                  isDefault:
+                    description: 'a boolean indicating whether or not the project
+                      is the default project. (Default: "false") determine if the
+                      project is the default or not.'
+                    type: boolean
+                  purpose:
+                    description: 'the purpose of the project, (Default: "Web Application")
+                      the purpose of the project'
+                    type: string
+                  resources:
+                    description: a list of uniform resource names (URNs) for the resources
+                      associated with the project the resources associated with the
+                      project
+                    items:
                       type: string
-                    description: A map of arbitrary strings that, when changed, will
-                      force the null resource to be replaced, re-running any associated
-                      provisioners.
-                    type: object
+                    type: array
                 type: object
               managementPolicies:
                 default:
@@ -258,19 +291,55 @@ spec:
             - forProvider
             type: object
           status:
-            description: ResourceStatus defines the observed state of Resource.
+            description: ProjectStatus defines the observed state of Project.
             properties:
               atProvider:
                 properties:
-                  id:
+                  createdAt:
+                    description: the date and time when the project was created, (ISO8601)
+                      the date and time when the project was created, (ISO8601)
                     type: string
-                  triggers:
-                    additionalProperties:
+                  description:
+                    description: the description of the project the description of
+                      the project
+                    type: string
+                  environment:
+                    description: 'the environment of the project''s resources. The
+                      possible values are: Development, Staging, Production) the environment
+                      of the project''s resources'
+                    type: string
+                  id:
+                    description: The id of the project
+                    type: string
+                  isDefault:
+                    description: 'a boolean indicating whether or not the project
+                      is the default project. (Default: "false") determine if the
+                      project is the default or not.'
+                    type: boolean
+                  ownerId:
+                    description: the id of the project owner. the id of the project
+                      owner.
+                    type: number
+                  ownerUuid:
+                    description: the unique universal identifier of the project owner.
+                      the unique universal identifier of the project owner.
+                    type: string
+                  purpose:
+                    description: 'the purpose of the project, (Default: "Web Application")
+                      the purpose of the project'
+                    type: string
+                  resources:
+                    description: a list of uniform resource names (URNs) for the resources
+                      associated with the project the resources associated with the
+                      project
+                    items:
                       type: string
-                    description: A map of arbitrary strings that, when changed, will
-                      force the null resource to be replaced, re-running any associated
-                      provisioners.
-                    type: object
+                    type: array
+                  updatedAt:
+                    description: the date and time when the project was last updated,
+                      (ISO8601) the date and time when the project was last updated,
+                      (ISO8601)
+                    type: string
                 type: object
               conditions:
                 description: Conditions of the resource.
