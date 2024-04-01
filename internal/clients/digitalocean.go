@@ -15,7 +15,7 @@ import (
 
 	"github.com/crossplane/upjet/pkg/terraform"
 
-	"github.com/upbound/upjet-provider-template/apis/v1beta1"
+	"github.com/straw-hat-team/provider-digitalocean/apis/v1beta1"
 )
 
 const (
@@ -24,7 +24,7 @@ const (
 	errGetProviderConfig    = "cannot get referenced ProviderConfig"
 	errTrackUsage           = "cannot track ProviderConfig usage"
 	errExtractCredentials   = "cannot extract credentials"
-	errUnmarshalCredentials = "cannot unmarshal template credentials as JSON"
+	errUnmarshalCredentials = "cannot unmarshal digitalocean credentials as JSON"
 )
 
 // TerraformSetupBuilder builds Terraform a terraform.SetupFn function which
@@ -62,11 +62,18 @@ func TerraformSetupBuilder(version, providerSource, providerVersion string) terr
 			return ps, errors.Wrap(err, errUnmarshalCredentials)
 		}
 
-		// Set credentials in Terraform provider configuration.
-		/*ps.Configuration = map[string]any{
-			"username": creds["username"],
-			"password": creds["password"],
-		}*/
+		ps.Configuration = map[string]any{
+			"token":               creds["token"],
+			"spaces_access_id":    creds["spaces_access_id"],
+			"spaces_secret_key":   creds["spaces_secret_key"],
+			"api_endpoint":        creds["api_endpoint"],
+			"spaces_endpoint":     creds["spaces_endpoint"],
+			"requests_per_second": creds["requests_per_second"],
+			"http_retry_max":      creds["http_retry_max"],
+			"http_retry_wait_min": creds["http_retry_wait_min"],
+			"http_retry_wait_max": creds["http_retry_wait_max"],
+		}
+
 		return ps, nil
 	}
 }
