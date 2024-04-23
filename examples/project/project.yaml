@@ -1,0 +1,12 @@
+apiVersion: project.digitalocean.crossplane.io/v1alpha1
+kind: Project
+metadata:
+  name: upjet
+spec:
+  forProvider:
+    description: Upjet Testing
+    environment: Development
+    purpose: Other
+    isDefault: true
+  providerConfigRef:
+    name: default

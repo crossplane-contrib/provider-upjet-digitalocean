@@ -4,9 +4,9 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.13.0
-  name: projects.project.crossplane.io
+  name: projects.project.digitalocean.crossplane.io
 spec:
-  group: project.crossplane.io
+  group: project.digitalocean.crossplane.io
   names:
     categories:
     - crossplane
