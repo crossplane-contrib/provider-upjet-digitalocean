@@ -9,7 +9,8 @@ import "github.com/crossplane/upjet/pkg/config"
 // ExternalNameConfigs contains all external name configurations for this
 // provider.
 var ExternalNameConfigs = map[string]config.ExternalName{
-	"digitalocean_project": config.NameAsIdentifier,
+	//"digitalocean_project": config.NameAsIdentifier,
+	"digitalocean_project": config.IdentifierFromProvider,
 }
 
 // ExternalNameConfigurations applies all external name configs listed in the

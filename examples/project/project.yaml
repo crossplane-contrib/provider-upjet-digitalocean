@@ -8,5 +8,6 @@ spec:
     environment: Development
     purpose: Other
     isDefault: true
+    name: playground
   providerConfigRef:
     name: default

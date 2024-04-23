@@ -80,6 +80,10 @@ spec:
                       is the default project. (Default: "false") determine if the
                       project is the default or not.'
                     type: boolean
+                  name:
+                    description: The name of the Project the human-readable name for
+                      the project
+                    type: string
                   purpose:
                     description: 'the purpose of the project, (Default: "Web Application")
                       the purpose of the project'
@@ -91,6 +95,7 @@ spec:
                     items:
                       type: string
                     type: array
+                    x-kubernetes-list-type: set
                 type: object
               initProvider:
                 description: THIS IS A BETA FIELD. It will be honored unless the Management
@@ -118,6 +123,10 @@ spec:
                       is the default project. (Default: "false") determine if the
                       project is the default or not.'
                     type: boolean
+                  name:
+                    description: The name of the Project the human-readable name for
+                      the project
+                    type: string
                   purpose:
                     description: 'the purpose of the project, (Default: "Web Application")
                       the purpose of the project'
@@ -129,6 +138,7 @@ spec:
                     items:
                       type: string
                     type: array
+                    x-kubernetes-list-type: set
                 type: object
               managementPolicies:
                 default:
@@ -290,6 +300,11 @@ spec:
             required:
             - forProvider
             type: object
+            x-kubernetes-validations:
+            - message: spec.forProvider.name is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.name)
+                || (has(self.initProvider) && has(self.initProvider.name))'
           status:
             description: ProjectStatus defines the observed state of Project.
             properties:
@@ -316,6 +331,10 @@ spec:
                       is the default project. (Default: "false") determine if the
                       project is the default or not.'
                     type: boolean
+                  name:
+                    description: The name of the Project the human-readable name for
+                      the project
+                    type: string
                   ownerId:
                     description: the id of the project owner. the id of the project
                       owner.
@@ -335,6 +354,7 @@ spec:
                     items:
                       type: string
                     type: array
+                    x-kubernetes-list-type: set
                   updatedAt:
                     description: the date and time when the project was last updated,
                       (ISO8601) the date and time when the project was last updated,

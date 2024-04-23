@@ -1,7 +1,3 @@
-// SPDX-FileCopyrightText: 2023 The Crossplane Authors <https://crossplane.io>
-//
-// SPDX-License-Identifier: Apache-2.0
-
 /*
 Copyright 2022 Upbound Inc.
 */
@@ -31,12 +27,17 @@ type ProjectInitParameters struct {
 	// determine if the project is the default or not.
 	IsDefault *bool `json:"isDefault,omitempty" tf:"is_default,omitempty"`
 
+	// The name of the Project
+	// the human-readable name for the project
+	Name *string `json:"name,omitempty" tf:"name,omitempty"`
+
 	// the purpose of the project, (Default: "Web Application")
 	// the purpose of the project
 	Purpose *string `json:"purpose,omitempty" tf:"purpose,omitempty"`
 
 	// a list of uniform resource names (URNs) for the resources associated with the project
 	// the resources associated with the project
+	// +listType=set
 	Resources []*string `json:"resources,omitempty" tf:"resources,omitempty"`
 }
 
@@ -61,6 +62,10 @@ type ProjectObservation struct {
 	// determine if the project is the default or not.
 	IsDefault *bool `json:"isDefault,omitempty" tf:"is_default,omitempty"`
 
+	// The name of the Project
+	// the human-readable name for the project
+	Name *string `json:"name,omitempty" tf:"name,omitempty"`
+
 	// the id of the project owner.
 	// the id of the project owner.
 	OwnerID *float64 `json:"ownerId,omitempty" tf:"owner_id,omitempty"`
@@ -75,6 +80,7 @@ type ProjectObservation struct {
 
 	// a list of uniform resource names (URNs) for the resources associated with the project
 	// the resources associated with the project
+	// +listType=set
 	Resources []*string `json:"resources,omitempty" tf:"resources,omitempty"`
 
 	// the date and time when the project was last updated, (ISO8601)
@@ -99,6 +105,11 @@ type ProjectParameters struct {
 	// +kubebuilder:validation:Optional
 	IsDefault *bool `json:"isDefault,omitempty" tf:"is_default,omitempty"`
 
+	// The name of the Project
+	// the human-readable name for the project
+	// +kubebuilder:validation:Optional
+	Name *string `json:"name,omitempty" tf:"name,omitempty"`
+
 	// the purpose of the project, (Default: "Web Application")
 	// the purpose of the project
 	// +kubebuilder:validation:Optional
@@ -107,6 +118,7 @@ type ProjectParameters struct {
 	// a list of uniform resource names (URNs) for the resources associated with the project
 	// the resources associated with the project
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	Resources []*string `json:"resources,omitempty" tf:"resources,omitempty"`
 }
 
@@ -134,19 +146,21 @@ type ProjectStatus struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+// +kubebuilder:storageversion
 
 // Project is the Schema for the Projects API.
 // +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
-// +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,digitalocean}
 type Project struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
-	Spec              ProjectSpec   `json:"spec"`
-	Status            ProjectStatus `json:"status,omitempty"`
+	// +kubebuilder:validation:XValidation:rule="!('*' in self.managementPolicies || 'Create' in self.managementPolicies || 'Update' in self.managementPolicies) || has(self.forProvider.name) || (has(self.initProvider) && has(self.initProvider.name))",message="spec.forProvider.name is a required parameter"
+	Spec   ProjectSpec   `json:"spec"`
+	Status ProjectStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true

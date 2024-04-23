@@ -10,4 +10,5 @@ spec:
   forProvider:
     description: A project to represent development resources.
     environment: Development
+    name: playground
     purpose: Web Application

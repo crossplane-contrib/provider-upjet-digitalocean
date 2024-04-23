@@ -7,9 +7,9 @@ package config
 import (
 	// Note(turkenh): we are importing this to embed provider schema document
 	_ "embed"
-	"github.com/straw-hat-team/provider-digitalocean/config/project"
-
 	ujconfig "github.com/crossplane/upjet/pkg/config"
+	"github.com/digitalocean/terraform-provider-digitalocean/digitalocean"
+	"github.com/straw-hat-team/provider-digitalocean/config/project"
 )
 
 const (
@@ -29,6 +29,7 @@ func GetProvider() *ujconfig.Provider {
 		ujconfig.WithRootGroup("digitalocean.crossplane.io"),
 		ujconfig.WithIncludeList(ExternalNameConfigured()),
 		ujconfig.WithFeaturesPackage("internal/features"),
+		ujconfig.WithTerraformProvider(digitalocean.Provider()),
 		ujconfig.WithDefaultResourceOptions(
 			ExternalNameConfigurations(),
 		))

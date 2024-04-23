@@ -242,3 +242,10 @@ crossplane.help:
 help-special: crossplane.help
 
 .PHONY: crossplane.help help-special
+
+k-apply-all:
+	@kubectl apply -f ./package/crds
+	@kubectl apply -f ./examples/project
+
+echo-test:
+	@echo "../.work/${TERRAFORM_PROVIDER_SOURCE}/${TERRAFORM_DOCS_PATH}"
