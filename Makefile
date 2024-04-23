@@ -4,7 +4,7 @@
 PROJECT_NAME ?= provider-digitalocean
 PROJECT_REPO ?= github.com/straw-hat-team/$(PROJECT_NAME)
 
-export TERRAFORM_VERSION ?= 1.7.5
+export TERRAFORM_VERSION ?= 1.8.1
 
 export TERRAFORM_PROVIDER_SOURCE ?= digitalocean/digitalocean
 export TERRAFORM_PROVIDER_REPO ?= https://github.com/digitalocean/terraform-provider-digitalocean
