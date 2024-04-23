@@ -1,10 +1,10 @@
 apiVersion: project.digitalocean.crossplane.io/v1alpha1
 kind: Project
 metadata:
-  name: upjet
+  name: playground
 spec:
   forProvider:
-    description: Upjet Testing
+    description: A project to represent development resources.
     environment: Development
     purpose: Other
     isDefault: true
