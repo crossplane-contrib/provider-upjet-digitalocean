@@ -27,7 +27,10 @@ var providerMetadata string
 func GetProvider() *ujconfig.Provider {
 	pc := ujconfig.NewProvider([]byte(providerSchema), resourcePrefix, modulePath, []byte(providerMetadata),
 		ujconfig.WithRootGroup("digitalocean.crossplane.io"),
-		ujconfig.WithIncludeList(ExternalNameConfigured()),
+		ujconfig.WithShortName("digitalocean"),
+		//ujconfig.WithIncludeList(ExternalNameConfigured()),
+		ujconfig.WithIncludeList(ExternalNameConfigured(cliReconciledExternalNameConfigs)),
+		ujconfig.WithTerraformPluginSDKIncludeList(ExternalNameConfigured(terraformPluginSDKExternalNameConfigs)),
 		ujconfig.WithFeaturesPackage("internal/features"),
 		ujconfig.WithTerraformProvider(digitalocean.Provider()),
 		ujconfig.WithDefaultResourceOptions(
