@@ -8,6 +8,7 @@ import (
 	// Note(turkenh): we are importing this to embed provider schema document
 	_ "embed"
 	ujconfig "github.com/crossplane/upjet/pkg/config"
+	"github.com/crossplane/upjet/pkg/registry/reference"
 	"github.com/digitalocean/terraform-provider-digitalocean/digitalocean"
 	"github.com/straw-hat-team/provider-digitalocean/config/project"
 )
@@ -31,6 +32,7 @@ func GetProvider() *ujconfig.Provider {
 		//ujconfig.WithIncludeList(ExternalNameConfigured()),
 		ujconfig.WithIncludeList(ExternalNameConfigured(cliReconciledExternalNameConfigs)),
 		ujconfig.WithTerraformPluginSDKIncludeList(ExternalNameConfigured(terraformPluginSDKExternalNameConfigs)),
+		ujconfig.WithReferenceInjectors([]ujconfig.ReferenceInjector{reference.NewInjector(modulePath)}),
 		ujconfig.WithFeaturesPackage("internal/features"),
 		ujconfig.WithTerraformProvider(digitalocean.Provider()),
 		ujconfig.WithDefaultResourceOptions(
