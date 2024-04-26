@@ -157,7 +157,7 @@ func (in *ProjectObservation) DeepCopyInto(out *ProjectObservation) {
 	}
 	if in.OwnerID != nil {
 		in, out := &in.OwnerID, &out.OwnerID
-		*out = new(float64)
+		*out = new(int64)
 		**out = **in
 	}
 	if in.OwnerUUID != nil {

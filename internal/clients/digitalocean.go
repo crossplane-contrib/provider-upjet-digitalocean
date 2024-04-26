@@ -31,6 +31,9 @@ const (
 // returns Terraform provider setup configuration
 func TerraformSetupBuilder(version, providerSource, providerVersion string) terraform.SetupFn {
 	return func(ctx context.Context, client client.Client, mg resource.Managed) (terraform.Setup, error) {
+		// TODO: No Fork Mode
+		// 1. We need a native client of TF provider
+		// 2. Run `make generate`
 		ps := terraform.Setup{
 			Version: version,
 			Requirement: terraform.ProviderRequirement{

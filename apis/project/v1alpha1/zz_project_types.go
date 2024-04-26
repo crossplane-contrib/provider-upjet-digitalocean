@@ -68,7 +68,7 @@ type ProjectObservation struct {
 
 	// the id of the project owner.
 	// the id of the project owner.
-	OwnerID *float64 `json:"ownerId,omitempty" tf:"owner_id,omitempty"`
+	OwnerID *int64 `json:"ownerId,omitempty" tf:"owner_id,omitempty"`
 
 	// the unique universal identifier of the project owner.
 	// the unique universal identifier of the project owner.
