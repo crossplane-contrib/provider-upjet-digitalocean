@@ -44,6 +44,7 @@ var ExternalNameConfigs = map[string]ujconfig.ExternalName{
 	"digitalocean_reserved_ip":          ujconfig.IdentifierFromProvider,
 	"digitalocean_monitor_alert":        ujconfig.IdentifierFromProvider,
 	"digitalocean_uptime_check":         ujconfig.IdentifierFromProvider,
+	"digitalocean_uptime_alert":         ujconfig.IdentifierFromProvider,
 }
 
 const networkingGroup = "networking"
@@ -59,6 +60,13 @@ func GetProvider() *ujconfig.Provider {
 			ExternalNameConfigurations(),
 		))
 
+	pc.AddResourceConfigurator("digitalocean_uptime_alert", func(r *ujconfig.Resource) {
+		r.UseAsync = false
+		r.References["check_id"] = ujconfig.Reference{
+			Type:          "Check",
+			TerraformName: "digitalocean_uptime_check",
+		}
+	})
 	pc.AddResourceConfigurator("digitalocean_monitor_alert", func(r *ujconfig.Resource) {
 		r.UseAsync = false
 		r.References["entities"] = ujconfig.Reference{
