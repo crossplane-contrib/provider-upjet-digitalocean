@@ -26,6 +26,7 @@ import (
 	v1alpha1uptime "github.com/straw-hat-team/provider-digitalocean/apis/uptime/v1alpha1"
 	v1alpha1apis "github.com/straw-hat-team/provider-digitalocean/apis/v1alpha1"
 	v1beta1 "github.com/straw-hat-team/provider-digitalocean/apis/v1beta1"
+	v1alpha1volume "github.com/straw-hat-team/provider-digitalocean/apis/volume/v1alpha1"
 )
 
 func init() {
@@ -43,6 +44,7 @@ func init() {
 		v1alpha1uptime.SchemeBuilder.AddToScheme,
 		v1alpha1apis.SchemeBuilder.AddToScheme,
 		v1beta1.SchemeBuilder.AddToScheme,
+		v1alpha1volume.SchemeBuilder.AddToScheme,
 	)
 }
 

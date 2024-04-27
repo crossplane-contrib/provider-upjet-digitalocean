@@ -29,6 +29,9 @@ import (
 	bucket "github.com/straw-hat-team/provider-digitalocean/internal/controller/storage/bucket"
 	alertuptime "github.com/straw-hat-team/provider-digitalocean/internal/controller/uptime/alert"
 	check "github.com/straw-hat-team/provider-digitalocean/internal/controller/uptime/check"
+	attachment "github.com/straw-hat-team/provider-digitalocean/internal/controller/volume/attachment"
+	snapshotvolume "github.com/straw-hat-team/provider-digitalocean/internal/controller/volume/snapshot"
+	volume "github.com/straw-hat-team/provider-digitalocean/internal/controller/volume/volume"
 )
 
 // Setup creates all controllers with the supplied logger and adds them to
@@ -55,6 +58,9 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		bucket.Setup,
 		alertuptime.Setup,
 		check.Setup,
+		attachment.Setup,
+		snapshotvolume.Setup,
+		volume.Setup,
 	} {
 		if err := setup(mgr, o); err != nil {
 			return err

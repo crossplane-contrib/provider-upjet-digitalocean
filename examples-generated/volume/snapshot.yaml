@@ -1,0 +1,31 @@
+apiVersion: volume.digitalocean.crossplane.io/v1alpha1
+kind: Snapshot
+metadata:
+  annotations:
+    meta.upbound.io/example-id: volume/v1alpha1/snapshot
+  labels:
+    testing.upbound.io/example-name: foobar
+  name: foobar
+spec:
+  forProvider:
+    name: foo
+    volumeIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: foobar
+
+---
+
+apiVersion: volume.digitalocean.crossplane.io/v1alpha1
+kind: Volume
+metadata:
+  annotations:
+    meta.upbound.io/example-id: volume/v1alpha1/snapshot
+  labels:
+    testing.upbound.io/example-name: foobar
+  name: foobar
+spec:
+  forProvider:
+    description: an example volume
+    name: baz
+    region: nyc1
+    size: 100

@@ -45,6 +45,9 @@ var ExternalNameConfigs = map[string]ujconfig.ExternalName{
 	"digitalocean_monitor_alert":        ujconfig.IdentifierFromProvider,
 	"digitalocean_uptime_check":         ujconfig.IdentifierFromProvider,
 	"digitalocean_uptime_alert":         ujconfig.IdentifierFromProvider,
+	"digitalocean_volume":               ujconfig.IdentifierFromProvider,
+	"digitalocean_volume_snapshot":      ujconfig.IdentifierFromProvider,
+	"digitalocean_volume_attachment":    ujconfig.IdentifierFromProvider,
 }
 
 const networkingGroup = "networking"
@@ -60,6 +63,33 @@ func GetProvider() *ujconfig.Provider {
 			ExternalNameConfigurations(),
 		))
 
+	pc.AddResourceConfigurator("digitalocean_volume_attachment", func(r *ujconfig.Resource) {
+		r.ShortGroup = "volume"
+		r.UseAsync = false
+		r.References["volume_id"] = ujconfig.Reference{
+			Type:          "Volume",
+			TerraformName: "digitalocean_volume",
+		}
+		r.References["droplet_id"] = ujconfig.Reference{
+			Type:          referenceType(pc, "compute", "v1alpha1", "Droplet"),
+			TerraformName: "digitalocean_droplet",
+		}
+	})
+	pc.AddResourceConfigurator("digitalocean_volume_snapshot", func(r *ujconfig.Resource) {
+		r.UseAsync = false
+		r.References["volume_id"] = ujconfig.Reference{
+			Type:          "Volume",
+			TerraformName: "digitalocean_volume",
+		}
+	})
+	pc.AddResourceConfigurator("digitalocean_volume", func(r *ujconfig.Resource) {
+		r.ShortGroup = "volume"
+		r.UseAsync = false
+		r.References["snapshot_id"] = ujconfig.Reference{
+			Type:          "Snapshot",
+			TerraformName: "digitalocean_volume_snapshot",
+		}
+	})
 	pc.AddResourceConfigurator("digitalocean_uptime_alert", func(r *ujconfig.Resource) {
 		r.UseAsync = false
 		r.References["check_id"] = ujconfig.Reference{
@@ -164,6 +194,14 @@ func GetProvider() *ujconfig.Provider {
 			Type:          referenceType(pc, "digitalocean", "v1alpha1", "Tag"),
 			TerraformName: "digitalocean_tag",
 		}
+		// r.References["vpc_uuid"] = ujconfig.Reference{
+		// 	Type:          referenceType(pc, "networking", "v1alpha1", "VPC"),
+		// 	TerraformName: "digitalocean_vpc",
+		// }
+		// r.References["volume_ids"] = ujconfig.Reference{
+		// 	Type:          referenceType(pc, "volume", "v1alpha1", "Volume"),
+		// 	TerraformName: "digitalocean_volume",
+		// }
 	})
 	pc.AddResourceConfigurator("digitalocean_kubernetes_cluster", func(r *ujconfig.Resource) {
 		r.ShortGroup = "kubernetes"
