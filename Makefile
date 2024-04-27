@@ -4,7 +4,7 @@
 PROJECT_NAME ?= provider-digitalocean
 PROJECT_REPO ?= github.com/straw-hat-team/$(PROJECT_NAME)
 
-export TERRAFORM_VERSION ?= 1.7.5
+export TERRAFORM_VERSION ?= 1.8.1
 
 export TERRAFORM_PROVIDER_SOURCE ?= digitalocean/digitalocean
 export TERRAFORM_PROVIDER_REPO ?= https://github.com/digitalocean/terraform-provider-digitalocean
@@ -242,3 +242,19 @@ crossplane.help:
 help-special: crossplane.help
 
 .PHONY: crossplane.help help-special
+
+k-apply-crds:
+	@kubectl apply -f ./package/crds
+
+k-apply-tmp:
+	@kubectl apply -f ./tmp/local
+
+k-apply-providerconfig:
+	@kubectl apply -f ./examples/providerconfig/
+
+k-apply-all: k-apply-crds k-apply-providerconfig k-apply-tmp
+
+helm-install-crossplane:
+	helm install crossplane --namespace crossplane-system --create-namespace crossplane-stable/crossplane
+
+run-all: generate k-apply-all run

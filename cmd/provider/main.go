@@ -26,12 +26,12 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/cache"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	"github.com/crossplane-contrib/provider-digitalocean/apis"
-	"github.com/crossplane-contrib/provider-digitalocean/apis/v1alpha1"
-	"github.com/crossplane-contrib/provider-digitalocean/config"
-	"github.com/crossplane-contrib/provider-digitalocean/internal/clients"
-	"github.com/crossplane-contrib/provider-digitalocean/internal/controller"
-	"github.com/crossplane-contrib/provider-digitalocean/internal/features"
+	"github.com/straw-hat-team/provider-digitalocean/apis"
+	"github.com/straw-hat-team/provider-digitalocean/apis/v1alpha1"
+	"github.com/straw-hat-team/provider-digitalocean/config"
+	"github.com/straw-hat-team/provider-digitalocean/internal/clients"
+	"github.com/straw-hat-team/provider-digitalocean/internal/controller"
+	"github.com/straw-hat-team/provider-digitalocean/internal/features"
 )
 
 func main() {
