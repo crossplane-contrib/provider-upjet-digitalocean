@@ -16,6 +16,7 @@ import (
 
 	v1alpha1 "github.com/straw-hat-team/provider-digitalocean/apis/compute/v1alpha1"
 	v1alpha1database "github.com/straw-hat-team/provider-digitalocean/apis/database/v1alpha1"
+	v1alpha1digitalocean "github.com/straw-hat-team/provider-digitalocean/apis/digitalocean/v1alpha1"
 	v1alpha1droplet "github.com/straw-hat-team/provider-digitalocean/apis/droplet/v1alpha1"
 	v1alpha1kubernetes "github.com/straw-hat-team/provider-digitalocean/apis/kubernetes/v1alpha1"
 	v1alpha1networking "github.com/straw-hat-team/provider-digitalocean/apis/networking/v1alpha1"
@@ -30,6 +31,7 @@ func init() {
 	AddToSchemes = append(AddToSchemes,
 		v1alpha1.SchemeBuilder.AddToScheme,
 		v1alpha1database.SchemeBuilder.AddToScheme,
+		v1alpha1digitalocean.SchemeBuilder.AddToScheme,
 		v1alpha1droplet.SchemeBuilder.AddToScheme,
 		v1alpha1kubernetes.SchemeBuilder.AddToScheme,
 		v1alpha1networking.SchemeBuilder.AddToScheme,

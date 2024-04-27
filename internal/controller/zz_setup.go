@@ -13,6 +13,7 @@ import (
 	cluster "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/cluster"
 	replica "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/replica"
 	user "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/user"
+	tag "github.com/straw-hat-team/provider-digitalocean/internal/controller/digitalocean/tag"
 	snapshot "github.com/straw-hat-team/provider-digitalocean/internal/controller/droplet/snapshot"
 	clusterkubernetes "github.com/straw-hat-team/provider-digitalocean/internal/controller/kubernetes/cluster"
 	nodepool "github.com/straw-hat-team/provider-digitalocean/internal/controller/kubernetes/nodepool"
@@ -33,6 +34,7 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		cluster.Setup,
 		replica.Setup,
 		user.Setup,
+		tag.Setup,
 		snapshot.Setup,
 		clusterkubernetes.Setup,
 		nodepool.Setup,
