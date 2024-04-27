@@ -1,0 +1,41 @@
+apiVersion: monitor.digitalocean.crossplane.io/v1alpha1
+kind: Alert
+metadata:
+  annotations:
+    meta.upbound.io/example-id: monitor/v1alpha1/alert
+  labels:
+    testing.upbound.io/example-name: cpu_alert
+  name: cpu-alert
+spec:
+  forProvider:
+    alerts:
+    - email:
+      - sammy@digitalocean.com
+      slack:
+      - channel: Production Alerts
+        url: https://hooks.slack.com/services/T1234567/AAAAAAAA/ZZZZZZ
+    compare: GreaterThan
+    description: Alert about CPU usage
+    enabled: true
+    entities:
+    - ${digitalocean_droplet.web.id}
+    type: v1/insights/droplet/cpu
+    value: 95
+    window: 5m
+
+---
+
+apiVersion: compute.digitalocean.crossplane.io/v1alpha1
+kind: Droplet
+metadata:
+  annotations:
+    meta.upbound.io/example-id: monitor/v1alpha1/alert
+  labels:
+    testing.upbound.io/example-name: web
+  name: web
+spec:
+  forProvider:
+    image: ubuntu-20-04-x64
+    name: web-1
+    region: nyc2
+    size: s-1vcpu-1gb

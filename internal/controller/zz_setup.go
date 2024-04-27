@@ -17,6 +17,7 @@ import (
 	snapshot "github.com/straw-hat-team/provider-digitalocean/internal/controller/droplet/snapshot"
 	clusterkubernetes "github.com/straw-hat-team/provider-digitalocean/internal/controller/kubernetes/cluster"
 	nodepool "github.com/straw-hat-team/provider-digitalocean/internal/controller/kubernetes/nodepool"
+	alert "github.com/straw-hat-team/provider-digitalocean/internal/controller/monitor/alert"
 	domain "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/domain"
 	firewall "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/firewall"
 	ip "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/ip"
@@ -40,6 +41,7 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		snapshot.Setup,
 		clusterkubernetes.Setup,
 		nodepool.Setup,
+		alert.Setup,
 		domain.Setup,
 		firewall.Setup,
 		ip.Setup,

@@ -83,7 +83,7 @@ open an [issue](https://github.com/straw-hat-team/provider-digitalocean/issues).
 - [x] digitalocean_kubernetes_cluster
 - [x] digitalocean_kubernetes_node_pool
 - [x] digitalocean_loadbalancer
-- [ ] digitalocean_monitor_alert
+- [x] digitalocean_monitor_alert
 - [x] digitalocean_project
 - [ ] digitalocean_project_resources
 - [x] digitalocean_record
