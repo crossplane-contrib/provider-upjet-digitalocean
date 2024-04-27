@@ -41,6 +41,7 @@ var ExternalNameConfigs = map[string]ujconfig.ExternalName{
 	"digitalocean_droplet_snapshot":     ujconfig.IdentifierFromProvider,
 	"digitalocean_tag":                  ujconfig.IdentifierFromProvider,
 	"digitalocean_firewall":             ujconfig.IdentifierFromProvider,
+	"digitalocean_reserved_ip":          ujconfig.IdentifierFromProvider,
 }
 
 const networkingGroup = "networking"
@@ -56,6 +57,14 @@ func GetProvider() *ujconfig.Provider {
 			ExternalNameConfigurations(),
 		))
 
+	pc.AddResourceConfigurator("digitalocean_reserved_ip", func(r *ujconfig.Resource) {
+		r.ShortGroup = networkingGroup
+		r.UseAsync = false
+		r.References["droplet_id"] = ujconfig.Reference{
+			Type:          referenceType(pc, "compute", "v1alpha1", "Droplet"),
+			TerraformName: "digitalocean_droplet",
+		}
+	})
 	pc.AddResourceConfigurator("digitalocean_firewall", func(r *ujconfig.Resource) {
 		r.ShortGroup = networkingGroup
 		r.UseAsync = false

@@ -19,6 +19,7 @@ import (
 	nodepool "github.com/straw-hat-team/provider-digitalocean/internal/controller/kubernetes/nodepool"
 	domain "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/domain"
 	firewall "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/firewall"
+	ip "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/ip"
 	loadbalancer "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/loadbalancer"
 	record "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/record"
 	vpc "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/vpc"
@@ -41,6 +42,7 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		nodepool.Setup,
 		domain.Setup,
 		firewall.Setup,
+		ip.Setup,
 		loadbalancer.Setup,
 		record.Setup,
 		vpc.Setup,
