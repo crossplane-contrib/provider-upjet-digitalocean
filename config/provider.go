@@ -40,7 +40,10 @@ var ExternalNameConfigs = map[string]ujconfig.ExternalName{
 	"digitalocean_database_replica":     ujconfig.IdentifierFromProvider,
 	"digitalocean_droplet_snapshot":     ujconfig.IdentifierFromProvider,
 	"digitalocean_tag":                  ujconfig.IdentifierFromProvider,
+	"digitalocean_firewall":             ujconfig.IdentifierFromProvider,
 }
+
+const networkingGroup = "networking"
 
 // GetProvider returns provider configuration
 func GetProvider() *ujconfig.Provider {
@@ -53,6 +56,14 @@ func GetProvider() *ujconfig.Provider {
 			ExternalNameConfigurations(),
 		))
 
+	pc.AddResourceConfigurator("digitalocean_firewall", func(r *ujconfig.Resource) {
+		r.ShortGroup = networkingGroup
+		r.UseAsync = false
+		r.References["droplet_ids"] = ujconfig.Reference{
+			Type:          referenceType(pc, "compute", "v1alpha1", "Droplet"),
+			TerraformName: "digitalocean_droplet",
+		}
+	})
 	pc.AddResourceConfigurator("digitalocean_droplet_snapshot", func(r *ujconfig.Resource) {
 		r.UseAsync = false
 		r.References["droplet_id"] = ujconfig.Reference{
@@ -97,7 +108,7 @@ func GetProvider() *ujconfig.Provider {
 		r.ShortGroup = "project"
 	})
 	pc.AddResourceConfigurator("digitalocean_loadbalancer", func(r *ujconfig.Resource) {
-		r.ShortGroup = "networking"
+		r.ShortGroup = networkingGroup
 		r.References["droplet_ids"] = ujconfig.Reference{
 			Type:          referenceType(pc, "compute", "v1alpha1", "Droplet"),
 			TerraformName: "digitalocean_droplet",
@@ -108,13 +119,13 @@ func GetProvider() *ujconfig.Provider {
 		}
 	})
 	pc.AddResourceConfigurator("digitalocean_vpc", func(r *ujconfig.Resource) {
-		r.ShortGroup = "networking"
+		r.ShortGroup = networkingGroup
 	})
 	pc.AddResourceConfigurator("digitalocean_domain", func(r *ujconfig.Resource) {
-		r.ShortGroup = "networking"
+		r.ShortGroup = networkingGroup
 	})
 	pc.AddResourceConfigurator("digitalocean_record", func(r *ujconfig.Resource) {
-		r.ShortGroup = "networking"
+		r.ShortGroup = networkingGroup
 		r.References["domain"] = ujconfig.Reference{
 			Type:          "Domain",
 			TerraformName: "digitalocean_domain",

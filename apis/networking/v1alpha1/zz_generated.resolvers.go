@@ -13,6 +13,32 @@ import (
 	client "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
+// ResolveReferences of this Firewall.
+func (mg *Firewall) ResolveReferences(ctx context.Context, c client.Reader) error {
+	r := reference.NewAPIResolver(c, mg)
+
+	var mrsp reference.MultiResolutionResponse
+	var err error
+
+	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
+		CurrentValues: reference.FromFloatPtrValues(mg.Spec.ForProvider.DropletIds),
+		Extract:       reference.ExternalName(),
+		References:    mg.Spec.ForProvider.DropletIdsRefs,
+		Selector:      mg.Spec.ForProvider.DropletIdsSelector,
+		To: reference.To{
+			List:    &v1alpha1.DropletList{},
+			Managed: &v1alpha1.Droplet{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.DropletIds")
+	}
+	mg.Spec.ForProvider.DropletIds = reference.ToFloatPtrValues(mrsp.ResolvedValues)
+	mg.Spec.ForProvider.DropletIdsRefs = mrsp.ResolvedReferences
+
+	return nil
+}
+
 // ResolveReferences of this Loadbalancer.
 func (mg *Loadbalancer) ResolveReferences(ctx context.Context, c client.Reader) error {
 	r := reference.NewAPIResolver(c, mg)

@@ -79,9 +79,7 @@ open an [issue](https://github.com/straw-hat-team/provider-digitalocean/issues).
 - [x] digitalocean_domain
 - [x] digitalocean_droplet
 - [x] digitalocean_droplet_snapshot
-- [ ] digitalocean_firewall
-- [ ] digitalocean_floating_ip
-- [ ] digitalocean_floating_ip_assignment
+- [x] digitalocean_firewall
 - [x] digitalocean_kubernetes_cluster
 - [x] digitalocean_kubernetes_node_pool
 - [x] digitalocean_loadbalancer
