@@ -9,6 +9,7 @@ Copyright 2022 Upbound Inc.
 package v1alpha1
 
 import (
+	"github.com/crossplane/crossplane-runtime/apis/common/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 )
 
@@ -112,17 +113,6 @@ func (in *DropletInitParameters) DeepCopyInto(out *DropletInitParameters) {
 		in, out := &in.Size, &out.Size
 		*out = new(string)
 		**out = **in
-	}
-	if in.Tags != nil {
-		in, out := &in.Tags, &out.Tags
-		*out = make([]*string, len(*in))
-		for i := range *in {
-			if (*in)[i] != nil {
-				in, out := &(*in)[i], &(*out)[i]
-				*out = new(string)
-				**out = **in
-			}
-		}
 	}
 	if in.UserData != nil {
 		in, out := &in.UserData, &out.UserData
@@ -451,6 +441,18 @@ func (in *DropletParameters) DeepCopyInto(out *DropletParameters) {
 				**out = **in
 			}
 		}
+	}
+	if in.TagsRefs != nil {
+		in, out := &in.TagsRefs, &out.TagsRefs
+		*out = make([]v1.Reference, len(*in))
+		for i := range *in {
+			(*in)[i].DeepCopyInto(&(*out)[i])
+		}
+	}
+	if in.TagsSelector != nil {
+		in, out := &in.TagsSelector, &out.TagsSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
 	}
 	if in.UserData != nil {
 		in, out := &in.UserData, &out.UserData

@@ -39,6 +39,7 @@ var ExternalNameConfigs = map[string]ujconfig.ExternalName{
 	"digitalocean_database_user":        ujconfig.NameAsIdentifier,
 	"digitalocean_database_replica":     ujconfig.IdentifierFromProvider,
 	"digitalocean_droplet_snapshot":     ujconfig.IdentifierFromProvider,
+	"digitalocean_tag":                  ujconfig.IdentifierFromProvider,
 }
 
 // GetProvider returns provider configuration
@@ -122,6 +123,10 @@ func GetProvider() *ujconfig.Provider {
 	pc.AddResourceConfigurator("digitalocean_droplet", func(r *ujconfig.Resource) {
 		r.ShortGroup = "compute"
 		r.UseAsync = false
+		r.References["tags"] = ujconfig.Reference{
+			Type:          referenceType(pc, "digitalocean", "v1alpha1", "Tag"),
+			TerraformName: "digitalocean_tag",
+		}
 	})
 	pc.AddResourceConfigurator("digitalocean_kubernetes_cluster", func(r *ujconfig.Resource) {
 		r.ShortGroup = "kubernetes"

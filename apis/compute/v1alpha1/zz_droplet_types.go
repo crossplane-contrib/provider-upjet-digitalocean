@@ -79,9 +79,6 @@ type DropletInitParameters struct {
 	// The unique slug that indentifies the type of Droplet. You can find a list of available slugs on DigitalOcean API documentation.
 	Size *string `json:"size,omitempty" tf:"size,omitempty"`
 
-	// A list of the tags to be applied to this Droplet.
-	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
-
 	// A string of the desired User Data for the Droplet.
 	UserData *string `json:"userData,omitempty" tf:"user_data,omitempty"`
 
@@ -277,8 +274,17 @@ type DropletParameters struct {
 	Size *string `json:"size,omitempty" tf:"size,omitempty"`
 
 	// A list of the tags to be applied to this Droplet.
+	// +crossplane:generate:reference:type=github.com/straw-hat-team/provider-digitalocean/apis/digitalocean/v1alpha1.Tag
 	// +kubebuilder:validation:Optional
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
+
+	// References to Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsRefs []v1.Reference `json:"tagsRefs,omitempty" tf:"-"`
+
+	// Selector for a list of Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsSelector *v1.Selector `json:"tagsSelector,omitempty" tf:"-"`
 
 	// A string of the desired User Data for the Droplet.
 	// +kubebuilder:validation:Optional

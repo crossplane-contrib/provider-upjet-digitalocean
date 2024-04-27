@@ -67,7 +67,7 @@ open an [issue](https://github.com/straw-hat-team/provider-digitalocean/issues).
 - [ ] digitalocean_container_registry
 - [ ] digitalocean_container_registry_docker_credentials
 - [ ] digitalocean_custom_image
-- [ ] digitalocean_database_cluster
+- [x] digitalocean_database_cluster
 - [ ] digitalocean_database_connection_pool
 - [ ] digitalocean_database_db
 - [ ] digitalocean_database_firewall
@@ -96,7 +96,7 @@ open an [issue](https://github.com/straw-hat-team/provider-digitalocean/issues).
 - [ ] digitalocean_spaces_bucket_object
 - [ ] digitalocean_spaces_bucket_policy
 - [ ] digitalocean_ssh_key
-- [ ] digitalocean_tag
+- [x] digitalocean_tag
 - [ ] digitalocean_uptime_alert
 - [ ] digitalocean_uptime_check
 - [ ] digitalocean_volume
