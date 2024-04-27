@@ -8,6 +8,7 @@ import (
 	// Note(turkenh): we are importing this to embed provider schema document
 	_ "embed"
 	"fmt"
+
 	ujconfig "github.com/crossplane/upjet/pkg/config"
 )
 
@@ -35,6 +36,7 @@ var ExternalNameConfigs = map[string]ujconfig.ExternalName{
 	"digitalocean_spaces_bucket":        ujconfig.NameAsIdentifier,
 	"digitalocean_loadbalancer":         ujconfig.IdentifierFromProvider,
 	"digitalocean_database_cluster":     ujconfig.IdentifierFromProvider,
+	"digitalocean_database_user":        ujconfig.NameAsIdentifier,
 }
 
 // GetProvider returns provider configuration
@@ -48,6 +50,13 @@ func GetProvider() *ujconfig.Provider {
 			ExternalNameConfigurations(),
 		))
 
+	pc.AddResourceConfigurator("digitalocean_database_user", func(r *ujconfig.Resource) {
+		r.ShortGroup = "database"
+		r.References["cluster_id"] = ujconfig.Reference{
+			Type:          "Cluster",
+			TerraformName: "digitalocean_database_cluster",
+		}
+	})
 	pc.AddResourceConfigurator("digitalocean_database_cluster", func(r *ujconfig.Resource) {
 		r.ShortGroup = "database"
 		r.References["private_network_uuid"] = ujconfig.Reference{
