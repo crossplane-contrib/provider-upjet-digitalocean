@@ -27,6 +27,7 @@ import (
 	project "github.com/straw-hat-team/provider-digitalocean/internal/controller/project/project"
 	providerconfig "github.com/straw-hat-team/provider-digitalocean/internal/controller/providerconfig"
 	bucket "github.com/straw-hat-team/provider-digitalocean/internal/controller/storage/bucket"
+	check "github.com/straw-hat-team/provider-digitalocean/internal/controller/uptime/check"
 )
 
 // Setup creates all controllers with the supplied logger and adds them to
@@ -51,6 +52,7 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		project.Setup,
 		providerconfig.Setup,
 		bucket.Setup,
+		check.Setup,
 	} {
 		if err := setup(mgr, o); err != nil {
 			return err

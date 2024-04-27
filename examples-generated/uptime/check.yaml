@@ -1,0 +1,14 @@
+apiVersion: uptime.digitalocean.crossplane.io/v1alpha1
+kind: Check
+metadata:
+  annotations:
+    meta.upbound.io/example-id: uptime/v1alpha1/check
+  labels:
+    testing.upbound.io/example-name: foobar
+  name: foobar
+spec:
+  forProvider:
+    name: example-europe-check
+    regions:
+    - eu_west
+    target: https://www.example.com

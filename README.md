@@ -96,7 +96,7 @@ open an [issue](https://github.com/straw-hat-team/provider-digitalocean/issues).
 - [ ] digitalocean_ssh_key
 - [x] digitalocean_tag
 - [ ] digitalocean_uptime_alert
-- [ ] digitalocean_uptime_check
+- [x] digitalocean_uptime_check
 - [ ] digitalocean_volume
 - [ ] digitalocean_volume_attachment
 - [ ] digitalocean_volume_snapshot
