@@ -1,0 +1,48 @@
+apiVersion: droplet.digitalocean.crossplane.io/v1alpha1
+kind: Snapshot
+metadata:
+  annotations:
+    meta.upbound.io/example-id: droplet/v1alpha1/snapshot
+  labels:
+    testing.upbound.io/example-name: web-snapshot
+  name: web-snapshot
+spec:
+  forProvider:
+    dropletIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: web
+    name: web-snapshot-01
+
+---
+
+apiVersion: compute.digitalocean.crossplane.io/v1alpha1
+kind: Droplet
+metadata:
+  annotations:
+    meta.upbound.io/example-id: droplet/v1alpha1/snapshot
+  labels:
+    testing.upbound.io/example-name: from-snapshot
+  name: from-snapshot
+spec:
+  forProvider:
+    image: ${digitalocean_droplet_snapshot.web-snapshot.id}
+    name: web-02
+    region: nyc3
+    size: s-2vcpu-4gb
+
+---
+
+apiVersion: compute.digitalocean.crossplane.io/v1alpha1
+kind: Droplet
+metadata:
+  annotations:
+    meta.upbound.io/example-id: droplet/v1alpha1/snapshot
+  labels:
+    testing.upbound.io/example-name: web
+  name: web
+spec:
+  forProvider:
+    image: ubuntu-22-04-x64
+    name: web-01
+    region: nyc3
+    size: s-1vcpu-1gb
