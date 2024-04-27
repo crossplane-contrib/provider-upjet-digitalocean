@@ -17,41 +17,6 @@ import (
 	v1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 )
 
-type FirewallInitParameters struct {
-
-	// A list of strings describing allow rules. Must be colon delimited strings of the form {type}:{source}
-	// the rules for ALLOWING traffic to the LB (strings in the form: 'ip:1.2.3.4' or 'cidr:1.2.0.0/16')
-	Allow []*string `json:"allow,omitempty" tf:"allow,omitempty"`
-
-	// A list of strings describing deny rules. Must be colon delimited strings of the form {type}:{source}
-	// the rules for DENYING traffic to the LB (strings in the form: 'ip:1.2.3.4' or 'cidr:1.2.0.0/16')
-	Deny []*string `json:"deny,omitempty" tf:"deny,omitempty"`
-}
-
-type FirewallObservation struct {
-
-	// A list of strings describing allow rules. Must be colon delimited strings of the form {type}:{source}
-	// the rules for ALLOWING traffic to the LB (strings in the form: 'ip:1.2.3.4' or 'cidr:1.2.0.0/16')
-	Allow []*string `json:"allow,omitempty" tf:"allow,omitempty"`
-
-	// A list of strings describing deny rules. Must be colon delimited strings of the form {type}:{source}
-	// the rules for DENYING traffic to the LB (strings in the form: 'ip:1.2.3.4' or 'cidr:1.2.0.0/16')
-	Deny []*string `json:"deny,omitempty" tf:"deny,omitempty"`
-}
-
-type FirewallParameters struct {
-
-	// A list of strings describing allow rules. Must be colon delimited strings of the form {type}:{source}
-	// the rules for ALLOWING traffic to the LB (strings in the form: 'ip:1.2.3.4' or 'cidr:1.2.0.0/16')
-	// +kubebuilder:validation:Optional
-	Allow []*string `json:"allow,omitempty" tf:"allow,omitempty"`
-
-	// A list of strings describing deny rules. Must be colon delimited strings of the form {type}:{source}
-	// the rules for DENYING traffic to the LB (strings in the form: 'ip:1.2.3.4' or 'cidr:1.2.0.0/16')
-	// +kubebuilder:validation:Optional
-	Deny []*string `json:"deny,omitempty" tf:"deny,omitempty"`
-}
-
 type ForwardingRuleInitParameters struct {
 
 	// Deprecated The ID of the TLS certificate to be used for SSL termination.
@@ -210,6 +175,41 @@ type HealthcheckParameters struct {
 	UnhealthyThreshold *float64 `json:"unhealthyThreshold,omitempty" tf:"unhealthy_threshold,omitempty"`
 }
 
+type LoadbalancerFirewallInitParameters struct {
+
+	// A list of strings describing allow rules. Must be colon delimited strings of the form {type}:{source}
+	// the rules for ALLOWING traffic to the LB (strings in the form: 'ip:1.2.3.4' or 'cidr:1.2.0.0/16')
+	Allow []*string `json:"allow,omitempty" tf:"allow,omitempty"`
+
+	// A list of strings describing deny rules. Must be colon delimited strings of the form {type}:{source}
+	// the rules for DENYING traffic to the LB (strings in the form: 'ip:1.2.3.4' or 'cidr:1.2.0.0/16')
+	Deny []*string `json:"deny,omitempty" tf:"deny,omitempty"`
+}
+
+type LoadbalancerFirewallObservation struct {
+
+	// A list of strings describing allow rules. Must be colon delimited strings of the form {type}:{source}
+	// the rules for ALLOWING traffic to the LB (strings in the form: 'ip:1.2.3.4' or 'cidr:1.2.0.0/16')
+	Allow []*string `json:"allow,omitempty" tf:"allow,omitempty"`
+
+	// A list of strings describing deny rules. Must be colon delimited strings of the form {type}:{source}
+	// the rules for DENYING traffic to the LB (strings in the form: 'ip:1.2.3.4' or 'cidr:1.2.0.0/16')
+	Deny []*string `json:"deny,omitempty" tf:"deny,omitempty"`
+}
+
+type LoadbalancerFirewallParameters struct {
+
+	// A list of strings describing allow rules. Must be colon delimited strings of the form {type}:{source}
+	// the rules for ALLOWING traffic to the LB (strings in the form: 'ip:1.2.3.4' or 'cidr:1.2.0.0/16')
+	// +kubebuilder:validation:Optional
+	Allow []*string `json:"allow,omitempty" tf:"allow,omitempty"`
+
+	// A list of strings describing deny rules. Must be colon delimited strings of the form {type}:{source}
+	// the rules for DENYING traffic to the LB (strings in the form: 'ip:1.2.3.4' or 'cidr:1.2.0.0/16')
+	// +kubebuilder:validation:Optional
+	Deny []*string `json:"deny,omitempty" tf:"deny,omitempty"`
+}
+
 type LoadbalancerInitParameters struct {
 
 	// The load balancing algorithm used to determine
@@ -232,7 +232,7 @@ type LoadbalancerInitParameters struct {
 	EnableProxyProtocol *bool `json:"enableProxyProtocol,omitempty" tf:"enable_proxy_protocol,omitempty"`
 
 	// A block containing rules for allowing/denying traffic to the Load Balancer. The firewall block is documented below. Only 1 firewall is allowed.
-	Firewall []FirewallInitParameters `json:"firewall,omitempty" tf:"firewall,omitempty"`
+	Firewall []LoadbalancerFirewallInitParameters `json:"firewall,omitempty" tf:"firewall,omitempty"`
 
 	// A list of forwarding_rule to be assigned to the
 	// Load Balancer. The forwarding_rule block is documented below.
@@ -299,7 +299,7 @@ type LoadbalancerObservation struct {
 	EnableProxyProtocol *bool `json:"enableProxyProtocol,omitempty" tf:"enable_proxy_protocol,omitempty"`
 
 	// A block containing rules for allowing/denying traffic to the Load Balancer. The firewall block is documented below. Only 1 firewall is allowed.
-	Firewall []FirewallObservation `json:"firewall,omitempty" tf:"firewall,omitempty"`
+	Firewall []LoadbalancerFirewallObservation `json:"firewall,omitempty" tf:"firewall,omitempty"`
 
 	// A list of forwarding_rule to be assigned to the
 	// Load Balancer. The forwarding_rule block is documented below.
@@ -397,7 +397,7 @@ type LoadbalancerParameters struct {
 
 	// A block containing rules for allowing/denying traffic to the Load Balancer. The firewall block is documented below. Only 1 firewall is allowed.
 	// +kubebuilder:validation:Optional
-	Firewall []FirewallParameters `json:"firewall,omitempty" tf:"firewall,omitempty"`
+	Firewall []LoadbalancerFirewallParameters `json:"firewall,omitempty" tf:"firewall,omitempty"`
 
 	// A list of forwarding_rule to be assigned to the
 	// Load Balancer. The forwarding_rule block is documented below.
