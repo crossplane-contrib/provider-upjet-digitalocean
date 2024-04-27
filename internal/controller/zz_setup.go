@@ -11,6 +11,7 @@ import (
 
 	droplet "github.com/straw-hat-team/provider-digitalocean/internal/controller/compute/droplet"
 	cluster "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/cluster"
+	user "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/user"
 	clusterkubernetes "github.com/straw-hat-team/provider-digitalocean/internal/controller/kubernetes/cluster"
 	nodepool "github.com/straw-hat-team/provider-digitalocean/internal/controller/kubernetes/nodepool"
 	domain "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/domain"
@@ -28,6 +29,7 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 	for _, setup := range []func(ctrl.Manager, controller.Options) error{
 		droplet.Setup,
 		cluster.Setup,
+		user.Setup,
 		clusterkubernetes.Setup,
 		nodepool.Setup,
 		domain.Setup,
