@@ -37,6 +37,7 @@ var ExternalNameConfigs = map[string]ujconfig.ExternalName{
 	"digitalocean_loadbalancer":         ujconfig.IdentifierFromProvider,
 	"digitalocean_database_cluster":     ujconfig.IdentifierFromProvider,
 	"digitalocean_database_user":        ujconfig.NameAsIdentifier,
+	"digitalocean_database_replica":     ujconfig.IdentifierFromProvider,
 }
 
 // GetProvider returns provider configuration
@@ -50,6 +51,18 @@ func GetProvider() *ujconfig.Provider {
 			ExternalNameConfigurations(),
 		))
 
+	pc.AddResourceConfigurator("digitalocean_database_replica", func(r *ujconfig.Resource) {
+		r.ShortGroup = "database"
+		r.UseAsync = false
+		r.References["cluster_id"] = ujconfig.Reference{
+			Type:          "Cluster",
+			TerraformName: "digitalocean_database_cluster",
+		}
+		r.References["private_network_uuid"] = ujconfig.Reference{
+			Type:          referenceType(pc, "networking", "v1alpha1", "VPC"),
+			TerraformName: "digitalocean_vpc",
+		}
+	})
 	pc.AddResourceConfigurator("digitalocean_database_user", func(r *ujconfig.Resource) {
 		r.ShortGroup = "database"
 		r.References["cluster_id"] = ujconfig.Reference{
@@ -119,6 +132,7 @@ func GetProvider() *ujconfig.Provider {
 	return pc
 }
 
+//nolint:unparam
 func referenceType(pc *ujconfig.Provider, shortGroup string, version string, structTypeName string) string {
 	return fmt.Sprintf("%s/apis/%s/%s.%s", pc.ModulePath, shortGroup, version, structTypeName)
 }

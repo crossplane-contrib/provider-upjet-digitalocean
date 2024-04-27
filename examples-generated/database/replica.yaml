@@ -1,0 +1,35 @@
+apiVersion: database.digitalocean.crossplane.io/v1alpha1
+kind: Replica
+metadata:
+  annotations:
+    meta.upbound.io/example-id: database/v1alpha1/replica
+  labels:
+    testing.upbound.io/example-name: replica-example
+  name: replica-example
+spec:
+  forProvider:
+    clusterIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: postgres-example
+    name: replica-example
+    region: nyc1
+    size: db-s-1vcpu-1gb
+
+---
+
+apiVersion: database.digitalocean.crossplane.io/v1alpha1
+kind: Cluster
+metadata:
+  annotations:
+    meta.upbound.io/example-id: database/v1alpha1/replica
+  labels:
+    testing.upbound.io/example-name: postgres-example
+  name: postgres-example
+spec:
+  forProvider:
+    engine: pg
+    name: example-postgres-cluster
+    nodeCount: 1
+    region: nyc1
+    size: db-s-1vcpu-1gb
+    version: "11"

@@ -74,8 +74,8 @@ open an [issue](https://github.com/straw-hat-team/provider-digitalocean/issues).
 - [ ] digitalocean_database_kafka_topic
 - [ ] digitalocean_database_mysql_config
 - [ ] digitalocean_database_redis_config
-- [ ] digitalocean_database_replica
-- [ ] digitalocean_database_user
+- [x] digitalocean_database_replica
+- [x] digitalocean_database_user
 - [x] digitalocean_domain
 - [x] digitalocean_droplet
 - [ ] digitalocean_droplet_snapshot
