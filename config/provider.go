@@ -43,6 +43,7 @@ var ExternalNameConfigs = map[string]ujconfig.ExternalName{
 	"digitalocean_firewall":             ujconfig.IdentifierFromProvider,
 	"digitalocean_reserved_ip":          ujconfig.IdentifierFromProvider,
 	"digitalocean_monitor_alert":        ujconfig.IdentifierFromProvider,
+	"digitalocean_uptime_check":         ujconfig.IdentifierFromProvider,
 }
 
 const networkingGroup = "networking"
