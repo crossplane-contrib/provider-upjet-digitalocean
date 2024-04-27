@@ -1,0 +1,33 @@
+apiVersion: networking.digitalocean.crossplane.io/v1alpha1
+kind: IP
+metadata:
+  annotations:
+    meta.upbound.io/example-id: networking/v1alpha1/ip
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    dropletIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example
+    region: nyc2
+
+---
+
+apiVersion: compute.digitalocean.crossplane.io/v1alpha1
+kind: Droplet
+metadata:
+  annotations:
+    meta.upbound.io/example-id: networking/v1alpha1/ip
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    image: ubuntu-22-04-x64
+    ipv6: true
+    name: example
+    privateNetworking: true
+    region: nyc3
+    size: s-1vcpu-1gb

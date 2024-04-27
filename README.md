@@ -87,7 +87,7 @@ open an [issue](https://github.com/straw-hat-team/provider-digitalocean/issues).
 - [x] digitalocean_project
 - [ ] digitalocean_project_resources
 - [x] digitalocean_record
-- [ ] digitalocean_reserved_ip
+- [x] digitalocean_reserved_ip
 - [ ] digitalocean_reserved_ip_assignment
 - [x] digitalocean_spaces_bucket
 - [ ] digitalocean_spaces_bucket_cors_configuration

@@ -39,6 +39,32 @@ func (mg *Firewall) ResolveReferences(ctx context.Context, c client.Reader) erro
 	return nil
 }
 
+// ResolveReferences of this IP.
+func (mg *IP) ResolveReferences(ctx context.Context, c client.Reader) error {
+	r := reference.NewAPIResolver(c, mg)
+
+	var rsp reference.ResolutionResponse
+	var err error
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromFloatPtrValue(mg.Spec.ForProvider.DropletID),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.ForProvider.DropletIDRef,
+		Selector:     mg.Spec.ForProvider.DropletIDSelector,
+		To: reference.To{
+			List:    &v1alpha1.DropletList{},
+			Managed: &v1alpha1.Droplet{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.DropletID")
+	}
+	mg.Spec.ForProvider.DropletID = reference.ToFloatPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.DropletIDRef = rsp.ResolvedReference
+
+	return nil
+}
+
 // ResolveReferences of this Loadbalancer.
 func (mg *Loadbalancer) ResolveReferences(ctx context.Context, c client.Reader) error {
 	r := reference.NewAPIResolver(c, mg)
