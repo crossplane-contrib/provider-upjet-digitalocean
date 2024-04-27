@@ -17,8 +17,8 @@ spec:
     compare: GreaterThan
     description: Alert about CPU usage
     enabled: true
-    entities:
-    - ${digitalocean_droplet.web.id}
+    entitiesRefs:
+    - name: web
     type: v1/insights/droplet/cpu
     value: 95
     window: 5m

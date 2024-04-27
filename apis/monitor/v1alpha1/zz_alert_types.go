@@ -37,10 +37,6 @@ type AlertInitParameters struct {
 	// The status of the alert.
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
-	// A list of IDs for the resources to which the alert policy applies.
-	// The droplets to apply the alert policy to
-	Entities []*string `json:"entities,omitempty" tf:"entities,omitempty"`
-
 	// A list of tags. When an included tag is added to a resource, the alert policy will apply to it.
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
@@ -150,8 +146,17 @@ type AlertParameters struct {
 
 	// A list of IDs for the resources to which the alert policy applies.
 	// The droplets to apply the alert policy to
+	// +crossplane:generate:reference:type=github.com/straw-hat-team/provider-digitalocean/apis/compute/v1alpha1.Droplet
 	// +kubebuilder:validation:Optional
 	Entities []*string `json:"entities,omitempty" tf:"entities,omitempty"`
+
+	// References to Droplet in compute to populate entities.
+	// +kubebuilder:validation:Optional
+	EntitiesRefs []v1.Reference `json:"entitiesRefs,omitempty" tf:"-"`
+
+	// Selector for a list of Droplet in compute to populate entities.
+	// +kubebuilder:validation:Optional
+	EntitiesSelector *v1.Selector `json:"entitiesSelector,omitempty" tf:"-"`
 
 	// A list of tags. When an included tag is added to a resource, the alert policy will apply to it.
 	// +kubebuilder:validation:Optional
