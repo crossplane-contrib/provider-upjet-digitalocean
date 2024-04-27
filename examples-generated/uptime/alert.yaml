@@ -1,0 +1,41 @@
+apiVersion: uptime.digitalocean.crossplane.io/v1alpha1
+kind: Alert
+metadata:
+  annotations:
+    meta.upbound.io/example-id: uptime/v1alpha1/alert
+  labels:
+    testing.upbound.io/example-name: alert-example
+  name: alert-example
+spec:
+  forProvider:
+    checkIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: foobar
+    comparison: greater_than
+    name: latency-alert
+    notifications:
+    - email:
+      - sammy@digitalocean.com
+      slack:
+      - channel: Production Alerts
+        url: https://hooks.slack.com/services/T1234567/AAAAAAAA/ZZZZZZ
+    period: 2m
+    threshold: 300
+    type: latency
+
+---
+
+apiVersion: uptime.digitalocean.crossplane.io/v1alpha1
+kind: Check
+metadata:
+  annotations:
+    meta.upbound.io/example-id: uptime/v1alpha1/alert
+  labels:
+    testing.upbound.io/example-name: foobar
+  name: foobar
+spec:
+  forProvider:
+    name: example-europe-check
+    regions:
+    - eu_west
+    target: https://www.example.com

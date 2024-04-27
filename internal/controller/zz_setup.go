@@ -27,6 +27,7 @@ import (
 	project "github.com/straw-hat-team/provider-digitalocean/internal/controller/project/project"
 	providerconfig "github.com/straw-hat-team/provider-digitalocean/internal/controller/providerconfig"
 	bucket "github.com/straw-hat-team/provider-digitalocean/internal/controller/storage/bucket"
+	alertuptime "github.com/straw-hat-team/provider-digitalocean/internal/controller/uptime/alert"
 	check "github.com/straw-hat-team/provider-digitalocean/internal/controller/uptime/check"
 )
 
@@ -52,6 +53,7 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		project.Setup,
 		providerconfig.Setup,
 		bucket.Setup,
+		alertuptime.Setup,
 		check.Setup,
 	} {
 		if err := setup(mgr, o); err != nil {
