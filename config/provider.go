@@ -34,6 +34,7 @@ var ExternalNameConfigs = map[string]ujconfig.ExternalName{
 	"digitalocean_record":                           ujconfig.IdentifierFromProvider,
 	"digitalocean_vpc":                              ujconfig.IdentifierFromProvider,
 	"digitalocean_spaces_bucket":                    ujconfig.NameAsIdentifier,
+	"digitalocean_cdn":                              ujconfig.IdentifierFromProvider,
 	"digitalocean_loadbalancer":                     ujconfig.IdentifierFromProvider,
 	"digitalocean_database_cluster":                 ujconfig.IdentifierFromProvider,
 	"digitalocean_database_user":                    ujconfig.NameAsIdentifier,

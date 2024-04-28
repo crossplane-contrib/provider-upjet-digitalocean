@@ -62,7 +62,7 @@ open an [issue](https://github.com/straw-hat-team/provider-digitalocean/issues).
 ## Completeness List
 
 - [ ] digitalocean_app
-- [ ] digitalocean_cdn
+- [x] digitalocean_cdn
 - [ ] digitalocean_certificate
 - [ ] digitalocean_container_registry
 - [ ] digitalocean_container_registry_docker_credentials
