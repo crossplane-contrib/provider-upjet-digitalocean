@@ -14,6 +14,7 @@ import (
 	cluster "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/cluster"
 	replica "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/replica"
 	user "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/user"
+	app "github.com/straw-hat-team/provider-digitalocean/internal/controller/digitalocean/app"
 	cdn "github.com/straw-hat-team/provider-digitalocean/internal/controller/digitalocean/cdn"
 	certificate "github.com/straw-hat-team/provider-digitalocean/internal/controller/digitalocean/certificate"
 	tag "github.com/straw-hat-team/provider-digitalocean/internal/controller/digitalocean/tag"
@@ -51,6 +52,7 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		cluster.Setup,
 		replica.Setup,
 		user.Setup,
+		app.Setup,
 		cdn.Setup,
 		certificate.Setup,
 		tag.Setup,
