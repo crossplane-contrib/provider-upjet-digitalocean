@@ -56,6 +56,7 @@ var ExternalNameConfigs = map[string]ujconfig.ExternalName{
 	"digitalocean_spaces_bucket_policy":             ujconfig.IdentifierFromProvider,
 	"digitalocean_custom_image":                     ujconfig.IdentifierFromProvider,
 	"digitalocean_certificate":                      ujconfig.IdentifierFromProvider,
+	"digitalocean_app":                              ujconfig.IdentifierFromProvider,
 }
 
 const networkingGroup = "networking"
@@ -70,7 +71,12 @@ func GetProvider() *ujconfig.Provider {
 		ujconfig.WithDefaultResourceOptions(
 			ExternalNameConfigurations(),
 		))
-
+	pc.AddResourceConfigurator("digitalocean_app", func(r *ujconfig.Resource) {
+		r.References["project_id"] = ujconfig.Reference{
+			Type:          referenceType(pc, "project", "v1alpha1", "Project"),
+			TerraformName: "digitalocean_project",
+		}
+	})
 	pc.AddResourceConfigurator("digitalocean_reserved_ip_assignment", func(r *ujconfig.Resource) {
 		r.ShortGroup = networkingGroup
 		r.UseAsync = false

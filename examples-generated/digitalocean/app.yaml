@@ -1,0 +1,21 @@
+apiVersion: digitalocean.digitalocean.crossplane.io/v1alpha1
+kind: App
+metadata:
+  annotations:
+    meta.upbound.io/example-id: digitalocean/v1alpha1/app
+  labels:
+    testing.upbound.io/example-name: golang-sample
+  name: golang-sample
+spec:
+  forProvider:
+    spec:
+    - name: golang-sample
+      region: ams
+      service:
+      - environmentSlug: go
+        git:
+        - branch: main
+          repoCloneUrl: https://github.com/digitalocean/sample-golang.git
+        instanceCount: 1
+        instanceSizeSlug: professional-xs
+        name: go-service

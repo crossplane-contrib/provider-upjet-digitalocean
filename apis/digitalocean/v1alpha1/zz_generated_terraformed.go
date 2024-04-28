@@ -17,6 +17,90 @@ import (
 	"github.com/crossplane/upjet/pkg/resource/json"
 )
 
+// GetTerraformResourceType returns Terraform resource type for this App
+func (mg *App) GetTerraformResourceType() string {
+	return "digitalocean_app"
+}
+
+// GetConnectionDetailsMapping for this App
+func (tr *App) GetConnectionDetailsMapping() map[string]string {
+	return map[string]string{"spec[*].env[*].value": "spec.forProvider.spec[*].env[*].valueSecretRef", "spec[*].function[*].env[*].value": "spec.forProvider.spec[*].function[*].env[*].valueSecretRef", "spec[*].job[*].env[*].value": "spec.forProvider.spec[*].job[*].env[*].valueSecretRef", "spec[*].service[*].env[*].value": "spec.forProvider.spec[*].service[*].env[*].valueSecretRef", "spec[*].static_site[*].env[*].value": "spec.forProvider.spec[*].staticSite[*].env[*].valueSecretRef", "spec[*].worker[*].env[*].value": "spec.forProvider.spec[*].worker[*].env[*].valueSecretRef"}
+}
+
+// GetObservation of this App
+func (tr *App) GetObservation() (map[string]any, error) {
+	o, err := json.TFParser.Marshal(tr.Status.AtProvider)
+	if err != nil {
+		return nil, err
+	}
+	base := map[string]any{}
+	return base, json.TFParser.Unmarshal(o, &base)
+}
+
+// SetObservation for this App
+func (tr *App) SetObservation(obs map[string]any) error {
+	p, err := json.TFParser.Marshal(obs)
+	if err != nil {
+		return err
+	}
+	return json.TFParser.Unmarshal(p, &tr.Status.AtProvider)
+}
+
+// GetID returns ID of underlying Terraform resource of this App
+func (tr *App) GetID() string {
+	if tr.Status.AtProvider.ID == nil {
+		return ""
+	}
+	return *tr.Status.AtProvider.ID
+}
+
+// GetParameters of this App
+func (tr *App) GetParameters() (map[string]any, error) {
+	p, err := json.TFParser.Marshal(tr.Spec.ForProvider)
+	if err != nil {
+		return nil, err
+	}
+	base := map[string]any{}
+	return base, json.TFParser.Unmarshal(p, &base)
+}
+
+// SetParameters for this App
+func (tr *App) SetParameters(params map[string]any) error {
+	p, err := json.TFParser.Marshal(params)
+	if err != nil {
+		return err
+	}
+	return json.TFParser.Unmarshal(p, &tr.Spec.ForProvider)
+}
+
+// GetInitParameters of this App
+func (tr *App) GetInitParameters() (map[string]any, error) {
+	p, err := json.TFParser.Marshal(tr.Spec.InitProvider)
+	if err != nil {
+		return nil, err
+	}
+	base := map[string]any{}
+	return base, json.TFParser.Unmarshal(p, &base)
+}
+
+// LateInitialize this App using its observed tfState.
+// returns True if there are any spec changes for the resource.
+func (tr *App) LateInitialize(attrs []byte) (bool, error) {
+	params := &AppParameters{}
+	if err := json.TFParser.Unmarshal(attrs, params); err != nil {
+		return false, errors.Wrap(err, "failed to unmarshal Terraform state parameters for late-initialization")
+	}
+	opts := []resource.GenericLateInitializerOption{resource.WithZeroValueJSONOmitEmptyFilter(resource.CNameWildcard)}
+
+	li := resource.NewGenericLateInitializer(opts...)
+	return li.LateInitialize(&tr.Spec.ForProvider, params)
+}
+
+// GetTerraformSchemaVersion returns the associated Terraform schema version
+func (tr *App) GetTerraformSchemaVersion() int {
+	return 0
+}
+
 // GetTerraformResourceType returns Terraform resource type for this Cdn
 func (mg *Cdn) GetTerraformResourceType() string {
 	return "digitalocean_cdn"
