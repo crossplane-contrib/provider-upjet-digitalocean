@@ -1,0 +1,37 @@
+apiVersion: spaces.digitalocean.crossplane.io/v1alpha1
+kind: BucketCorsConfiguration
+metadata:
+  annotations:
+    meta.upbound.io/example-id: spaces/v1alpha1/bucketcorsconfiguration
+  labels:
+    testing.upbound.io/example-name: test
+  name: test
+spec:
+  forProvider:
+    bucket: ${digitalocean_spaces_bucket.foobar.id}
+    corsRule:
+    - allowedHeaders:
+      - '*'
+      allowedMethods:
+      - PUT
+      - POST
+      allowedOrigins:
+      - https://s3-website-test.hashicorp.com
+      exposeHeaders:
+      - ETag
+      maxAgeSeconds: 3000
+    region: nyc3
+
+---
+
+apiVersion: storage.digitalocean.crossplane.io/v1alpha1
+kind: Bucket
+metadata:
+  annotations:
+    meta.upbound.io/example-id: spaces/v1alpha1/bucketcorsconfiguration
+  labels:
+    testing.upbound.io/example-name: foobar
+  name: foobar
+spec:
+  forProvider:
+    region: nyc3
