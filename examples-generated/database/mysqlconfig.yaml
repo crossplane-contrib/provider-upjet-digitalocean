@@ -1,0 +1,34 @@
+apiVersion: database.digitalocean.crossplane.io/v1alpha1
+kind: MySQLConfig
+metadata:
+  annotations:
+    meta.upbound.io/example-id: database/v1alpha1/mysqlconfig
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    clusterIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example
+    connectTimeout: 10
+    defaultTimeZone: UTC
+
+---
+
+apiVersion: database.digitalocean.crossplane.io/v1alpha1
+kind: Cluster
+metadata:
+  annotations:
+    meta.upbound.io/example-id: database/v1alpha1/mysqlconfig
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    engine: mysql
+    name: example-mysql-cluster
+    nodeCount: 1
+    region: nyc1
+    size: db-s-1vcpu-1gb
+    version: "8"

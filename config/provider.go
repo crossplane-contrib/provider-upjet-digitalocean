@@ -61,6 +61,9 @@ var ExternalNameConfigs = map[string]ujconfig.ExternalName{
 	"digitalocean_container_registry_docker_credentials": ujconfig.IdentifierFromProvider,
 	"digitalocean_database_connection_pool":              ujconfig.IdentifierFromProvider,
 	"digitalocean_database_db":                           ujconfig.IdentifierFromProvider,
+	"digitalocean_database_kafka_topic":                  ujconfig.IdentifierFromProvider,
+	"digitalocean_database_mysql_config":                 ujconfig.IdentifierFromProvider,
+	"digitalocean_database_redis_config":                 ujconfig.IdentifierFromProvider,
 }
 
 const networkingGroup = "networking"
@@ -76,6 +79,31 @@ func GetProvider() *ujconfig.Provider {
 		ujconfig.WithDefaultResourceOptions(
 			ExternalNameConfigurations(),
 		))
+
+	pc.AddResourceConfigurator("digitalocean_database_redis_config", func(r *ujconfig.Resource) {
+		r.ShortGroup = databaseGroup
+		r.UseAsync = false
+		r.References["cluster_id"] = ujconfig.Reference{
+			Type:          "Cluster",
+			TerraformName: "digitalocean_database_cluster",
+		}
+	})
+	pc.AddResourceConfigurator("digitalocean_database_mysql_config", func(r *ujconfig.Resource) {
+		r.ShortGroup = databaseGroup
+		r.UseAsync = false
+		r.References["cluster_id"] = ujconfig.Reference{
+			Type:          "Cluster",
+			TerraformName: "digitalocean_database_cluster",
+		}
+	})
+	pc.AddResourceConfigurator("digitalocean_database_kafka_topic", func(r *ujconfig.Resource) {
+		r.ShortGroup = databaseGroup
+		r.UseAsync = false
+		r.References["cluster_id"] = ujconfig.Reference{
+			Type:          "Cluster",
+			TerraformName: "digitalocean_database_cluster",
+		}
+	})
 	pc.AddResourceConfigurator("digitalocean_database_db", func(r *ujconfig.Resource) {
 		r.ShortGroup = databaseGroup
 		r.UseAsync = false

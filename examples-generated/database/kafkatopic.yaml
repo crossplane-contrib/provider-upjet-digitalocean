@@ -1,0 +1,61 @@
+apiVersion: database.digitalocean.crossplane.io/v1alpha1
+kind: KafkaTopic
+metadata:
+  annotations:
+    meta.upbound.io/example-id: database/v1alpha1/kafkatopic
+  labels:
+    testing.upbound.io/example-name: topic-01
+  name: topic-01
+spec:
+  forProvider:
+    clusterIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: kafka-example
+    config:
+    - cleanupPolicy: compact
+      compressionType: uncompressed
+      deleteRetentionMs: 14000
+      fileDeleteDelayMs: 170000
+      flushMessages: 92233
+      flushMs: 92233720368
+      indexIntervalBytes: 40962
+      maxCompactionLagMs: 9223372036854775807
+      maxMessageBytes: 1048588
+      messageDownConversionEnable: true
+      messageFormatVersion: 3.0-IV1
+      messageTimestampDifferenceMaxMs: 9223372036854775807
+      messageTimestampType: log_append_time
+      minCleanableDirtyRatio: 0.5
+      minCompactionLagMs: 20000
+      minInsyncReplicas: 2
+      preallocate: false
+      retentionBytes: -1
+      retentionMs: -1
+      segmentBytes: 209715200
+      segmentIndexBytes: 10485760
+      segmentJitterMs: 0
+      segmentMs: 604800000
+    name: topic-01
+    partitionCount: 3
+    replicationFactor: 2
+
+---
+
+apiVersion: database.digitalocean.crossplane.io/v1alpha1
+kind: Cluster
+metadata:
+  annotations:
+    meta.upbound.io/example-id: database/v1alpha1/kafkatopic
+  labels:
+    testing.upbound.io/example-name: kafka-example
+  name: kafka-example
+spec:
+  forProvider:
+    engine: kafka
+    name: example-kafka-cluster
+    nodeCount: 3
+    region: nyc1
+    size: db-s-2vcpu-2gb
+    tags:
+    - production
+    version: "3.5"
