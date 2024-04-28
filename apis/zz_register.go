@@ -22,6 +22,7 @@ import (
 	v1alpha1monitor "github.com/straw-hat-team/provider-digitalocean/apis/monitor/v1alpha1"
 	v1alpha1networking "github.com/straw-hat-team/provider-digitalocean/apis/networking/v1alpha1"
 	v1alpha1project "github.com/straw-hat-team/provider-digitalocean/apis/project/v1alpha1"
+	v1alpha1ssh "github.com/straw-hat-team/provider-digitalocean/apis/ssh/v1alpha1"
 	v1alpha1storage "github.com/straw-hat-team/provider-digitalocean/apis/storage/v1alpha1"
 	v1alpha1uptime "github.com/straw-hat-team/provider-digitalocean/apis/uptime/v1alpha1"
 	v1alpha1apis "github.com/straw-hat-team/provider-digitalocean/apis/v1alpha1"
@@ -40,6 +41,7 @@ func init() {
 		v1alpha1monitor.SchemeBuilder.AddToScheme,
 		v1alpha1networking.SchemeBuilder.AddToScheme,
 		v1alpha1project.SchemeBuilder.AddToScheme,
+		v1alpha1ssh.SchemeBuilder.AddToScheme,
 		v1alpha1storage.SchemeBuilder.AddToScheme,
 		v1alpha1uptime.SchemeBuilder.AddToScheme,
 		v1alpha1apis.SchemeBuilder.AddToScheme,

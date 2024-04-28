@@ -68,14 +68,6 @@ type DropletInitParameters struct {
 	// size is a permanent change. Increasing only RAM and CPU is reversible.
 	ResizeDisk *bool `json:"resizeDisk,omitempty" tf:"resize_disk,omitempty"`
 
-	// A list of SSH key IDs or fingerprints to enable in
-	// the format [12345, 123456]. To retrieve this info, use the
-	// DigitalOcean API
-	// or CLI (doctl compute ssh-key list). Once a Droplet is created keys can not
-	// be added or removed via this provider. Modifying this field will prompt you
-	// to destroy and recreate the Droplet.
-	SSHKeys []*string `json:"sshKeys,omitempty" tf:"ssh_keys,omitempty"`
-
 	// The unique slug that indentifies the type of Droplet. You can find a list of available slugs on DigitalOcean API documentation.
 	Size *string `json:"size,omitempty" tf:"size,omitempty"`
 
@@ -266,8 +258,17 @@ type DropletParameters struct {
 	// or CLI (doctl compute ssh-key list). Once a Droplet is created keys can not
 	// be added or removed via this provider. Modifying this field will prompt you
 	// to destroy and recreate the Droplet.
+	// +crossplane:generate:reference:type=github.com/straw-hat-team/provider-digitalocean/apis/ssh/v1alpha1.Key
 	// +kubebuilder:validation:Optional
 	SSHKeys []*string `json:"sshKeys,omitempty" tf:"ssh_keys,omitempty"`
+
+	// References to Key in ssh to populate sshKeys.
+	// +kubebuilder:validation:Optional
+	SSHKeysRefs []v1.Reference `json:"sshKeysRefs,omitempty" tf:"-"`
+
+	// Selector for a list of Key in ssh to populate sshKeys.
+	// +kubebuilder:validation:Optional
+	SSHKeysSelector *v1.Selector `json:"sshKeysSelector,omitempty" tf:"-"`
 
 	// The unique slug that indentifies the type of Droplet. You can find a list of available slugs on DigitalOcean API documentation.
 	// +kubebuilder:validation:Optional

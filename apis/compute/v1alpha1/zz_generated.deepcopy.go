@@ -98,17 +98,6 @@ func (in *DropletInitParameters) DeepCopyInto(out *DropletInitParameters) {
 		*out = new(bool)
 		**out = **in
 	}
-	if in.SSHKeys != nil {
-		in, out := &in.SSHKeys, &out.SSHKeys
-		*out = make([]*string, len(*in))
-		for i := range *in {
-			if (*in)[i] != nil {
-				in, out := &(*in)[i], &(*out)[i]
-				*out = new(string)
-				**out = **in
-			}
-		}
-	}
 	if in.Size != nil {
 		in, out := &in.Size, &out.Size
 		*out = new(string)
@@ -425,6 +414,18 @@ func (in *DropletParameters) DeepCopyInto(out *DropletParameters) {
 				**out = **in
 			}
 		}
+	}
+	if in.SSHKeysRefs != nil {
+		in, out := &in.SSHKeysRefs, &out.SSHKeysRefs
+		*out = make([]v1.Reference, len(*in))
+		for i := range *in {
+			(*in)[i].DeepCopyInto(&(*out)[i])
+		}
+	}
+	if in.SSHKeysSelector != nil {
+		in, out := &in.SSHKeysSelector, &out.SSHKeysSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
 	}
 	if in.Size != nil {
 		in, out := &in.Size, &out.Size

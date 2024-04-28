@@ -26,6 +26,7 @@ import (
 	vpc "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/vpc"
 	project "github.com/straw-hat-team/provider-digitalocean/internal/controller/project/project"
 	providerconfig "github.com/straw-hat-team/provider-digitalocean/internal/controller/providerconfig"
+	key "github.com/straw-hat-team/provider-digitalocean/internal/controller/ssh/key"
 	bucket "github.com/straw-hat-team/provider-digitalocean/internal/controller/storage/bucket"
 	alertuptime "github.com/straw-hat-team/provider-digitalocean/internal/controller/uptime/alert"
 	check "github.com/straw-hat-team/provider-digitalocean/internal/controller/uptime/check"
@@ -55,6 +56,7 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		vpc.Setup,
 		project.Setup,
 		providerconfig.Setup,
+		key.Setup,
 		bucket.Setup,
 		alertuptime.Setup,
 		check.Setup,
