@@ -25,7 +25,9 @@ metadata:
   name: from-snapshot
 spec:
   forProvider:
-    image: ${digitalocean_droplet_snapshot.web-snapshot.id}
+    imageSelector:
+      matchLabels:
+        testing.upbound.io/example-name: web-snapshot
     name: web-02
     region: nyc3
     size: s-2vcpu-4gb
@@ -42,7 +44,9 @@ metadata:
   name: web
 spec:
   forProvider:
-    image: ubuntu-22-04-x64
+    imageSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example
     name: web-01
     region: nyc3
     size: s-1vcpu-1gb

@@ -35,7 +35,9 @@ metadata:
   name: web
 spec:
   forProvider:
-    image: ubuntu-20-04-x64
+    imageSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example
     name: web-1
     region: nyc2
     size: s-1vcpu-1gb

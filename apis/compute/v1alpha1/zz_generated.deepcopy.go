@@ -68,11 +68,6 @@ func (in *DropletInitParameters) DeepCopyInto(out *DropletInitParameters) {
 		*out = new(string)
 		**out = **in
 	}
-	if in.Image != nil {
-		in, out := &in.Image, &out.Image
-		*out = new(string)
-		**out = **in
-	}
 	if in.Monitoring != nil {
 		in, out := &in.Monitoring, &out.Monitoring
 		*out = new(bool)
@@ -378,6 +373,16 @@ func (in *DropletParameters) DeepCopyInto(out *DropletParameters) {
 		in, out := &in.Image, &out.Image
 		*out = new(string)
 		**out = **in
+	}
+	if in.ImageRef != nil {
+		in, out := &in.ImageRef, &out.ImageRef
+		*out = new(v1.Reference)
+		(*in).DeepCopyInto(*out)
+	}
+	if in.ImageSelector != nil {
+		in, out := &in.ImageSelector, &out.ImageSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
 	}
 	if in.Monitoring != nil {
 		in, out := &in.Monitoring, &out.Monitoring

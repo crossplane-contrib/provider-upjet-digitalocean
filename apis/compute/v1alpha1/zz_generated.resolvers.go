@@ -9,8 +9,9 @@ import (
 	"context"
 	reference "github.com/crossplane/crossplane-runtime/pkg/reference"
 	errors "github.com/pkg/errors"
-	v1alpha11 "github.com/straw-hat-team/provider-digitalocean/apis/digitalocean/v1alpha1"
-	v1alpha1 "github.com/straw-hat-team/provider-digitalocean/apis/ssh/v1alpha1"
+	v1alpha1 "github.com/straw-hat-team/provider-digitalocean/apis/custom/v1alpha1"
+	v1alpha12 "github.com/straw-hat-team/provider-digitalocean/apis/digitalocean/v1alpha1"
+	v1alpha11 "github.com/straw-hat-team/provider-digitalocean/apis/ssh/v1alpha1"
 	client "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -18,8 +19,25 @@ import (
 func (mg *Droplet) ResolveReferences(ctx context.Context, c client.Reader) error {
 	r := reference.NewAPIResolver(c, mg)
 
+	var rsp reference.ResolutionResponse
 	var mrsp reference.MultiResolutionResponse
 	var err error
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.Image),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.ForProvider.ImageRef,
+		Selector:     mg.Spec.ForProvider.ImageSelector,
+		To: reference.To{
+			List:    &v1alpha1.ImageList{},
+			Managed: &v1alpha1.Image{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.Image")
+	}
+	mg.Spec.ForProvider.Image = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.ImageRef = rsp.ResolvedReference
 
 	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
 		CurrentValues: reference.FromPtrValues(mg.Spec.ForProvider.SSHKeys),
@@ -27,8 +45,8 @@ func (mg *Droplet) ResolveReferences(ctx context.Context, c client.Reader) error
 		References:    mg.Spec.ForProvider.SSHKeysRefs,
 		Selector:      mg.Spec.ForProvider.SSHKeysSelector,
 		To: reference.To{
-			List:    &v1alpha1.KeyList{},
-			Managed: &v1alpha1.Key{},
+			List:    &v1alpha11.KeyList{},
+			Managed: &v1alpha11.Key{},
 		},
 	})
 	if err != nil {
@@ -43,8 +61,8 @@ func (mg *Droplet) ResolveReferences(ctx context.Context, c client.Reader) error
 		References:    mg.Spec.ForProvider.TagsRefs,
 		Selector:      mg.Spec.ForProvider.TagsSelector,
 		To: reference.To{
-			List:    &v1alpha11.TagList{},
-			Managed: &v1alpha11.Tag{},
+			List:    &v1alpha12.TagList{},
+			Managed: &v1alpha12.Tag{},
 		},
 	})
 	if err != nil {

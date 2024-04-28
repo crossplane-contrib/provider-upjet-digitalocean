@@ -44,9 +44,6 @@ type DropletInitParameters struct {
 	// The IPv6 address
 	IPv6Address *string `json:"ipv6Address,omitempty" tf:"ipv6_address,omitempty"`
 
-	// The Droplet image ID or slug. This could be either image ID or droplet snapshot ID.
-	Image *string `json:"image,omitempty" tf:"image,omitempty"`
-
 	// Boolean controlling whether monitoring agent is installed.
 	// Defaults to false. If set to true, you can configure monitor alert policies
 	// monitor alert resource
@@ -223,8 +220,17 @@ type DropletParameters struct {
 	IPv6Address *string `json:"ipv6Address,omitempty" tf:"ipv6_address,omitempty"`
 
 	// The Droplet image ID or slug. This could be either image ID or droplet snapshot ID.
+	// +crossplane:generate:reference:type=github.com/straw-hat-team/provider-digitalocean/apis/custom/v1alpha1.Image
 	// +kubebuilder:validation:Optional
 	Image *string `json:"image,omitempty" tf:"image,omitempty"`
+
+	// Reference to a Image in custom to populate image.
+	// +kubebuilder:validation:Optional
+	ImageRef *v1.Reference `json:"imageRef,omitempty" tf:"-"`
+
+	// Selector for a Image in custom to populate image.
+	// +kubebuilder:validation:Optional
+	ImageSelector *v1.Selector `json:"imageSelector,omitempty" tf:"-"`
 
 	// Boolean controlling whether monitoring agent is installed.
 	// Defaults to false. If set to true, you can configure monitor alert policies
@@ -335,7 +341,6 @@ type DropletStatus struct {
 type Droplet struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
-	// +kubebuilder:validation:XValidation:rule="!('*' in self.managementPolicies || 'Create' in self.managementPolicies || 'Update' in self.managementPolicies) || has(self.forProvider.image) || (has(self.initProvider) && has(self.initProvider.image))",message="spec.forProvider.image is a required parameter"
 	// +kubebuilder:validation:XValidation:rule="!('*' in self.managementPolicies || 'Create' in self.managementPolicies || 'Update' in self.managementPolicies) || has(self.forProvider.name) || (has(self.initProvider) && has(self.initProvider.name))",message="spec.forProvider.name is a required parameter"
 	// +kubebuilder:validation:XValidation:rule="!('*' in self.managementPolicies || 'Create' in self.managementPolicies || 'Update' in self.managementPolicies) || has(self.forProvider.size) || (has(self.initProvider) && has(self.initProvider.size))",message="spec.forProvider.size is a required parameter"
 	Spec   DropletSpec   `json:"spec"`
