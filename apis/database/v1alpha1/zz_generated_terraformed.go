@@ -101,6 +101,90 @@ func (tr *Cluster) GetTerraformSchemaVersion() int {
 	return 0
 }
 
+// GetTerraformResourceType returns Terraform resource type for this ConnectionPool
+func (mg *ConnectionPool) GetTerraformResourceType() string {
+	return "digitalocean_database_connection_pool"
+}
+
+// GetConnectionDetailsMapping for this ConnectionPool
+func (tr *ConnectionPool) GetConnectionDetailsMapping() map[string]string {
+	return map[string]string{"password": "status.atProvider.password", "private_uri": "status.atProvider.privateUri", "uri": "status.atProvider.uri"}
+}
+
+// GetObservation of this ConnectionPool
+func (tr *ConnectionPool) GetObservation() (map[string]any, error) {
+	o, err := json.TFParser.Marshal(tr.Status.AtProvider)
+	if err != nil {
+		return nil, err
+	}
+	base := map[string]any{}
+	return base, json.TFParser.Unmarshal(o, &base)
+}
+
+// SetObservation for this ConnectionPool
+func (tr *ConnectionPool) SetObservation(obs map[string]any) error {
+	p, err := json.TFParser.Marshal(obs)
+	if err != nil {
+		return err
+	}
+	return json.TFParser.Unmarshal(p, &tr.Status.AtProvider)
+}
+
+// GetID returns ID of underlying Terraform resource of this ConnectionPool
+func (tr *ConnectionPool) GetID() string {
+	if tr.Status.AtProvider.ID == nil {
+		return ""
+	}
+	return *tr.Status.AtProvider.ID
+}
+
+// GetParameters of this ConnectionPool
+func (tr *ConnectionPool) GetParameters() (map[string]any, error) {
+	p, err := json.TFParser.Marshal(tr.Spec.ForProvider)
+	if err != nil {
+		return nil, err
+	}
+	base := map[string]any{}
+	return base, json.TFParser.Unmarshal(p, &base)
+}
+
+// SetParameters for this ConnectionPool
+func (tr *ConnectionPool) SetParameters(params map[string]any) error {
+	p, err := json.TFParser.Marshal(params)
+	if err != nil {
+		return err
+	}
+	return json.TFParser.Unmarshal(p, &tr.Spec.ForProvider)
+}
+
+// GetInitParameters of this ConnectionPool
+func (tr *ConnectionPool) GetInitParameters() (map[string]any, error) {
+	p, err := json.TFParser.Marshal(tr.Spec.InitProvider)
+	if err != nil {
+		return nil, err
+	}
+	base := map[string]any{}
+	return base, json.TFParser.Unmarshal(p, &base)
+}
+
+// LateInitialize this ConnectionPool using its observed tfState.
+// returns True if there are any spec changes for the resource.
+func (tr *ConnectionPool) LateInitialize(attrs []byte) (bool, error) {
+	params := &ConnectionPoolParameters{}
+	if err := json.TFParser.Unmarshal(attrs, params); err != nil {
+		return false, errors.Wrap(err, "failed to unmarshal Terraform state parameters for late-initialization")
+	}
+	opts := []resource.GenericLateInitializerOption{resource.WithZeroValueJSONOmitEmptyFilter(resource.CNameWildcard)}
+
+	li := resource.NewGenericLateInitializer(opts...)
+	return li.LateInitialize(&tr.Spec.ForProvider, params)
+}
+
+// GetTerraformSchemaVersion returns the associated Terraform schema version
+func (tr *ConnectionPool) GetTerraformSchemaVersion() int {
+	return 0
+}
+
 // GetTerraformResourceType returns Terraform resource type for this Replica
 func (mg *Replica) GetTerraformResourceType() string {
 	return "digitalocean_database_replica"
