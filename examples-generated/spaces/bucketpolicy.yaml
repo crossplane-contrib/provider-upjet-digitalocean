@@ -1,0 +1,47 @@
+apiVersion: spaces.digitalocean.crossplane.io/v1alpha1
+kind: BucketPolicy
+metadata:
+  annotations:
+    meta.upbound.io/example-id: spaces/v1alpha1/bucketpolicy
+  labels:
+    testing.upbound.io/example-name: foobar
+  name: foobar
+spec:
+  forProvider:
+    bucket: ${digitalocean_spaces_bucket.foobar.name}
+    policy: |-
+      ${jsonencode({
+          "Version" : "2012-10-17",
+          "Statement" : [
+            {
+              "Sid" : "IPAllow",
+              "Effect" : "Deny",
+              "Principal" : "*",
+              "Action" : "s3:*",
+              "Resource" : [
+                "arn:aws:s3:::${digitalocean_spaces_bucket.foobar.name}",
+                "arn:aws:s3:::${digitalocean_spaces_bucket.foobar.name}/*"
+              ],
+              "Condition" : {
+                "NotIpAddress" : {
+                  "aws:SourceIp" : "54.240.143.0/24"
+                }
+              }
+            }
+          ]
+        })}
+    region: nyc3
+
+---
+
+apiVersion: storage.digitalocean.crossplane.io/v1alpha1
+kind: Bucket
+metadata:
+  annotations:
+    meta.upbound.io/example-id: spaces/v1alpha1/bucketpolicy
+  labels:
+    testing.upbound.io/example-name: foobar
+  name: foobar
+spec:
+  forProvider:
+    region: nyc3

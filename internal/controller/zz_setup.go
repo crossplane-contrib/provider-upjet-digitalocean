@@ -26,6 +26,9 @@ import (
 	vpc "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/vpc"
 	project "github.com/straw-hat-team/provider-digitalocean/internal/controller/project/project"
 	providerconfig "github.com/straw-hat-team/provider-digitalocean/internal/controller/providerconfig"
+	bucketcorsconfiguration "github.com/straw-hat-team/provider-digitalocean/internal/controller/spaces/bucketcorsconfiguration"
+	bucketobject "github.com/straw-hat-team/provider-digitalocean/internal/controller/spaces/bucketobject"
+	bucketpolicy "github.com/straw-hat-team/provider-digitalocean/internal/controller/spaces/bucketpolicy"
 	key "github.com/straw-hat-team/provider-digitalocean/internal/controller/ssh/key"
 	bucket "github.com/straw-hat-team/provider-digitalocean/internal/controller/storage/bucket"
 	alertuptime "github.com/straw-hat-team/provider-digitalocean/internal/controller/uptime/alert"
@@ -56,6 +59,9 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		vpc.Setup,
 		project.Setup,
 		providerconfig.Setup,
+		bucketcorsconfiguration.Setup,
+		bucketobject.Setup,
+		bucketpolicy.Setup,
 		key.Setup,
 		bucket.Setup,
 		alertuptime.Setup,
