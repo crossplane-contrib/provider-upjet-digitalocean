@@ -21,6 +21,7 @@ import (
 	domain "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/domain"
 	firewall "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/firewall"
 	ip "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/ip"
+	ipassignment "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/ipassignment"
 	loadbalancer "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/loadbalancer"
 	record "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/record"
 	vpc "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/vpc"
@@ -54,6 +55,7 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		domain.Setup,
 		firewall.Setup,
 		ip.Setup,
+		ipassignment.Setup,
 		loadbalancer.Setup,
 		record.Setup,
 		vpc.Setup,
