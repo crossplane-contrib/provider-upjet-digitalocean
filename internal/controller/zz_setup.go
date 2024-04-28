@@ -16,6 +16,7 @@ import (
 	cluster "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/cluster"
 	connectionpool "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/connectionpool"
 	db "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/db"
+	firewall "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/firewall"
 	kafkatopic "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/kafkatopic"
 	mysqlconfig "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/mysqlconfig"
 	redisconfig "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/redisconfig"
@@ -30,7 +31,7 @@ import (
 	nodepool "github.com/straw-hat-team/provider-digitalocean/internal/controller/kubernetes/nodepool"
 	alert "github.com/straw-hat-team/provider-digitalocean/internal/controller/monitor/alert"
 	domain "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/domain"
-	firewall "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/firewall"
+	firewallnetworking "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/firewall"
 	ip "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/ip"
 	ipassignment "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/ipassignment"
 	loadbalancer "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/loadbalancer"
@@ -61,6 +62,7 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		cluster.Setup,
 		connectionpool.Setup,
 		db.Setup,
+		firewall.Setup,
 		kafkatopic.Setup,
 		mysqlconfig.Setup,
 		redisconfig.Setup,
@@ -75,7 +77,7 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		nodepool.Setup,
 		alert.Setup,
 		domain.Setup,
-		firewall.Setup,
+		firewallnetworking.Setup,
 		ip.Setup,
 		ipassignment.Setup,
 		loadbalancer.Setup,

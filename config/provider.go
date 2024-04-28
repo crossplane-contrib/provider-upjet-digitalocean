@@ -64,6 +64,7 @@ var ExternalNameConfigs = map[string]ujconfig.ExternalName{
 	"digitalocean_database_kafka_topic":                  ujconfig.IdentifierFromProvider,
 	"digitalocean_database_mysql_config":                 ujconfig.IdentifierFromProvider,
 	"digitalocean_database_redis_config":                 ujconfig.IdentifierFromProvider,
+	"digitalocean_database_firewall":                     ujconfig.IdentifierFromProvider,
 }
 
 const networkingGroup = "networking"
@@ -80,6 +81,14 @@ func GetProvider() *ujconfig.Provider {
 			ExternalNameConfigurations(),
 		))
 
+	pc.AddResourceConfigurator("digitalocean_database_firewall", func(r *ujconfig.Resource) {
+		r.ShortGroup = databaseGroup
+		r.UseAsync = false
+		r.References["cluster_id"] = ujconfig.Reference{
+			Type:          "Cluster",
+			TerraformName: "digitalocean_database_cluster",
+		}
+	})
 	pc.AddResourceConfigurator("digitalocean_database_redis_config", func(r *ujconfig.Resource) {
 		r.ShortGroup = databaseGroup
 		r.UseAsync = false
