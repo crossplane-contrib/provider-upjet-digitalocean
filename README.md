@@ -70,7 +70,7 @@ open an [issue](https://github.com/straw-hat-team/provider-digitalocean/issues).
 - [x] digitalocean_database_cluster
 - [x] digitalocean_database_connection_pool
 - [x] digitalocean_database_db
-- [ ] digitalocean_database_firewall
+- [x] digitalocean_database_firewall
 - [x] digitalocean_database_kafka_topic
 - [x] digitalocean_database_mysql_config
 - [x] digitalocean_database_redis_config
