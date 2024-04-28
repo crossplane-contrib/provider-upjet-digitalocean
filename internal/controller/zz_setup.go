@@ -15,6 +15,7 @@ import (
 	replica "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/replica"
 	user "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/user"
 	cdn "github.com/straw-hat-team/provider-digitalocean/internal/controller/digitalocean/cdn"
+	certificate "github.com/straw-hat-team/provider-digitalocean/internal/controller/digitalocean/certificate"
 	tag "github.com/straw-hat-team/provider-digitalocean/internal/controller/digitalocean/tag"
 	snapshot "github.com/straw-hat-team/provider-digitalocean/internal/controller/droplet/snapshot"
 	clusterkubernetes "github.com/straw-hat-team/provider-digitalocean/internal/controller/kubernetes/cluster"
@@ -51,6 +52,7 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		replica.Setup,
 		user.Setup,
 		cdn.Setup,
+		certificate.Setup,
 		tag.Setup,
 		snapshot.Setup,
 		clusterkubernetes.Setup,

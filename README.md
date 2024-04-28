@@ -63,7 +63,7 @@ open an [issue](https://github.com/straw-hat-team/provider-digitalocean/issues).
 
 - [ ] digitalocean_app
 - [x] digitalocean_cdn
-- [ ] digitalocean_certificate
+- [x] digitalocean_certificate
 - [ ] digitalocean_container_registry
 - [ ] digitalocean_container_registry_docker_credentials
 - [x] digitalocean_custom_image

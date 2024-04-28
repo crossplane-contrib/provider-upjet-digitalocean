@@ -55,6 +55,7 @@ var ExternalNameConfigs = map[string]ujconfig.ExternalName{
 	"digitalocean_spaces_bucket_object":             ujconfig.IdentifierFromProvider,
 	"digitalocean_spaces_bucket_policy":             ujconfig.IdentifierFromProvider,
 	"digitalocean_custom_image":                     ujconfig.IdentifierFromProvider,
+	"digitalocean_certificate":                      ujconfig.IdentifierFromProvider,
 }
 
 const networkingGroup = "networking"
