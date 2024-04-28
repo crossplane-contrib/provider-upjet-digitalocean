@@ -65,6 +65,7 @@ var ExternalNameConfigs = map[string]ujconfig.ExternalName{
 	"digitalocean_database_mysql_config":                 ujconfig.IdentifierFromProvider,
 	"digitalocean_database_redis_config":                 ujconfig.IdentifierFromProvider,
 	"digitalocean_database_firewall":                     ujconfig.IdentifierFromProvider,
+	"digitalocean_project_resources":                     ujconfig.IdentifierFromProvider,
 }
 
 const networkingGroup = "networking"
@@ -81,6 +82,13 @@ func GetProvider() *ujconfig.Provider {
 			ExternalNameConfigurations(),
 		))
 
+	pc.AddResourceConfigurator("digitalocean_project_resources", func(r *ujconfig.Resource) {
+		r.ShortGroup = "project"
+		r.References["project"] = ujconfig.Reference{
+			Type:          "Project",
+			TerraformName: "digitalocean_project",
+		}
+	})
 	pc.AddResourceConfigurator("digitalocean_database_firewall", func(r *ujconfig.Resource) {
 		r.ShortGroup = databaseGroup
 		r.UseAsync = false
