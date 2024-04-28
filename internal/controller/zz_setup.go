@@ -38,6 +38,7 @@ import (
 	record "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/record"
 	vpc "github.com/straw-hat-team/provider-digitalocean/internal/controller/networking/vpc"
 	project "github.com/straw-hat-team/provider-digitalocean/internal/controller/project/project"
+	resources "github.com/straw-hat-team/provider-digitalocean/internal/controller/project/resources"
 	providerconfig "github.com/straw-hat-team/provider-digitalocean/internal/controller/providerconfig"
 	bucketcorsconfiguration "github.com/straw-hat-team/provider-digitalocean/internal/controller/spaces/bucketcorsconfiguration"
 	bucketobject "github.com/straw-hat-team/provider-digitalocean/internal/controller/spaces/bucketobject"
@@ -84,6 +85,7 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		record.Setup,
 		vpc.Setup,
 		project.Setup,
+		resources.Setup,
 		providerconfig.Setup,
 		bucketcorsconfiguration.Setup,
 		bucketobject.Setup,

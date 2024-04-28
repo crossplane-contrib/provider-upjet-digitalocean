@@ -85,7 +85,7 @@ open an [issue](https://github.com/straw-hat-team/provider-digitalocean/issues).
 - [x] digitalocean_loadbalancer
 - [x] digitalocean_monitor_alert
 - [x] digitalocean_project
-- [ ] digitalocean_project_resources
+- [x] digitalocean_project_resources
 - [x] digitalocean_record
 - [x] digitalocean_reserved_ip
 - [x] digitalocean_reserved_ip_assignment
