@@ -1,0 +1,31 @@
+apiVersion: ssh.digitalocean.crossplane.io/v1alpha1
+kind: Key
+metadata:
+  annotations:
+    meta.upbound.io/example-id: ssh/v1alpha1/key
+  labels:
+    testing.upbound.io/example-name: default
+  name: default
+spec:
+  forProvider:
+    name: Terraform Example
+    publicKey: ${file("/Users/terraform/.ssh/id_rsa.pub")}
+
+---
+
+apiVersion: compute.digitalocean.crossplane.io/v1alpha1
+kind: Droplet
+metadata:
+  annotations:
+    meta.upbound.io/example-id: ssh/v1alpha1/key
+  labels:
+    testing.upbound.io/example-name: web
+  name: web
+spec:
+  forProvider:
+    image: ubuntu-18-04-x64
+    name: web-1
+    region: nyc3
+    size: s-1vcpu-1gb
+    sshKeysRefs:
+    - name: default

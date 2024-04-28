@@ -9,7 +9,8 @@ import (
 	"context"
 	reference "github.com/crossplane/crossplane-runtime/pkg/reference"
 	errors "github.com/pkg/errors"
-	v1alpha1 "github.com/straw-hat-team/provider-digitalocean/apis/digitalocean/v1alpha1"
+	v1alpha11 "github.com/straw-hat-team/provider-digitalocean/apis/digitalocean/v1alpha1"
+	v1alpha1 "github.com/straw-hat-team/provider-digitalocean/apis/ssh/v1alpha1"
 	client "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -21,13 +22,29 @@ func (mg *Droplet) ResolveReferences(ctx context.Context, c client.Reader) error
 	var err error
 
 	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
+		CurrentValues: reference.FromPtrValues(mg.Spec.ForProvider.SSHKeys),
+		Extract:       reference.ExternalName(),
+		References:    mg.Spec.ForProvider.SSHKeysRefs,
+		Selector:      mg.Spec.ForProvider.SSHKeysSelector,
+		To: reference.To{
+			List:    &v1alpha1.KeyList{},
+			Managed: &v1alpha1.Key{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.SSHKeys")
+	}
+	mg.Spec.ForProvider.SSHKeys = reference.ToPtrValues(mrsp.ResolvedValues)
+	mg.Spec.ForProvider.SSHKeysRefs = mrsp.ResolvedReferences
+
+	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
 		CurrentValues: reference.FromPtrValues(mg.Spec.ForProvider.Tags),
 		Extract:       reference.ExternalName(),
 		References:    mg.Spec.ForProvider.TagsRefs,
 		Selector:      mg.Spec.ForProvider.TagsSelector,
 		To: reference.To{
-			List:    &v1alpha1.TagList{},
-			Managed: &v1alpha1.Tag{},
+			List:    &v1alpha11.TagList{},
+			Managed: &v1alpha11.Tag{},
 		},
 	})
 	if err != nil {
