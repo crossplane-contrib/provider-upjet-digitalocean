@@ -10,6 +10,8 @@ import (
 	"github.com/crossplane/upjet/pkg/controller"
 
 	droplet "github.com/straw-hat-team/provider-digitalocean/internal/controller/compute/droplet"
+	registry "github.com/straw-hat-team/provider-digitalocean/internal/controller/container/registry"
+	registrydockercredentials "github.com/straw-hat-team/provider-digitalocean/internal/controller/container/registrydockercredentials"
 	image "github.com/straw-hat-team/provider-digitalocean/internal/controller/custom/image"
 	cluster "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/cluster"
 	replica "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/replica"
@@ -48,6 +50,8 @@ import (
 func Setup(mgr ctrl.Manager, o controller.Options) error {
 	for _, setup := range []func(ctrl.Manager, controller.Options) error{
 		droplet.Setup,
+		registry.Setup,
+		registrydockercredentials.Setup,
 		image.Setup,
 		cluster.Setup,
 		replica.Setup,
