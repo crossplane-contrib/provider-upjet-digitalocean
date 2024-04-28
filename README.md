@@ -90,9 +90,9 @@ open an [issue](https://github.com/straw-hat-team/provider-digitalocean/issues).
 - [x] digitalocean_reserved_ip
 - [ ] digitalocean_reserved_ip_assignment
 - [x] digitalocean_spaces_bucket
-- [ ] digitalocean_spaces_bucket_cors_configuration
-- [ ] digitalocean_spaces_bucket_object
-- [ ] digitalocean_spaces_bucket_policy
+- [x] digitalocean_spaces_bucket_cors_configuration
+- [x] digitalocean_spaces_bucket_object
+- [x] digitalocean_spaces_bucket_policy
 - [x] digitalocean_ssh_key
 - [x] digitalocean_tag
 - [x] digitalocean_uptime_alert
