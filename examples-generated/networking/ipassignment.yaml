@@ -27,7 +27,9 @@ metadata:
   name: example
 spec:
   forProvider:
-    image: ubuntu-22-04-x64
+    imageSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example
     ipv6: true
     name: baz
     privateNetworking: true

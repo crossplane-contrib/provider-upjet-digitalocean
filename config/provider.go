@@ -54,6 +54,7 @@ var ExternalNameConfigs = map[string]ujconfig.ExternalName{
 	"digitalocean_spaces_bucket_cors_configuration": ujconfig.IdentifierFromProvider,
 	"digitalocean_spaces_bucket_object":             ujconfig.IdentifierFromProvider,
 	"digitalocean_spaces_bucket_policy":             ujconfig.IdentifierFromProvider,
+	"digitalocean_custom_image":                     ujconfig.IdentifierFromProvider,
 }
 
 const networkingGroup = "networking"
@@ -215,6 +216,10 @@ func GetProvider() *ujconfig.Provider {
 		r.References["ssh_keys"] = ujconfig.Reference{
 			Type:          referenceType(pc, "ssh", "v1alpha1", "Key"),
 			TerraformName: "digitalocean_ssh_key",
+		}
+		r.References["image"] = ujconfig.Reference{
+			Type:          referenceType(pc, "custom", "v1alpha1", "Image"),
+			TerraformName: "digitalocean_custom_image",
 		}
 		// r.References["vpc_uuid"] = ujconfig.Reference{
 		// 	Type:          referenceType(pc, "networking", "v1alpha1", "VPC"),

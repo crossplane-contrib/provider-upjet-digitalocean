@@ -15,6 +15,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 
 	v1alpha1 "github.com/straw-hat-team/provider-digitalocean/apis/compute/v1alpha1"
+	v1alpha1custom "github.com/straw-hat-team/provider-digitalocean/apis/custom/v1alpha1"
 	v1alpha1database "github.com/straw-hat-team/provider-digitalocean/apis/database/v1alpha1"
 	v1alpha1digitalocean "github.com/straw-hat-team/provider-digitalocean/apis/digitalocean/v1alpha1"
 	v1alpha1droplet "github.com/straw-hat-team/provider-digitalocean/apis/droplet/v1alpha1"
@@ -35,6 +36,7 @@ func init() {
 	// Register the types with the Scheme so the components can map objects to GroupVersionKinds and back
 	AddToSchemes = append(AddToSchemes,
 		v1alpha1.SchemeBuilder.AddToScheme,
+		v1alpha1custom.SchemeBuilder.AddToScheme,
 		v1alpha1database.SchemeBuilder.AddToScheme,
 		v1alpha1digitalocean.SchemeBuilder.AddToScheme,
 		v1alpha1droplet.SchemeBuilder.AddToScheme,

@@ -10,6 +10,7 @@ import (
 	"github.com/crossplane/upjet/pkg/controller"
 
 	droplet "github.com/straw-hat-team/provider-digitalocean/internal/controller/compute/droplet"
+	image "github.com/straw-hat-team/provider-digitalocean/internal/controller/custom/image"
 	cluster "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/cluster"
 	replica "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/replica"
 	user "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/user"
@@ -45,6 +46,7 @@ import (
 func Setup(mgr ctrl.Manager, o controller.Options) error {
 	for _, setup := range []func(ctrl.Manager, controller.Options) error{
 		droplet.Setup,
+		image.Setup,
 		cluster.Setup,
 		replica.Setup,
 		user.Setup,

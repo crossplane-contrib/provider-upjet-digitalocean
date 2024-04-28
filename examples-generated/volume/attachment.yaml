@@ -27,7 +27,9 @@ metadata:
   name: foobar
 spec:
   forProvider:
-    image: ubuntu-18-04-x64
+    imageSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example
     name: baz
     region: nyc1
     size: s-1vcpu-1gb
