@@ -60,9 +60,11 @@ var ExternalNameConfigs = map[string]ujconfig.ExternalName{
 	"digitalocean_container_registry":                    ujconfig.IdentifierFromProvider,
 	"digitalocean_container_registry_docker_credentials": ujconfig.IdentifierFromProvider,
 	"digitalocean_database_connection_pool":              ujconfig.IdentifierFromProvider,
+	"digitalocean_database_db":                           ujconfig.IdentifierFromProvider,
 }
 
 const networkingGroup = "networking"
+const databaseGroup = "database"
 
 // GetProvider returns provider configuration
 func GetProvider() *ujconfig.Provider {
@@ -74,9 +76,16 @@ func GetProvider() *ujconfig.Provider {
 		ujconfig.WithDefaultResourceOptions(
 			ExternalNameConfigurations(),
 		))
-
+	pc.AddResourceConfigurator("digitalocean_database_db", func(r *ujconfig.Resource) {
+		r.ShortGroup = databaseGroup
+		r.UseAsync = false
+		r.References["cluster_id"] = ujconfig.Reference{
+			Type:          "Cluster",
+			TerraformName: "digitalocean_database_cluster",
+		}
+	})
 	pc.AddResourceConfigurator("digitalocean_database_connection_pool", func(r *ujconfig.Resource) {
-		r.ShortGroup = "database"
+		r.ShortGroup = databaseGroup
 		r.UseAsync = false
 		r.References["cluster_id"] = ujconfig.Reference{
 			Type:          "Cluster",
@@ -166,7 +175,7 @@ func GetProvider() *ujconfig.Provider {
 		}
 	})
 	pc.AddResourceConfigurator("digitalocean_database_replica", func(r *ujconfig.Resource) {
-		r.ShortGroup = "database"
+		r.ShortGroup = databaseGroup
 		r.UseAsync = false
 		r.References["cluster_id"] = ujconfig.Reference{
 			Type:          "Cluster",
@@ -178,14 +187,14 @@ func GetProvider() *ujconfig.Provider {
 		}
 	})
 	pc.AddResourceConfigurator("digitalocean_database_user", func(r *ujconfig.Resource) {
-		r.ShortGroup = "database"
+		r.ShortGroup = databaseGroup
 		r.References["cluster_id"] = ujconfig.Reference{
 			Type:          "Cluster",
 			TerraformName: "digitalocean_database_cluster",
 		}
 	})
 	pc.AddResourceConfigurator("digitalocean_database_cluster", func(r *ujconfig.Resource) {
-		r.ShortGroup = "database"
+		r.ShortGroup = databaseGroup
 		r.References["private_network_uuid"] = ujconfig.Reference{
 			Type:          referenceType(pc, "networking", "v1alpha1", "VPC"),
 			TerraformName: "digitalocean_vpc",
