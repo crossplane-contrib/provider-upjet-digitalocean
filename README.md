@@ -69,7 +69,7 @@ open an [issue](https://github.com/straw-hat-team/provider-digitalocean/issues).
 - [x] digitalocean_custom_image
 - [x] digitalocean_database_cluster
 - [x] digitalocean_database_connection_pool
-- [ ] digitalocean_database_db
+- [x] digitalocean_database_db
 - [ ] digitalocean_database_firewall
 - [ ] digitalocean_database_kafka_topic
 - [ ] digitalocean_database_mysql_config
