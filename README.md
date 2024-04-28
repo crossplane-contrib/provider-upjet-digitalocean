@@ -93,7 +93,7 @@ open an [issue](https://github.com/straw-hat-team/provider-digitalocean/issues).
 - [ ] digitalocean_spaces_bucket_cors_configuration
 - [ ] digitalocean_spaces_bucket_object
 - [ ] digitalocean_spaces_bucket_policy
-- [ ] digitalocean_ssh_key
+- [x] digitalocean_ssh_key
 - [x] digitalocean_tag
 - [x] digitalocean_uptime_alert
 - [x] digitalocean_uptime_check
