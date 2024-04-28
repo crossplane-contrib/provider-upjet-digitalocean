@@ -14,6 +14,7 @@ import (
 	registrydockercredentials "github.com/straw-hat-team/provider-digitalocean/internal/controller/container/registrydockercredentials"
 	image "github.com/straw-hat-team/provider-digitalocean/internal/controller/custom/image"
 	cluster "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/cluster"
+	connectionpool "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/connectionpool"
 	replica "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/replica"
 	user "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/user"
 	app "github.com/straw-hat-team/provider-digitalocean/internal/controller/digitalocean/app"
@@ -54,6 +55,7 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		registrydockercredentials.Setup,
 		image.Setup,
 		cluster.Setup,
+		connectionpool.Setup,
 		replica.Setup,
 		user.Setup,
 		app.Setup,
