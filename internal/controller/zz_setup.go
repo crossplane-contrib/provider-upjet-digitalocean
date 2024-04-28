@@ -16,6 +16,9 @@ import (
 	cluster "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/cluster"
 	connectionpool "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/connectionpool"
 	db "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/db"
+	kafkatopic "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/kafkatopic"
+	mysqlconfig "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/mysqlconfig"
+	redisconfig "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/redisconfig"
 	replica "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/replica"
 	user "github.com/straw-hat-team/provider-digitalocean/internal/controller/database/user"
 	app "github.com/straw-hat-team/provider-digitalocean/internal/controller/digitalocean/app"
@@ -58,6 +61,9 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		cluster.Setup,
 		connectionpool.Setup,
 		db.Setup,
+		kafkatopic.Setup,
+		mysqlconfig.Setup,
+		redisconfig.Setup,
 		replica.Setup,
 		user.Setup,
 		app.Setup,

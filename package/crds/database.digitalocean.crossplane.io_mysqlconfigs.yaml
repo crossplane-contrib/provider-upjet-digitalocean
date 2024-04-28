@@ -1,0 +1,718 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.13.0
+  name: mysqlconfigs.database.digitalocean.crossplane.io
+spec:
+  group: database.digitalocean.crossplane.io
+  names:
+    categories:
+    - crossplane
+    - managed
+    - do
+    kind: MySQLConfig
+    listKind: MySQLConfigList
+    plural: mysqlconfigs
+    singular: mysqlconfig
+  scope: Cluster
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.conditions[?(@.type=='Ready')].status
+      name: READY
+      type: string
+    - jsonPath: .status.conditions[?(@.type=='Synced')].status
+      name: SYNCED
+      type: string
+    - jsonPath: .metadata.annotations.crossplane\.io/external-name
+      name: EXTERNAL-NAME
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: AGE
+      type: date
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: MySQLConfig is the Schema for the MySQLConfigs API.
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: MySQLConfigSpec defines the desired state of MySQLConfig
+            properties:
+              deletionPolicy:
+                default: Delete
+                description: 'DeletionPolicy specifies what will happen to the underlying
+                  external when this managed resource is deleted - either "Delete"
+                  or "Orphan" the external resource. This field is planned to be deprecated
+                  in favor of the ManagementPolicies field in a future release. Currently,
+                  both could be set independently and non-default values would be
+                  honored if the feature flag is enabled. See the design doc for more
+                  information: https://github.com/crossplane/crossplane/blob/499895a25d1a1a0ba1604944ef98ac7a1a71f197/design/design-doc-observe-only-resources.md?plain=1#L223'
+                enum:
+                - Orphan
+                - Delete
+                type: string
+              forProvider:
+                properties:
+                  backupHour:
+                    description: The hour of day (in UTC) when backup for the service
+                      starts. New backup only starts if previous backup has already
+                      completed.
+                    type: number
+                  backupMinute:
+                    description: The minute of the backup hour when backup for the
+                      service starts. New backup only starts if previous backup has
+                      already completed.
+                    type: number
+                  binlogRetentionPeriod:
+                    description: The minimum amount of time, in seconds, to keep binlog
+                      entries before deletion. This may be extended for services that
+                      require binlog entries for longer than the default, for example
+                      if using the MySQL Debezium Kafka connector.
+                    type: number
+                  clusterId:
+                    description: The ID of the target MySQL cluster.
+                    type: string
+                  clusterIdRef:
+                    description: Reference to a Cluster to populate clusterId.
+                    properties:
+                      name:
+                        description: Name of the referenced object.
+                        type: string
+                      policy:
+                        description: Policies for referencing.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: Resolution specifies whether resolution of
+                              this reference is required. The default is 'Required',
+                              which means the reconcile will fail if the reference
+                              cannot be resolved. 'Optional' means this reference
+                              will be a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: Resolve specifies when this reference should
+                              be resolved. The default is 'IfNotPresent', which will
+                              attempt to resolve the reference only when the corresponding
+                              field is not present. Use 'Always' to resolve the reference
+                              on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    required:
+                    - name
+                    type: object
+                  clusterIdSelector:
+                    description: Selector for a Cluster to populate clusterId.
+                    properties:
+                      matchControllerRef:
+                        description: MatchControllerRef ensures an object with the
+                          same controller reference as the selecting object is selected.
+                        type: boolean
+                      matchLabels:
+                        additionalProperties:
+                          type: string
+                        description: MatchLabels ensures an object with matching labels
+                          is selected.
+                        type: object
+                      policy:
+                        description: Policies for selection.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: Resolution specifies whether resolution of
+                              this reference is required. The default is 'Required',
+                              which means the reconcile will fail if the reference
+                              cannot be resolved. 'Optional' means this reference
+                              will be a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: Resolve specifies when this reference should
+                              be resolved. The default is 'IfNotPresent', which will
+                              attempt to resolve the reference only when the corresponding
+                              field is not present. Use 'Always' to resolve the reference
+                              on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    type: object
+                  connectTimeout:
+                    description: The number of seconds that the mysqld server waits
+                      for a connect packet before responding with bad handshake.
+                    type: number
+                  defaultTimeZone:
+                    description: Default server time zone, in the form of an offset
+                      from UTC (from -12:00 to +12:00), a time zone name (EST), or
+                      SYSTEM to use the MySQL server default.
+                    type: string
+                  groupConcatMaxLen:
+                    description: The maximum permitted result length, in bytes, for
+                      the GROUP_CONCAT() function.
+                    type: number
+                  informationSchemaStatsExpiry:
+                    description: The time, in seconds, before cached statistics expire.
+                    type: number
+                  innodbFtMinTokenSize:
+                    description: The minimum length of words that an InnoDB FULLTEXT
+                      index stores.
+                    type: number
+                  innodbFtServerStopwordTable:
+                    description: The InnoDB FULLTEXT index stopword list for all InnoDB
+                      tables.
+                    type: string
+                  innodbLockWaitTimeout:
+                    description: The time, in seconds, that an InnoDB transaction
+                      waits for a row lock. before giving up.
+                    type: number
+                  innodbLogBufferSize:
+                    description: The size of the buffer, in bytes, that InnoDB uses
+                      to write to the log files. on disk.
+                    type: number
+                  innodbOnlineAlterLogMaxSize:
+                    description: The upper limit, in bytes, of the size of the temporary
+                      log files used during online DDL operations for InnoDB tables.
+                    type: number
+                  innodbPrintAllDeadlocks:
+                    description: When enabled, records information about all deadlocks
+                      in InnoDB user transactions in the error log. Disabled by default.
+                    type: boolean
+                  innodbRollbackOnTimeout:
+                    description: When enabled, transaction timeouts cause InnoDB to
+                      abort and roll back the entire transaction.
+                    type: boolean
+                  interactiveTimeout:
+                    description: The time, in seconds, the server waits for activity
+                      on an interactive. connection before closing it.
+                    type: number
+                  internalTmpMemStorageEngine:
+                    description: 'The storage engine for in-memory internal temporary
+                      tables. Supported values are: TempTable, MEMORY.'
+                    type: string
+                  longQueryTime:
+                    description: The time, in seconds, for a query to take to execute
+                      before being captured by slow_query_logs. Default is 10 seconds.
+                    type: number
+                  maxAllowedPacket:
+                    description: The size of the largest message, in bytes, that can
+                      be received by the server. Default is 67108864 (64M).
+                    type: number
+                  maxHeapTableSize:
+                    description: The maximum size, in bytes, of internal in-memory
+                      tables. Also set tmp_table_size. Default is 16777216 (16M)
+                    type: number
+                  netReadTimeout:
+                    description: The time, in seconds, to wait for more data from
+                      an existing connection. aborting the read.
+                    type: number
+                  netWriteTimeout:
+                    description: The number of seconds to wait for a block to be written
+                      to a connection before aborting the write.
+                    type: number
+                  slowQueryLog:
+                    description: When enabled, captures slow queries. When disabled,
+                      also truncates the mysql.slow_log table. Default is false.
+                    type: boolean
+                  sortBufferSize:
+                    description: The sort buffer size, in bytes, for ORDER BY optimization.
+                      Default is 262144. (256K).
+                    type: number
+                  sqlMode:
+                    description: Global SQL mode. If empty, uses MySQL server defaults.
+                      Must only include uppercase alphabetic characters, underscores,
+                      and commas.
+                    type: string
+                  sqlRequirePrimaryKey:
+                    description: Require primary key to be defined for new tables
+                      or old tables modified with ALTER TABLE and fail if missing.
+                      It is recommended to always have primary keys because various
+                      functionality may break if any large table is missing them.
+                    type: boolean
+                  tmpTableSize:
+                    description: The maximum size, in bytes, of internal in-memory
+                      tables. Also set max_heap_table_size. Default is 16777216 (16M).
+                    type: number
+                  waitTimeout:
+                    description: The number of seconds the server waits for activity
+                      on a noninteractive connection before closing it.
+                    type: number
+                type: object
+              initProvider:
+                description: THIS IS A BETA FIELD. It will be honored unless the Management
+                  Policies feature flag is disabled. InitProvider holds the same fields
+                  as ForProvider, with the exception of Identifier and other resource
+                  reference fields. The fields that are in InitProvider are merged
+                  into ForProvider when the resource is created. The same fields are
+                  also added to the terraform ignore_changes hook, to avoid updating
+                  them after creation. This is useful for fields that are required
+                  on creation, but we do not desire to update them after creation,
+                  for example because of an external controller is managing them,
+                  like an autoscaler.
+                properties:
+                  backupHour:
+                    description: The hour of day (in UTC) when backup for the service
+                      starts. New backup only starts if previous backup has already
+                      completed.
+                    type: number
+                  backupMinute:
+                    description: The minute of the backup hour when backup for the
+                      service starts. New backup only starts if previous backup has
+                      already completed.
+                    type: number
+                  binlogRetentionPeriod:
+                    description: The minimum amount of time, in seconds, to keep binlog
+                      entries before deletion. This may be extended for services that
+                      require binlog entries for longer than the default, for example
+                      if using the MySQL Debezium Kafka connector.
+                    type: number
+                  connectTimeout:
+                    description: The number of seconds that the mysqld server waits
+                      for a connect packet before responding with bad handshake.
+                    type: number
+                  defaultTimeZone:
+                    description: Default server time zone, in the form of an offset
+                      from UTC (from -12:00 to +12:00), a time zone name (EST), or
+                      SYSTEM to use the MySQL server default.
+                    type: string
+                  groupConcatMaxLen:
+                    description: The maximum permitted result length, in bytes, for
+                      the GROUP_CONCAT() function.
+                    type: number
+                  informationSchemaStatsExpiry:
+                    description: The time, in seconds, before cached statistics expire.
+                    type: number
+                  innodbFtMinTokenSize:
+                    description: The minimum length of words that an InnoDB FULLTEXT
+                      index stores.
+                    type: number
+                  innodbFtServerStopwordTable:
+                    description: The InnoDB FULLTEXT index stopword list for all InnoDB
+                      tables.
+                    type: string
+                  innodbLockWaitTimeout:
+                    description: The time, in seconds, that an InnoDB transaction
+                      waits for a row lock. before giving up.
+                    type: number
+                  innodbLogBufferSize:
+                    description: The size of the buffer, in bytes, that InnoDB uses
+                      to write to the log files. on disk.
+                    type: number
+                  innodbOnlineAlterLogMaxSize:
+                    description: The upper limit, in bytes, of the size of the temporary
+                      log files used during online DDL operations for InnoDB tables.
+                    type: number
+                  innodbPrintAllDeadlocks:
+                    description: When enabled, records information about all deadlocks
+                      in InnoDB user transactions in the error log. Disabled by default.
+                    type: boolean
+                  innodbRollbackOnTimeout:
+                    description: When enabled, transaction timeouts cause InnoDB to
+                      abort and roll back the entire transaction.
+                    type: boolean
+                  interactiveTimeout:
+                    description: The time, in seconds, the server waits for activity
+                      on an interactive. connection before closing it.
+                    type: number
+                  internalTmpMemStorageEngine:
+                    description: 'The storage engine for in-memory internal temporary
+                      tables. Supported values are: TempTable, MEMORY.'
+                    type: string
+                  longQueryTime:
+                    description: The time, in seconds, for a query to take to execute
+                      before being captured by slow_query_logs. Default is 10 seconds.
+                    type: number
+                  maxAllowedPacket:
+                    description: The size of the largest message, in bytes, that can
+                      be received by the server. Default is 67108864 (64M).
+                    type: number
+                  maxHeapTableSize:
+                    description: The maximum size, in bytes, of internal in-memory
+                      tables. Also set tmp_table_size. Default is 16777216 (16M)
+                    type: number
+                  netReadTimeout:
+                    description: The time, in seconds, to wait for more data from
+                      an existing connection. aborting the read.
+                    type: number
+                  netWriteTimeout:
+                    description: The number of seconds to wait for a block to be written
+                      to a connection before aborting the write.
+                    type: number
+                  slowQueryLog:
+                    description: When enabled, captures slow queries. When disabled,
+                      also truncates the mysql.slow_log table. Default is false.
+                    type: boolean
+                  sortBufferSize:
+                    description: The sort buffer size, in bytes, for ORDER BY optimization.
+                      Default is 262144. (256K).
+                    type: number
+                  sqlMode:
+                    description: Global SQL mode. If empty, uses MySQL server defaults.
+                      Must only include uppercase alphabetic characters, underscores,
+                      and commas.
+                    type: string
+                  sqlRequirePrimaryKey:
+                    description: Require primary key to be defined for new tables
+                      or old tables modified with ALTER TABLE and fail if missing.
+                      It is recommended to always have primary keys because various
+                      functionality may break if any large table is missing them.
+                    type: boolean
+                  tmpTableSize:
+                    description: The maximum size, in bytes, of internal in-memory
+                      tables. Also set max_heap_table_size. Default is 16777216 (16M).
+                    type: number
+                  waitTimeout:
+                    description: The number of seconds the server waits for activity
+                      on a noninteractive connection before closing it.
+                    type: number
+                type: object
+              managementPolicies:
+                default:
+                - '*'
+                description: 'THIS IS A BETA FIELD. It is on by default but can be
+                  opted out through a Crossplane feature flag. ManagementPolicies
+                  specify the array of actions Crossplane is allowed to take on the
+                  managed and external resources. This field is planned to replace
+                  the DeletionPolicy field in a future release. Currently, both could
+                  be set independently and non-default values would be honored if
+                  the feature flag is enabled. If both are custom, the DeletionPolicy
+                  field will be ignored. See the design doc for more information:
+                  https://github.com/crossplane/crossplane/blob/499895a25d1a1a0ba1604944ef98ac7a1a71f197/design/design-doc-observe-only-resources.md?plain=1#L223
+                  and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md'
+                items:
+                  description: A ManagementAction represents an action that the Crossplane
+                    controllers can take on an external resource.
+                  enum:
+                  - Observe
+                  - Create
+                  - Update
+                  - Delete
+                  - LateInitialize
+                  - '*'
+                  type: string
+                type: array
+              providerConfigRef:
+                default:
+                  name: default
+                description: ProviderConfigReference specifies how the provider that
+                  will be used to create, observe, update, and delete this managed
+                  resource should be configured.
+                properties:
+                  name:
+                    description: Name of the referenced object.
+                    type: string
+                  policy:
+                    description: Policies for referencing.
+                    properties:
+                      resolution:
+                        default: Required
+                        description: Resolution specifies whether resolution of this
+                          reference is required. The default is 'Required', which
+                          means the reconcile will fail if the reference cannot be
+                          resolved. 'Optional' means this reference will be a no-op
+                          if it cannot be resolved.
+                        enum:
+                        - Required
+                        - Optional
+                        type: string
+                      resolve:
+                        description: Resolve specifies when this reference should
+                          be resolved. The default is 'IfNotPresent', which will attempt
+                          to resolve the reference only when the corresponding field
+                          is not present. Use 'Always' to resolve the reference on
+                          every reconcile.
+                        enum:
+                        - Always
+                        - IfNotPresent
+                        type: string
+                    type: object
+                required:
+                - name
+                type: object
+              publishConnectionDetailsTo:
+                description: PublishConnectionDetailsTo specifies the connection secret
+                  config which contains a name, metadata and a reference to secret
+                  store config to which any connection details for this managed resource
+                  should be written. Connection details frequently include the endpoint,
+                  username, and password required to connect to the managed resource.
+                properties:
+                  configRef:
+                    default:
+                      name: default
+                    description: SecretStoreConfigRef specifies which secret store
+                      config should be used for this ConnectionSecret.
+                    properties:
+                      name:
+                        description: Name of the referenced object.
+                        type: string
+                      policy:
+                        description: Policies for referencing.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: Resolution specifies whether resolution of
+                              this reference is required. The default is 'Required',
+                              which means the reconcile will fail if the reference
+                              cannot be resolved. 'Optional' means this reference
+                              will be a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: Resolve specifies when this reference should
+                              be resolved. The default is 'IfNotPresent', which will
+                              attempt to resolve the reference only when the corresponding
+                              field is not present. Use 'Always' to resolve the reference
+                              on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    required:
+                    - name
+                    type: object
+                  metadata:
+                    description: Metadata is the metadata for connection secret.
+                    properties:
+                      annotations:
+                        additionalProperties:
+                          type: string
+                        description: Annotations are the annotations to be added to
+                          connection secret. - For Kubernetes secrets, this will be
+                          used as "metadata.annotations". - It is up to Secret Store
+                          implementation for others store types.
+                        type: object
+                      labels:
+                        additionalProperties:
+                          type: string
+                        description: Labels are the labels/tags to be added to connection
+                          secret. - For Kubernetes secrets, this will be used as "metadata.labels".
+                          - It is up to Secret Store implementation for others store
+                          types.
+                        type: object
+                      type:
+                        description: Type is the SecretType for the connection secret.
+                          - Only valid for Kubernetes Secret Stores.
+                        type: string
+                    type: object
+                  name:
+                    description: Name is the name of the connection secret.
+                    type: string
+                required:
+                - name
+                type: object
+              writeConnectionSecretToRef:
+                description: WriteConnectionSecretToReference specifies the namespace
+                  and name of a Secret to which any connection details for this managed
+                  resource should be written. Connection details frequently include
+                  the endpoint, username, and password required to connect to the
+                  managed resource. This field is planned to be replaced in a future
+                  release in favor of PublishConnectionDetailsTo. Currently, both
+                  could be set independently and connection details would be published
+                  to both without affecting each other.
+                properties:
+                  name:
+                    description: Name of the secret.
+                    type: string
+                  namespace:
+                    description: Namespace of the secret.
+                    type: string
+                required:
+                - name
+                - namespace
+                type: object
+            required:
+            - forProvider
+            type: object
+          status:
+            description: MySQLConfigStatus defines the observed state of MySQLConfig.
+            properties:
+              atProvider:
+                properties:
+                  backupHour:
+                    description: The hour of day (in UTC) when backup for the service
+                      starts. New backup only starts if previous backup has already
+                      completed.
+                    type: number
+                  backupMinute:
+                    description: The minute of the backup hour when backup for the
+                      service starts. New backup only starts if previous backup has
+                      already completed.
+                    type: number
+                  binlogRetentionPeriod:
+                    description: The minimum amount of time, in seconds, to keep binlog
+                      entries before deletion. This may be extended for services that
+                      require binlog entries for longer than the default, for example
+                      if using the MySQL Debezium Kafka connector.
+                    type: number
+                  clusterId:
+                    description: The ID of the target MySQL cluster.
+                    type: string
+                  connectTimeout:
+                    description: The number of seconds that the mysqld server waits
+                      for a connect packet before responding with bad handshake.
+                    type: number
+                  defaultTimeZone:
+                    description: Default server time zone, in the form of an offset
+                      from UTC (from -12:00 to +12:00), a time zone name (EST), or
+                      SYSTEM to use the MySQL server default.
+                    type: string
+                  groupConcatMaxLen:
+                    description: The maximum permitted result length, in bytes, for
+                      the GROUP_CONCAT() function.
+                    type: number
+                  id:
+                    type: string
+                  informationSchemaStatsExpiry:
+                    description: The time, in seconds, before cached statistics expire.
+                    type: number
+                  innodbFtMinTokenSize:
+                    description: The minimum length of words that an InnoDB FULLTEXT
+                      index stores.
+                    type: number
+                  innodbFtServerStopwordTable:
+                    description: The InnoDB FULLTEXT index stopword list for all InnoDB
+                      tables.
+                    type: string
+                  innodbLockWaitTimeout:
+                    description: The time, in seconds, that an InnoDB transaction
+                      waits for a row lock. before giving up.
+                    type: number
+                  innodbLogBufferSize:
+                    description: The size of the buffer, in bytes, that InnoDB uses
+                      to write to the log files. on disk.
+                    type: number
+                  innodbOnlineAlterLogMaxSize:
+                    description: The upper limit, in bytes, of the size of the temporary
+                      log files used during online DDL operations for InnoDB tables.
+                    type: number
+                  innodbPrintAllDeadlocks:
+                    description: When enabled, records information about all deadlocks
+                      in InnoDB user transactions in the error log. Disabled by default.
+                    type: boolean
+                  innodbRollbackOnTimeout:
+                    description: When enabled, transaction timeouts cause InnoDB to
+                      abort and roll back the entire transaction.
+                    type: boolean
+                  interactiveTimeout:
+                    description: The time, in seconds, the server waits for activity
+                      on an interactive. connection before closing it.
+                    type: number
+                  internalTmpMemStorageEngine:
+                    description: 'The storage engine for in-memory internal temporary
+                      tables. Supported values are: TempTable, MEMORY.'
+                    type: string
+                  longQueryTime:
+                    description: The time, in seconds, for a query to take to execute
+                      before being captured by slow_query_logs. Default is 10 seconds.
+                    type: number
+                  maxAllowedPacket:
+                    description: The size of the largest message, in bytes, that can
+                      be received by the server. Default is 67108864 (64M).
+                    type: number
+                  maxHeapTableSize:
+                    description: The maximum size, in bytes, of internal in-memory
+                      tables. Also set tmp_table_size. Default is 16777216 (16M)
+                    type: number
+                  netReadTimeout:
+                    description: The time, in seconds, to wait for more data from
+                      an existing connection. aborting the read.
+                    type: number
+                  netWriteTimeout:
+                    description: The number of seconds to wait for a block to be written
+                      to a connection before aborting the write.
+                    type: number
+                  slowQueryLog:
+                    description: When enabled, captures slow queries. When disabled,
+                      also truncates the mysql.slow_log table. Default is false.
+                    type: boolean
+                  sortBufferSize:
+                    description: The sort buffer size, in bytes, for ORDER BY optimization.
+                      Default is 262144. (256K).
+                    type: number
+                  sqlMode:
+                    description: Global SQL mode. If empty, uses MySQL server defaults.
+                      Must only include uppercase alphabetic characters, underscores,
+                      and commas.
+                    type: string
+                  sqlRequirePrimaryKey:
+                    description: Require primary key to be defined for new tables
+                      or old tables modified with ALTER TABLE and fail if missing.
+                      It is recommended to always have primary keys because various
+                      functionality may break if any large table is missing them.
+                    type: boolean
+                  tmpTableSize:
+                    description: The maximum size, in bytes, of internal in-memory
+                      tables. Also set max_heap_table_size. Default is 16777216 (16M).
+                    type: number
+                  waitTimeout:
+                    description: The number of seconds the server waits for activity
+                      on a noninteractive connection before closing it.
+                    type: number
+                type: object
+              conditions:
+                description: Conditions of the resource.
+                items:
+                  description: A Condition that may apply to a resource.
+                  properties:
+                    lastTransitionTime:
+                      description: LastTransitionTime is the last time this condition
+                        transitioned from one status to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: A Message containing details about this condition's
+                        last transition from one status to another, if any.
+                      type: string
+                    reason:
+                      description: A Reason for this condition's last transition from
+                        one status to another.
+                      type: string
+                    status:
+                      description: Status of this condition; is it currently True,
+                        False, or Unknown?
+                      type: string
+                    type:
+                      description: Type of this condition. At most one of each condition
+                        type may apply to a resource at any point in time.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+                x-kubernetes-list-map-keys:
+                - type
+                x-kubernetes-list-type: map
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

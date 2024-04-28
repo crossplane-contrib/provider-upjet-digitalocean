@@ -1,0 +1,35 @@
+apiVersion: database.digitalocean.crossplane.io/v1alpha1
+kind: RedisConfig
+metadata:
+  annotations:
+    meta.upbound.io/example-id: database/v1alpha1/redisconfig
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    clusterIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example
+    maxmemoryPolicy: allkeys-lru
+    notifyKeyspaceEvents: KEA
+    timeout: 90
+
+---
+
+apiVersion: database.digitalocean.crossplane.io/v1alpha1
+kind: Cluster
+metadata:
+  annotations:
+    meta.upbound.io/example-id: database/v1alpha1/redisconfig
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    engine: redis
+    name: example-redis-cluster
+    nodeCount: 1
+    region: nyc1
+    size: db-s-1vcpu-1gb
+    version: "7"
