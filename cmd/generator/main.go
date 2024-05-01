@@ -11,7 +11,7 @@ import (
 
 	"github.com/crossplane/upjet/pkg/pipeline"
 
-	"github.com/straw-hat-team/provider-digitalocean/config"
+	"github.com/crossplane-contrib/provider-upjet-digitalocean/config"
 )
 
 func main() {

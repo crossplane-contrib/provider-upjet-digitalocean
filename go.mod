@@ -1,4 +1,4 @@
-module github.com/straw-hat-team/provider-digitalocean
+module github.com/crossplane-contrib/provider-upjet-digitalocean
 
 go 1.19
 

@@ -146,7 +146,7 @@ type AlertParameters struct {
 
 	// A list of IDs for the resources to which the alert policy applies.
 	// The droplets to apply the alert policy to
-	// +crossplane:generate:reference:type=github.com/straw-hat-team/provider-digitalocean/apis/compute/v1alpha1.Droplet
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/compute/v1alpha1.Droplet
 	// +kubebuilder:validation:Optional
 	Entities []*string `json:"entities,omitempty" tf:"entities,omitempty"`
 

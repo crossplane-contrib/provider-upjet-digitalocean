@@ -7,11 +7,11 @@ package v1alpha1
 
 import (
 	"context"
+	v1alpha1 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/custom/v1alpha1"
+	v1alpha12 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1"
+	v1alpha11 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/ssh/v1alpha1"
 	reference "github.com/crossplane/crossplane-runtime/pkg/reference"
 	errors "github.com/pkg/errors"
-	v1alpha1 "github.com/straw-hat-team/provider-digitalocean/apis/custom/v1alpha1"
-	v1alpha12 "github.com/straw-hat-team/provider-digitalocean/apis/digitalocean/v1alpha1"
-	v1alpha11 "github.com/straw-hat-team/provider-digitalocean/apis/ssh/v1alpha1"
 	client "sigs.k8s.io/controller-runtime/pkg/client"
 )
 

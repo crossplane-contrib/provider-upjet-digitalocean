@@ -180,7 +180,7 @@ type ClusterParameters struct {
 	NodeCount *float64 `json:"nodeCount,omitempty" tf:"node_count,omitempty"`
 
 	// The ID of the VPC where the database cluster will be located.
-	// +crossplane:generate:reference:type=github.com/straw-hat-team/provider-digitalocean/apis/networking/v1alpha1.VPC
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/networking/v1alpha1.VPC
 	// +kubebuilder:validation:Optional
 	PrivateNetworkUUID *string `json:"privateNetworkUuid,omitempty" tf:"private_network_uuid,omitempty"`
 
@@ -193,7 +193,7 @@ type ClusterParameters struct {
 	PrivateNetworkUUIDSelector *v1.Selector `json:"privateNetworkUuidSelector,omitempty" tf:"-"`
 
 	// The ID of the project that the database cluster is assigned to. If excluded when creating a new database cluster, it will be assigned to your default project.
-	// +crossplane:generate:reference:type=github.com/straw-hat-team/provider-digitalocean/apis/project/v1alpha1.Project
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/project/v1alpha1.Project
 	// +kubebuilder:validation:Optional
 	ProjectID *string `json:"projectId,omitempty" tf:"project_id,omitempty"`
 
