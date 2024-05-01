@@ -220,7 +220,7 @@ type DropletParameters struct {
 	IPv6Address *string `json:"ipv6Address,omitempty" tf:"ipv6_address,omitempty"`
 
 	// The Droplet image ID or slug. This could be either image ID or droplet snapshot ID.
-	// +crossplane:generate:reference:type=github.com/straw-hat-team/provider-digitalocean/apis/custom/v1alpha1.Image
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/custom/v1alpha1.Image
 	// +kubebuilder:validation:Optional
 	Image *string `json:"image,omitempty" tf:"image,omitempty"`
 
@@ -264,7 +264,7 @@ type DropletParameters struct {
 	// or CLI (doctl compute ssh-key list). Once a Droplet is created keys can not
 	// be added or removed via this provider. Modifying this field will prompt you
 	// to destroy and recreate the Droplet.
-	// +crossplane:generate:reference:type=github.com/straw-hat-team/provider-digitalocean/apis/ssh/v1alpha1.Key
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/ssh/v1alpha1.Key
 	// +kubebuilder:validation:Optional
 	SSHKeys []*string `json:"sshKeys,omitempty" tf:"ssh_keys,omitempty"`
 
@@ -281,7 +281,7 @@ type DropletParameters struct {
 	Size *string `json:"size,omitempty" tf:"size,omitempty"`
 
 	// A list of the tags to be applied to this Droplet.
-	// +crossplane:generate:reference:type=github.com/straw-hat-team/provider-digitalocean/apis/digitalocean/v1alpha1.Tag
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1.Tag
 	// +kubebuilder:validation:Optional
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 

@@ -11,7 +11,7 @@ import (
 	"github.com/crossplane/upjet/pkg/controller"
 	ctrl "sigs.k8s.io/controller-runtime"
 
-	"github.com/straw-hat-team/provider-digitalocean/apis/v1beta1"
+	"github.com/crossplane-contrib/provider-upjet-digitalocean/apis/v1beta1"
 )
 
 // Setup adds a controller that reconciles ProviderConfigs by accounting for

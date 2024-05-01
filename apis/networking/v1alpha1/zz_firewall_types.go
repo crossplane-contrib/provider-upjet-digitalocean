@@ -76,7 +76,7 @@ type FirewallParameters struct {
 
 	// The list of the IDs of the Droplets assigned
 	// to the Firewall.
-	// +crossplane:generate:reference:type=github.com/straw-hat-team/provider-digitalocean/apis/compute/v1alpha1.Droplet
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/compute/v1alpha1.Droplet
 	// +kubebuilder:validation:Optional
 	DropletIds []*float64 `json:"dropletIds,omitempty" tf:"droplet_ids,omitempty"`
 

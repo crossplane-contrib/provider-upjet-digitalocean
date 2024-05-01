@@ -23,8 +23,8 @@ import (
 	"github.com/crossplane/upjet/pkg/terraform"
 	ctrl "sigs.k8s.io/controller-runtime"
 
-	v1alpha1 "github.com/straw-hat-team/provider-digitalocean/apis/uptime/v1alpha1"
-	features "github.com/straw-hat-team/provider-digitalocean/internal/features"
+	v1alpha1 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/uptime/v1alpha1"
+	features "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/features"
 )
 
 // Setup adds a controller that reconciles Alert managed resources.

@@ -50,7 +50,7 @@ type SnapshotObservation struct {
 type SnapshotParameters struct {
 
 	// The ID of the Droplet from which the snapshot will be taken.
-	// +crossplane:generate:reference:type=github.com/straw-hat-team/provider-digitalocean/apis/compute/v1alpha1.Droplet
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/compute/v1alpha1.Droplet
 	// +kubebuilder:validation:Optional
 	DropletID *string `json:"dropletId,omitempty" tf:"droplet_id,omitempty"`
 

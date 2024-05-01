@@ -34,7 +34,7 @@ type IPAssignmentObservation struct {
 type IPAssignmentParameters struct {
 
 	// The ID of Droplet that the reserved IP will be assigned to.
-	// +crossplane:generate:reference:type=github.com/straw-hat-team/provider-digitalocean/apis/compute/v1alpha1.Droplet
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/compute/v1alpha1.Droplet
 	// +kubebuilder:validation:Optional
 	DropletID *float64 `json:"dropletId,omitempty" tf:"droplet_id,omitempty"`
 

@@ -2,6 +2,14 @@
 
 ## How-To
 
+### Getting Started
+
+1. Clone the repository.
+2. Run `make submodules` to initialize the submodules.
+3. Run `create-secret-yaml` to create the secret yaml file.
+4. Fix the configuration of `./examples/providerconfig/secret.yaml` manifest.
+5. Run `make k-apply-requires` to apply the required resources.
+
 ### Run the local DigitalOcean Provider
 
 1. Run `make run-all` to run the local DigitalOcean provider.
@@ -24,14 +32,38 @@
 
 #### Test the new resource
 
-1. Add Kubernetes resources under `./tmp` directory.
-2. Run `make k-apply-tmp` to apply all the resources under `./tmp` directory.
+1. Add Kubernetes resources under `./tmp/manifests` directory.
+2. Run `make k-apply-tmp` to apply all the resources under `./tmp/manifests` directory.
 
 Or to be safe, you call apply all the required resources at once:
 
 1. `k-apply-all`
 
 ## Explanations
+
+Run code-generation pipeline:
+
+```console
+go run cmd/generator/main.go "$PWD"
+```
+
+Run against a Kubernetes cluster:
+
+```console
+make run
+```
+
+Build, push, and install:
+
+```console
+make all
+```
+
+Build binary:
+
+```console
+make build
+```
 
 ### Local Development with IntelliJ IDEA
 

@@ -14,7 +14,7 @@ import (
 
 const (
 	resourcePrefix = "digitalocean"
-	modulePath     = "github.com/straw-hat-team/provider-digitalocean"
+	modulePath     = "github.com/crossplane-contrib/provider-upjet-digitalocean"
 )
 
 //go:embed schema.json

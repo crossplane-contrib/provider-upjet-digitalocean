@@ -26,12 +26,12 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/cache"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	"github.com/straw-hat-team/provider-digitalocean/apis"
-	"github.com/straw-hat-team/provider-digitalocean/apis/v1alpha1"
-	"github.com/straw-hat-team/provider-digitalocean/config"
-	"github.com/straw-hat-team/provider-digitalocean/internal/clients"
-	"github.com/straw-hat-team/provider-digitalocean/internal/controller"
-	"github.com/straw-hat-team/provider-digitalocean/internal/features"
+	"github.com/crossplane-contrib/provider-upjet-digitalocean/apis"
+	"github.com/crossplane-contrib/provider-upjet-digitalocean/apis/v1alpha1"
+	"github.com/crossplane-contrib/provider-upjet-digitalocean/config"
+	"github.com/crossplane-contrib/provider-upjet-digitalocean/internal/clients"
+	"github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller"
+	"github.com/crossplane-contrib/provider-upjet-digitalocean/internal/features"
 )
 
 func main() {
@@ -55,7 +55,7 @@ func main() {
 	kingpin.MustParse(app.Parse(os.Args[1:]))
 
 	zl := zap.New(zap.UseDevMode(*debug))
-	log := logging.NewLogrLogger(zl.WithName("provider-digitalocean"))
+	log := logging.NewLogrLogger(zl.WithName("provider-upjet-digitalocean"))
 	if *debug {
 		// The controller-runtime runs with a no-op logger by default. It is
 		// *very* verbose even at info level, so we only provide it a real
@@ -70,7 +70,7 @@ func main() {
 
 	mgr, err := ctrl.NewManager(cfg, ctrl.Options{
 		LeaderElection:   *leaderElection,
-		LeaderElectionID: "crossplane-leader-election-provider-digitalocean",
+		LeaderElectionID: "crossplane-leader-election-provider-upjet-digitalocean",
 		Cache: cache.Options{
 			SyncPeriod: syncPeriod,
 		},

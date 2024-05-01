@@ -140,7 +140,7 @@ type AppObservation struct {
 type AppParameters struct {
 
 	// The ID of the project that the app is assigned to.
-	// +crossplane:generate:reference:type=github.com/straw-hat-team/provider-digitalocean/apis/project/v1alpha1.Project
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/project/v1alpha1.Project
 	// +kubebuilder:validation:Optional
 	ProjectID *string `json:"projectId,omitempty" tf:"project_id,omitempty"`
 

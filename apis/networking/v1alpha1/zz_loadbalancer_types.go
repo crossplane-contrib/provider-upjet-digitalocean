@@ -369,7 +369,7 @@ type LoadbalancerParameters struct {
 	DisableLetsEncryptDNSRecords *bool `json:"disableLetsEncryptDnsRecords,omitempty" tf:"disable_lets_encrypt_dns_records,omitempty"`
 
 	// A list of the IDs of each droplet to be attached to the Load Balancer.
-	// +crossplane:generate:reference:type=github.com/straw-hat-team/provider-digitalocean/apis/compute/v1alpha1.Droplet
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/compute/v1alpha1.Droplet
 	// +kubebuilder:validation:Optional
 	DropletIds []*float64 `json:"dropletIds,omitempty" tf:"droplet_ids,omitempty"`
 

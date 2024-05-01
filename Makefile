@@ -1,8 +1,8 @@
 # ====================================================================================
 # Setup Project
 
-PROJECT_NAME ?= provider-digitalocean
-PROJECT_REPO ?= github.com/straw-hat-team/$(PROJECT_NAME)
+PROJECT_NAME ?= provider-upjet-digitalocean
+PROJECT_REPO ?= github.com/crossplane-contrib/$(PROJECT_NAME)
 
 export TERRAFORM_VERSION ?= 1.8.1
 
@@ -89,7 +89,7 @@ fallthrough: submodules
 
 # NOTE(hasheddan): we force image building to happen prior to xpkg build so that
 # we ensure image is present in daemon.
-xpkg.build.provider-digitalocean: do.build.images
+xpkg.build.provider-upjet-digitalocean: do.build.images
 
 # NOTE(hasheddan): we ensure up is installed prior to running platform-specific
 # build steps in parallel to avoid encountering an installation race condition.
@@ -247,7 +247,10 @@ k-apply-crds:
 	@kubectl apply -f ./package/crds
 
 k-apply-tmp:
-	@kubectl apply -f ./tmp/local
+	@mkdir -p ./tmp/manifests
+	@kubectl apply -f ./tmp/manifests
+
+k-apply-requires: k-apply-crds k-apply-providerconfig
 
 k-apply-providerconfig:
 	@kubectl apply -f ./examples/providerconfig/
@@ -258,3 +261,6 @@ helm-install-crossplane:
 	helm install crossplane --namespace crossplane-system --create-namespace crossplane-stable/crossplane
 
 run-all: generate k-apply-all run
+
+create-secret-yaml:
+	cp ./examples/providerconfig/secret.yaml.tmpl ./examples/providerconfig/secret.yaml
