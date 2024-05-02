@@ -262,10 +262,10 @@ func GetProvider() *ujconfig.Provider {
 			Type:          referenceType(pc, "custom", "v1alpha1", "Image"),
 			TerraformName: "digitalocean_custom_image",
 		}
-		// r.References["vpc_uuid"] = ujconfig.Reference{
-		// 	Type:          referenceType(pc, "digitalocean", "v1alpha1", "VPC"),
-		// 	TerraformName: "digitalocean_vpc",
-		// }
+		r.References["vpc_uuid"] = ujconfig.Reference{
+			Type:          "VPC",
+			TerraformName: "digitalocean_vpc",
+		}
 		// r.References["volume_ids"] = ujconfig.Reference{
 		// 	Type:          referenceType(pc, "volume", "v1alpha1", "Volume"),
 		// 	TerraformName: "digitalocean_volume",
