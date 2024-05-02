@@ -71,7 +71,8 @@ spec:
                       be taken.
                     type: string
                   dropletIdRef:
-                    description: Reference to a Droplet in compute to populate dropletId.
+                    description: Reference to a Droplet in digitalocean to populate
+                      dropletId.
                     properties:
                       name:
                         description: Name of the referenced object.
@@ -105,7 +106,8 @@ spec:
                     - name
                     type: object
                   dropletIdSelector:
-                    description: Selector for a Droplet in compute to populate dropletId.
+                    description: Selector for a Droplet in digitalocean to populate
+                      dropletId.
                     properties:
                       matchControllerRef:
                         description: MatchControllerRef ensures an object with the

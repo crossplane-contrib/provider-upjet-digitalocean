@@ -17,52 +17,7 @@ import (
 	v1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 )
 
-type BucketCorsConfigurationInitParameters struct {
-
-	// The name of the bucket to which to apply the CORS configuration.
-	// Bucket ID
-	Bucket *string `json:"bucket,omitempty" tf:"bucket,omitempty"`
-
-	// Set of origins and methods (cross-origin access that you want to allow). See below. You can configure up to 100 rules.
-	CorsRule []CorsRuleInitParameters `json:"corsRule,omitempty" tf:"cors_rule,omitempty"`
-
-	// The region where the bucket resides.
-	Region *string `json:"region,omitempty" tf:"region,omitempty"`
-}
-
-type BucketCorsConfigurationObservation struct {
-
-	// The name of the bucket to which to apply the CORS configuration.
-	// Bucket ID
-	Bucket *string `json:"bucket,omitempty" tf:"bucket,omitempty"`
-
-	// Set of origins and methods (cross-origin access that you want to allow). See below. You can configure up to 100 rules.
-	CorsRule []CorsRuleObservation `json:"corsRule,omitempty" tf:"cors_rule,omitempty"`
-
-	// Unique identifier for the rule. The value cannot be longer than 255 characters.
-	ID *string `json:"id,omitempty" tf:"id,omitempty"`
-
-	// The region where the bucket resides.
-	Region *string `json:"region,omitempty" tf:"region,omitempty"`
-}
-
-type BucketCorsConfigurationParameters struct {
-
-	// The name of the bucket to which to apply the CORS configuration.
-	// Bucket ID
-	// +kubebuilder:validation:Optional
-	Bucket *string `json:"bucket,omitempty" tf:"bucket,omitempty"`
-
-	// Set of origins and methods (cross-origin access that you want to allow). See below. You can configure up to 100 rules.
-	// +kubebuilder:validation:Optional
-	CorsRule []CorsRuleParameters `json:"corsRule,omitempty" tf:"cors_rule,omitempty"`
-
-	// The region where the bucket resides.
-	// +kubebuilder:validation:Optional
-	Region *string `json:"region,omitempty" tf:"region,omitempty"`
-}
-
-type CorsRuleInitParameters struct {
+type BucketCorsConfigurationCorsRuleInitParameters struct {
 
 	// Set of Headers that are specified in the Access-Control-Request-Headers header.
 	AllowedHeaders []*string `json:"allowedHeaders,omitempty" tf:"allowed_headers,omitempty"`
@@ -83,7 +38,7 @@ type CorsRuleInitParameters struct {
 	MaxAgeSeconds *float64 `json:"maxAgeSeconds,omitempty" tf:"max_age_seconds,omitempty"`
 }
 
-type CorsRuleObservation struct {
+type BucketCorsConfigurationCorsRuleObservation struct {
 
 	// Set of Headers that are specified in the Access-Control-Request-Headers header.
 	AllowedHeaders []*string `json:"allowedHeaders,omitempty" tf:"allowed_headers,omitempty"`
@@ -104,7 +59,7 @@ type CorsRuleObservation struct {
 	MaxAgeSeconds *float64 `json:"maxAgeSeconds,omitempty" tf:"max_age_seconds,omitempty"`
 }
 
-type CorsRuleParameters struct {
+type BucketCorsConfigurationCorsRuleParameters struct {
 
 	// Set of Headers that are specified in the Access-Control-Request-Headers header.
 	// +kubebuilder:validation:Optional
@@ -129,6 +84,51 @@ type CorsRuleParameters struct {
 	// Time in seconds that your browser is to cache the preflight response for the specified resource.
 	// +kubebuilder:validation:Optional
 	MaxAgeSeconds *float64 `json:"maxAgeSeconds,omitempty" tf:"max_age_seconds,omitempty"`
+}
+
+type BucketCorsConfigurationInitParameters struct {
+
+	// The name of the bucket to which to apply the CORS configuration.
+	// Bucket ID
+	Bucket *string `json:"bucket,omitempty" tf:"bucket,omitempty"`
+
+	// Set of origins and methods (cross-origin access that you want to allow). See below. You can configure up to 100 rules.
+	CorsRule []BucketCorsConfigurationCorsRuleInitParameters `json:"corsRule,omitempty" tf:"cors_rule,omitempty"`
+
+	// The region where the bucket resides.
+	Region *string `json:"region,omitempty" tf:"region,omitempty"`
+}
+
+type BucketCorsConfigurationObservation struct {
+
+	// The name of the bucket to which to apply the CORS configuration.
+	// Bucket ID
+	Bucket *string `json:"bucket,omitempty" tf:"bucket,omitempty"`
+
+	// Set of origins and methods (cross-origin access that you want to allow). See below. You can configure up to 100 rules.
+	CorsRule []BucketCorsConfigurationCorsRuleObservation `json:"corsRule,omitempty" tf:"cors_rule,omitempty"`
+
+	// Unique identifier for the rule. The value cannot be longer than 255 characters.
+	ID *string `json:"id,omitempty" tf:"id,omitempty"`
+
+	// The region where the bucket resides.
+	Region *string `json:"region,omitempty" tf:"region,omitempty"`
+}
+
+type BucketCorsConfigurationParameters struct {
+
+	// The name of the bucket to which to apply the CORS configuration.
+	// Bucket ID
+	// +kubebuilder:validation:Optional
+	Bucket *string `json:"bucket,omitempty" tf:"bucket,omitempty"`
+
+	// Set of origins and methods (cross-origin access that you want to allow). See below. You can configure up to 100 rules.
+	// +kubebuilder:validation:Optional
+	CorsRule []BucketCorsConfigurationCorsRuleParameters `json:"corsRule,omitempty" tf:"cors_rule,omitempty"`
+
+	// The region where the bucket resides.
+	// +kubebuilder:validation:Optional
+	Region *string `json:"region,omitempty" tf:"region,omitempty"`
 }
 
 // BucketCorsConfigurationSpec defines the desired state of BucketCorsConfiguration

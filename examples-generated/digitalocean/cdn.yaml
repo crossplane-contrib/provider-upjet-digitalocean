@@ -12,7 +12,7 @@ spec:
 
 ---
 
-apiVersion: storage.digitalocean.crossplane.io/v1alpha1
+apiVersion: spaces.digitalocean.crossplane.io/v1alpha1
 kind: Bucket
 metadata:
   annotations:

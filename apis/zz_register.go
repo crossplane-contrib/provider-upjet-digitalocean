@@ -14,19 +14,17 @@ package apis
 import (
 	"k8s.io/apimachinery/pkg/runtime"
 
-	v1alpha1 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/compute/v1alpha1"
-	v1alpha1container "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/container/v1alpha1"
+	v1alpha1 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/container/v1alpha1"
 	v1alpha1custom "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/custom/v1alpha1"
 	v1alpha1database "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/database/v1alpha1"
 	v1alpha1digitalocean "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1"
 	v1alpha1droplet "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/droplet/v1alpha1"
 	v1alpha1kubernetes "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/kubernetes/v1alpha1"
 	v1alpha1monitor "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/monitor/v1alpha1"
-	v1alpha1networking "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/networking/v1alpha1"
 	v1alpha1project "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/project/v1alpha1"
+	v1alpha1reserved "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/reserved/v1alpha1"
 	v1alpha1spaces "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/spaces/v1alpha1"
 	v1alpha1ssh "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/ssh/v1alpha1"
-	v1alpha1storage "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/storage/v1alpha1"
 	v1alpha1uptime "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/uptime/v1alpha1"
 	v1alpha1apis "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/v1alpha1"
 	v1beta1 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/v1beta1"
@@ -37,18 +35,16 @@ func init() {
 	// Register the types with the Scheme so the components can map objects to GroupVersionKinds and back
 	AddToSchemes = append(AddToSchemes,
 		v1alpha1.SchemeBuilder.AddToScheme,
-		v1alpha1container.SchemeBuilder.AddToScheme,
 		v1alpha1custom.SchemeBuilder.AddToScheme,
 		v1alpha1database.SchemeBuilder.AddToScheme,
 		v1alpha1digitalocean.SchemeBuilder.AddToScheme,
 		v1alpha1droplet.SchemeBuilder.AddToScheme,
 		v1alpha1kubernetes.SchemeBuilder.AddToScheme,
 		v1alpha1monitor.SchemeBuilder.AddToScheme,
-		v1alpha1networking.SchemeBuilder.AddToScheme,
 		v1alpha1project.SchemeBuilder.AddToScheme,
+		v1alpha1reserved.SchemeBuilder.AddToScheme,
 		v1alpha1spaces.SchemeBuilder.AddToScheme,
 		v1alpha1ssh.SchemeBuilder.AddToScheme,
-		v1alpha1storage.SchemeBuilder.AddToScheme,
 		v1alpha1uptime.SchemeBuilder.AddToScheme,
 		v1alpha1apis.SchemeBuilder.AddToScheme,
 		v1beta1.SchemeBuilder.AddToScheme,
