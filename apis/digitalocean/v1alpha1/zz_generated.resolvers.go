@@ -7,8 +7,7 @@ package v1alpha1
 
 import (
 	"context"
-	v1alpha1 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/custom/v1alpha1"
-	v1alpha11 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/ssh/v1alpha1"
+	v1alpha1 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/project/v1alpha1"
 	reference "github.com/crossplane/crossplane-runtime/pkg/reference"
 	errors "github.com/pkg/errors"
 	client "sigs.k8s.io/controller-runtime/pkg/client"
@@ -27,8 +26,8 @@ func (mg *App) ResolveReferences(ctx context.Context, c client.Reader) error {
 		Reference:    mg.Spec.ForProvider.ProjectIDRef,
 		Selector:     mg.Spec.ForProvider.ProjectIDSelector,
 		To: reference.To{
-			List:    &ProjectList{},
-			Managed: &Project{},
+			List:    &v1alpha1.ProjectList{},
+			Managed: &v1alpha1.Project{},
 		},
 	})
 	if err != nil {
@@ -36,176 +35,6 @@ func (mg *App) ResolveReferences(ctx context.Context, c client.Reader) error {
 	}
 	mg.Spec.ForProvider.ProjectID = reference.ToPtrValue(rsp.ResolvedValue)
 	mg.Spec.ForProvider.ProjectIDRef = rsp.ResolvedReference
-
-	return nil
-}
-
-// ResolveReferences of this Droplet.
-func (mg *Droplet) ResolveReferences(ctx context.Context, c client.Reader) error {
-	r := reference.NewAPIResolver(c, mg)
-
-	var rsp reference.ResolutionResponse
-	var mrsp reference.MultiResolutionResponse
-	var err error
-
-	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.Image),
-		Extract:      reference.ExternalName(),
-		Reference:    mg.Spec.ForProvider.ImageRef,
-		Selector:     mg.Spec.ForProvider.ImageSelector,
-		To: reference.To{
-			List:    &v1alpha1.ImageList{},
-			Managed: &v1alpha1.Image{},
-		},
-	})
-	if err != nil {
-		return errors.Wrap(err, "mg.Spec.ForProvider.Image")
-	}
-	mg.Spec.ForProvider.Image = reference.ToPtrValue(rsp.ResolvedValue)
-	mg.Spec.ForProvider.ImageRef = rsp.ResolvedReference
-
-	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
-		CurrentValues: reference.FromPtrValues(mg.Spec.ForProvider.SSHKeys),
-		Extract:       reference.ExternalName(),
-		References:    mg.Spec.ForProvider.SSHKeysRefs,
-		Selector:      mg.Spec.ForProvider.SSHKeysSelector,
-		To: reference.To{
-			List:    &v1alpha11.KeyList{},
-			Managed: &v1alpha11.Key{},
-		},
-	})
-	if err != nil {
-		return errors.Wrap(err, "mg.Spec.ForProvider.SSHKeys")
-	}
-	mg.Spec.ForProvider.SSHKeys = reference.ToPtrValues(mrsp.ResolvedValues)
-	mg.Spec.ForProvider.SSHKeysRefs = mrsp.ResolvedReferences
-
-	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
-		CurrentValues: reference.FromPtrValues(mg.Spec.ForProvider.Tags),
-		Extract:       reference.ExternalName(),
-		References:    mg.Spec.ForProvider.TagsRefs,
-		Selector:      mg.Spec.ForProvider.TagsSelector,
-		To: reference.To{
-			List:    &TagList{},
-			Managed: &Tag{},
-		},
-	})
-	if err != nil {
-		return errors.Wrap(err, "mg.Spec.ForProvider.Tags")
-	}
-	mg.Spec.ForProvider.Tags = reference.ToPtrValues(mrsp.ResolvedValues)
-	mg.Spec.ForProvider.TagsRefs = mrsp.ResolvedReferences
-
-	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.VPCUUID),
-		Extract:      reference.ExternalName(),
-		Reference:    mg.Spec.ForProvider.VPCUUIDRef,
-		Selector:     mg.Spec.ForProvider.VPCUUIDSelector,
-		To: reference.To{
-			List:    &VPCList{},
-			Managed: &VPC{},
-		},
-	})
-	if err != nil {
-		return errors.Wrap(err, "mg.Spec.ForProvider.VPCUUID")
-	}
-	mg.Spec.ForProvider.VPCUUID = reference.ToPtrValue(rsp.ResolvedValue)
-	mg.Spec.ForProvider.VPCUUIDRef = rsp.ResolvedReference
-
-	return nil
-}
-
-// ResolveReferences of this Firewall.
-func (mg *Firewall) ResolveReferences(ctx context.Context, c client.Reader) error {
-	r := reference.NewAPIResolver(c, mg)
-
-	var mrsp reference.MultiResolutionResponse
-	var err error
-
-	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
-		CurrentValues: reference.FromFloatPtrValues(mg.Spec.ForProvider.DropletIds),
-		Extract:       reference.ExternalName(),
-		References:    mg.Spec.ForProvider.DropletIdsRefs,
-		Selector:      mg.Spec.ForProvider.DropletIdsSelector,
-		To: reference.To{
-			List:    &DropletList{},
-			Managed: &Droplet{},
-		},
-	})
-	if err != nil {
-		return errors.Wrap(err, "mg.Spec.ForProvider.DropletIds")
-	}
-	mg.Spec.ForProvider.DropletIds = reference.ToFloatPtrValues(mrsp.ResolvedValues)
-	mg.Spec.ForProvider.DropletIdsRefs = mrsp.ResolvedReferences
-
-	return nil
-}
-
-// ResolveReferences of this Loadbalancer.
-func (mg *Loadbalancer) ResolveReferences(ctx context.Context, c client.Reader) error {
-	r := reference.NewAPIResolver(c, mg)
-
-	var rsp reference.ResolutionResponse
-	var mrsp reference.MultiResolutionResponse
-	var err error
-
-	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
-		CurrentValues: reference.FromFloatPtrValues(mg.Spec.ForProvider.DropletIds),
-		Extract:       reference.ExternalName(),
-		References:    mg.Spec.ForProvider.DropletIdsRefs,
-		Selector:      mg.Spec.ForProvider.DropletIdsSelector,
-		To: reference.To{
-			List:    &DropletList{},
-			Managed: &Droplet{},
-		},
-	})
-	if err != nil {
-		return errors.Wrap(err, "mg.Spec.ForProvider.DropletIds")
-	}
-	mg.Spec.ForProvider.DropletIds = reference.ToFloatPtrValues(mrsp.ResolvedValues)
-	mg.Spec.ForProvider.DropletIdsRefs = mrsp.ResolvedReferences
-
-	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.VPCUUID),
-		Extract:      reference.ExternalName(),
-		Reference:    mg.Spec.ForProvider.VPCUUIDRef,
-		Selector:     mg.Spec.ForProvider.VPCUUIDSelector,
-		To: reference.To{
-			List:    &VPCList{},
-			Managed: &VPC{},
-		},
-	})
-	if err != nil {
-		return errors.Wrap(err, "mg.Spec.ForProvider.VPCUUID")
-	}
-	mg.Spec.ForProvider.VPCUUID = reference.ToPtrValue(rsp.ResolvedValue)
-	mg.Spec.ForProvider.VPCUUIDRef = rsp.ResolvedReference
-
-	return nil
-}
-
-// ResolveReferences of this Record.
-func (mg *Record) ResolveReferences(ctx context.Context, c client.Reader) error {
-	r := reference.NewAPIResolver(c, mg)
-
-	var rsp reference.ResolutionResponse
-	var err error
-
-	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.Domain),
-		Extract:      reference.ExternalName(),
-		Reference:    mg.Spec.ForProvider.DomainRef,
-		Selector:     mg.Spec.ForProvider.DomainSelector,
-		To: reference.To{
-			List:    &DomainList{},
-			Managed: &Domain{},
-		},
-	})
-	if err != nil {
-		return errors.Wrap(err, "mg.Spec.ForProvider.Domain")
-	}
-	mg.Spec.ForProvider.Domain = reference.ToPtrValue(rsp.ResolvedValue)
-	mg.Spec.ForProvider.DomainRef = rsp.ResolvedReference
 
 	return nil
 }

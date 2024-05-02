@@ -35,15 +35,15 @@ type AttachmentObservation struct {
 type AttachmentParameters struct {
 
 	// ID of the Droplet to attach the volume to.
-	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1.Droplet
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/droplet/v1alpha1.Droplet
 	// +kubebuilder:validation:Optional
 	DropletID *float64 `json:"dropletId,omitempty" tf:"droplet_id,omitempty"`
 
-	// Reference to a Droplet in digitalocean to populate dropletId.
+	// Reference to a Droplet in droplet to populate dropletId.
 	// +kubebuilder:validation:Optional
 	DropletIDRef *v1.Reference `json:"dropletIdRef,omitempty" tf:"-"`
 
-	// Selector for a Droplet in digitalocean to populate dropletId.
+	// Selector for a Droplet in droplet to populate dropletId.
 	// +kubebuilder:validation:Optional
 	DropletIDSelector *v1.Selector `json:"dropletIdSelector,omitempty" tf:"-"`
 

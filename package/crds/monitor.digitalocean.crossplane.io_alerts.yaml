@@ -111,8 +111,7 @@ spec:
                       type: string
                     type: array
                   entitiesRefs:
-                    description: References to Droplet in digitalocean to populate
-                      entities.
+                    description: References to Droplet in droplet to populate entities.
                     items:
                       description: A Reference to a named object.
                       properties:
@@ -149,8 +148,8 @@ spec:
                       type: object
                     type: array
                   entitiesSelector:
-                    description: Selector for a list of Droplet in digitalocean to
-                      populate entities.
+                    description: Selector for a list of Droplet in droplet to populate
+                      entities.
                     properties:
                       matchControllerRef:
                         description: MatchControllerRef ensures an object with the

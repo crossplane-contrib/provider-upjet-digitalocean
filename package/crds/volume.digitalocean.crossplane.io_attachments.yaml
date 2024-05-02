@@ -70,8 +70,7 @@ spec:
                     description: ID of the Droplet to attach the volume to.
                     type: number
                   dropletIdRef:
-                    description: Reference to a Droplet in digitalocean to populate
-                      dropletId.
+                    description: Reference to a Droplet in droplet to populate dropletId.
                     properties:
                       name:
                         description: Name of the referenced object.
@@ -105,8 +104,7 @@ spec:
                     - name
                     type: object
                   dropletIdSelector:
-                    description: Selector for a Droplet in digitalocean to populate
-                      dropletId.
+                    description: Selector for a Droplet in droplet to populate dropletId.
                     properties:
                       matchControllerRef:
                         description: MatchControllerRef ensures an object with the

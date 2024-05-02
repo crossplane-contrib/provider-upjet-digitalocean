@@ -17,6 +17,8 @@ const (
 	modulePath     = "github.com/crossplane-contrib/provider-upjet-digitalocean"
 )
 
+const networkingShortGroup = "networking"
+
 //go:embed schema.json
 var providerSchema string
 
@@ -79,9 +81,18 @@ func GetProvider() *ujconfig.Provider {
 			ExternalNameConfigurations(),
 		))
 
+	pc.AddResourceConfigurator("digitalocean_certificate", func(r *ujconfig.Resource) {
+		r.ShortGroup = networkingShortGroup
+	})
+	pc.AddResourceConfigurator("digitalocean_project", func(r *ujconfig.Resource) {
+		r.ShortGroup = "project"
+	})
+	pc.AddResourceConfigurator("digitalocean_cdn", func(r *ujconfig.Resource) {
+		r.ShortGroup = "spaces"
+	})
 	pc.AddResourceConfigurator("digitalocean_project_resources", func(r *ujconfig.Resource) {
 		r.References["project"] = ujconfig.Reference{
-			Type:          referenceType(pc, "digitalocean", "v1alpha1", "Project"),
+			Type:          referenceType(pc, "project", "v1alpha1", "Project"),
 			TerraformName: "digitalocean_project",
 		}
 	})
@@ -129,14 +140,15 @@ func GetProvider() *ujconfig.Provider {
 	})
 	pc.AddResourceConfigurator("digitalocean_app", func(r *ujconfig.Resource) {
 		r.References["project_id"] = ujconfig.Reference{
-			Type:          referenceType(pc, "digitalocean", "v1alpha1", "Project"),
+			Type:          referenceType(pc, "project", "v1alpha1", "Project"),
 			TerraformName: "digitalocean_project",
 		}
 	})
 	pc.AddResourceConfigurator("digitalocean_reserved_ip_assignment", func(r *ujconfig.Resource) {
+		r.ShortGroup = networkingShortGroup
 		r.UseAsync = false
 		r.References["droplet_id"] = ujconfig.Reference{
-			Type:          referenceType(pc, "digitalocean", "v1alpha1", "Droplet"),
+			Type:          referenceType(pc, "droplet", "v1alpha1", "Droplet"),
 			TerraformName: "digitalocean_droplet",
 		}
 		r.References["ip_address"] = ujconfig.Reference{
@@ -151,7 +163,7 @@ func GetProvider() *ujconfig.Provider {
 			TerraformName: "digitalocean_volume",
 		}
 		r.References["droplet_id"] = ujconfig.Reference{
-			Type:          referenceType(pc, "digitalocean", "v1alpha1", "Droplet"),
+			Type:          referenceType(pc, "droplet", "v1alpha1", "Droplet"),
 			TerraformName: "digitalocean_droplet",
 		}
 	})
@@ -180,28 +192,33 @@ func GetProvider() *ujconfig.Provider {
 	pc.AddResourceConfigurator("digitalocean_monitor_alert", func(r *ujconfig.Resource) {
 		r.UseAsync = false
 		r.References["entities"] = ujconfig.Reference{
-			Type:          referenceType(pc, "digitalocean", "v1alpha1", "Droplet"),
+			Type:          referenceType(pc, "droplet", "v1alpha1", "Droplet"),
 			TerraformName: "digitalocean_droplet",
 		}
 	})
 	pc.AddResourceConfigurator("digitalocean_reserved_ip", func(r *ujconfig.Resource) {
+		r.ShortGroup = networkingShortGroup
 		r.UseAsync = false
 		r.References["droplet_id"] = ujconfig.Reference{
-			Type:          referenceType(pc, "digitalocean", "v1alpha1", "Droplet"),
+			Type:          referenceType(pc, "droplet", "v1alpha1", "Droplet"),
 			TerraformName: "digitalocean_droplet",
 		}
 	})
+	pc.AddResourceConfigurator("digitalocean_vpc", func(r *ujconfig.Resource) {
+		r.ShortGroup = "vpc"
+	})
 	pc.AddResourceConfigurator("digitalocean_firewall", func(r *ujconfig.Resource) {
+		r.ShortGroup = networkingShortGroup
 		r.UseAsync = false
 		r.References["droplet_ids"] = ujconfig.Reference{
-			Type:          referenceType(pc, "digitalocean", "v1alpha1", "Droplet"),
+			Type:          referenceType(pc, "droplet", "v1alpha1", "Droplet"),
 			TerraformName: "digitalocean_droplet",
 		}
 	})
 	pc.AddResourceConfigurator("digitalocean_droplet_snapshot", func(r *ujconfig.Resource) {
 		r.UseAsync = false
 		r.References["droplet_id"] = ujconfig.Reference{
-			Type:          referenceType(pc, "digitalocean", "v1alpha1", "Droplet"),
+			Type:          "Droplet",
 			TerraformName: "digitalocean_droplet",
 		}
 	})
@@ -212,7 +229,7 @@ func GetProvider() *ujconfig.Provider {
 			TerraformName: "digitalocean_database_cluster",
 		}
 		r.References["private_network_uuid"] = ujconfig.Reference{
-			Type:          referenceType(pc, "digitalocean", "v1alpha1", "VPC"),
+			Type:          referenceType(pc, "vpc", "v1alpha1", "VPC"),
 			TerraformName: "digitalocean_vpc",
 		}
 	})
@@ -224,31 +241,37 @@ func GetProvider() *ujconfig.Provider {
 	})
 	pc.AddResourceConfigurator("digitalocean_database_cluster", func(r *ujconfig.Resource) {
 		r.References["private_network_uuid"] = ujconfig.Reference{
-			Type:          referenceType(pc, "digitalocean", "v1alpha1", "VPC"),
+			Type:          referenceType(pc, "vpc", "v1alpha1", "VPC"),
 			TerraformName: "digitalocean_vpc",
 		}
 		r.References["project_id"] = ujconfig.Reference{
-			Type:          referenceType(pc, "digitalocean", "v1alpha1", "Project"),
+			Type:          referenceType(pc, "project", "v1alpha1", "Project"),
 			TerraformName: "digitalocean_project",
 		}
 	})
 	pc.AddResourceConfigurator("digitalocean_loadbalancer", func(r *ujconfig.Resource) {
+		r.ShortGroup = networkingShortGroup
 		r.References["droplet_ids"] = ujconfig.Reference{
-			Type:          referenceType(pc, "digitalocean", "v1alpha1", "Droplet"),
+			Type:          referenceType(pc, "droplet", "v1alpha1", "Droplet"),
 			TerraformName: "digitalocean_droplet",
 		}
 		r.References["vpc_uuid"] = ujconfig.Reference{
-			Type:          "VPC",
+			Type:          referenceType(pc, "vpc", "v1alpha1", "VPC"),
 			TerraformName: "digitalocean_vpc",
 		}
 	})
+	pc.AddResourceConfigurator("digitalocean_domain", func(r *ujconfig.Resource) {
+		r.ShortGroup = "dns"
+	})
 	pc.AddResourceConfigurator("digitalocean_record", func(r *ujconfig.Resource) {
+		r.ShortGroup = "dns"
 		r.References["domain"] = ujconfig.Reference{
 			Type:          "Domain",
 			TerraformName: "digitalocean_domain",
 		}
 	})
 	pc.AddResourceConfigurator("digitalocean_droplet", func(r *ujconfig.Resource) {
+		r.ShortGroup = "droplet"
 		r.UseAsync = false
 		r.References["tags"] = ujconfig.Reference{
 			Type:          referenceType(pc, "digitalocean", "v1alpha1", "Tag"),
@@ -263,13 +286,16 @@ func GetProvider() *ujconfig.Provider {
 			TerraformName: "digitalocean_custom_image",
 		}
 		r.References["vpc_uuid"] = ujconfig.Reference{
-			Type:          "VPC",
+			Type:          referenceType(pc, "vpc", "v1alpha1", "VPC"),
 			TerraformName: "digitalocean_vpc",
 		}
-		// r.References["volume_ids"] = ujconfig.Reference{
-		// 	Type:          referenceType(pc, "volume", "v1alpha1", "Volume"),
-		// 	TerraformName: "digitalocean_volume",
-		// }
+		// README: We can not enable a reference to volume_ids because it would create a circular dependency.
+		// What that means in practice is that users must use `digitalocean_volume_attachment` to attach volumes to
+		// droplets. Terraform documentation already mention that you can not use ``digitalocean_volume_attachment` and
+		// `digitalocean_droplet.volume_ids` at the same time since it will cause constantly drift.
+		// TODO: ask Crossplane team if there is a way to hide a given resource attribute. That way we remove the ability
+		//  to set `volume_ids` attribute.
+		// r.References["volume_ids"] = ujconfig.Reference{}
 	})
 	pc.AddResourceConfigurator("digitalocean_kubernetes_cluster", func(r *ujconfig.Resource) {
 		r.UseAsync = false

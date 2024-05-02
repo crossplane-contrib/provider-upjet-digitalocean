@@ -15,7 +15,7 @@ spec:
 
 ---
 
-apiVersion: digitalocean.digitalocean.crossplane.io/v1alpha1
+apiVersion: droplet.digitalocean.crossplane.io/v1alpha1
 kind: Droplet
 metadata:
   annotations:
