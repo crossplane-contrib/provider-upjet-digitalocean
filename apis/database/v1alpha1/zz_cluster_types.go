@@ -180,28 +180,28 @@ type ClusterParameters struct {
 	NodeCount *float64 `json:"nodeCount,omitempty" tf:"node_count,omitempty"`
 
 	// The ID of the VPC where the database cluster will be located.
-	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/networking/v1alpha1.VPC
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1.VPC
 	// +kubebuilder:validation:Optional
 	PrivateNetworkUUID *string `json:"privateNetworkUuid,omitempty" tf:"private_network_uuid,omitempty"`
 
-	// Reference to a VPC in networking to populate privateNetworkUuid.
+	// Reference to a VPC in digitalocean to populate privateNetworkUuid.
 	// +kubebuilder:validation:Optional
 	PrivateNetworkUUIDRef *v1.Reference `json:"privateNetworkUuidRef,omitempty" tf:"-"`
 
-	// Selector for a VPC in networking to populate privateNetworkUuid.
+	// Selector for a VPC in digitalocean to populate privateNetworkUuid.
 	// +kubebuilder:validation:Optional
 	PrivateNetworkUUIDSelector *v1.Selector `json:"privateNetworkUuidSelector,omitempty" tf:"-"`
 
 	// The ID of the project that the database cluster is assigned to. If excluded when creating a new database cluster, it will be assigned to your default project.
-	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/project/v1alpha1.Project
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1.Project
 	// +kubebuilder:validation:Optional
 	ProjectID *string `json:"projectId,omitempty" tf:"project_id,omitempty"`
 
-	// Reference to a Project in project to populate projectId.
+	// Reference to a Project in digitalocean to populate projectId.
 	// +kubebuilder:validation:Optional
 	ProjectIDRef *v1.Reference `json:"projectIdRef,omitempty" tf:"-"`
 
-	// Selector for a Project in project to populate projectId.
+	// Selector for a Project in digitalocean to populate projectId.
 	// +kubebuilder:validation:Optional
 	ProjectIDSelector *v1.Selector `json:"projectIdSelector,omitempty" tf:"-"`
 

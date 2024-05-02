@@ -7,8 +7,7 @@ package v1alpha1
 
 import (
 	"context"
-	v1alpha1 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/networking/v1alpha1"
-	v1alpha11 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/project/v1alpha1"
+	v1alpha1 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1"
 	reference "github.com/crossplane/crossplane-runtime/pkg/reference"
 	errors "github.com/pkg/errors"
 	client "sigs.k8s.io/controller-runtime/pkg/client"
@@ -43,8 +42,8 @@ func (mg *Cluster) ResolveReferences(ctx context.Context, c client.Reader) error
 		Reference:    mg.Spec.ForProvider.ProjectIDRef,
 		Selector:     mg.Spec.ForProvider.ProjectIDSelector,
 		To: reference.To{
-			List:    &v1alpha11.ProjectList{},
-			Managed: &v1alpha11.Project{},
+			List:    &v1alpha1.ProjectList{},
+			Managed: &v1alpha1.Project{},
 		},
 	})
 	if err != nil {
