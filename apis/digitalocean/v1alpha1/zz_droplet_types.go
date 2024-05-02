@@ -71,9 +71,6 @@ type DropletInitParameters struct {
 	// A string of the desired User Data for the Droplet.
 	UserData *string `json:"userData,omitempty" tf:"user_data,omitempty"`
 
-	// The ID of the VPC where the Droplet will be located.
-	VPCUUID *string `json:"vpcUuid,omitempty" tf:"vpc_uuid,omitempty"`
-
 	// A list of the IDs of each block storage volume to be attached to the Droplet.
 	VolumeIds []*string `json:"volumeIds,omitempty" tf:"volume_ids,omitempty"`
 }
@@ -298,8 +295,17 @@ type DropletParameters struct {
 	UserData *string `json:"userData,omitempty" tf:"user_data,omitempty"`
 
 	// The ID of the VPC where the Droplet will be located.
+	// +crossplane:generate:reference:type=VPC
 	// +kubebuilder:validation:Optional
 	VPCUUID *string `json:"vpcUuid,omitempty" tf:"vpc_uuid,omitempty"`
+
+	// Reference to a VPC to populate vpcUuid.
+	// +kubebuilder:validation:Optional
+	VPCUUIDRef *v1.Reference `json:"vpcUuidRef,omitempty" tf:"-"`
+
+	// Selector for a VPC to populate vpcUuid.
+	// +kubebuilder:validation:Optional
+	VPCUUIDSelector *v1.Selector `json:"vpcUuidSelector,omitempty" tf:"-"`
 
 	// A list of the IDs of each block storage volume to be attached to the Droplet.
 	// +kubebuilder:validation:Optional

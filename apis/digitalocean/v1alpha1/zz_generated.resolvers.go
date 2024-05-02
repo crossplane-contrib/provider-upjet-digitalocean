@@ -96,6 +96,22 @@ func (mg *Droplet) ResolveReferences(ctx context.Context, c client.Reader) error
 	mg.Spec.ForProvider.Tags = reference.ToPtrValues(mrsp.ResolvedValues)
 	mg.Spec.ForProvider.TagsRefs = mrsp.ResolvedReferences
 
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.VPCUUID),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.ForProvider.VPCUUIDRef,
+		Selector:     mg.Spec.ForProvider.VPCUUIDSelector,
+		To: reference.To{
+			List:    &VPCList{},
+			Managed: &VPC{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.VPCUUID")
+	}
+	mg.Spec.ForProvider.VPCUUID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.VPCUUIDRef = rsp.ResolvedReference
+
 	return nil
 }
 

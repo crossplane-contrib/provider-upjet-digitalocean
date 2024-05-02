@@ -1923,11 +1923,6 @@ func (in *DropletInitParameters) DeepCopyInto(out *DropletInitParameters) {
 		*out = new(string)
 		**out = **in
 	}
-	if in.VPCUUID != nil {
-		in, out := &in.VPCUUID, &out.VPCUUID
-		*out = new(string)
-		**out = **in
-	}
 	if in.VolumeIds != nil {
 		in, out := &in.VolumeIds, &out.VolumeIds
 		*out = make([]*string, len(*in))
@@ -2289,6 +2284,16 @@ func (in *DropletParameters) DeepCopyInto(out *DropletParameters) {
 		in, out := &in.VPCUUID, &out.VPCUUID
 		*out = new(string)
 		**out = **in
+	}
+	if in.VPCUUIDRef != nil {
+		in, out := &in.VPCUUIDRef, &out.VPCUUIDRef
+		*out = new(v1.Reference)
+		(*in).DeepCopyInto(*out)
+	}
+	if in.VPCUUIDSelector != nil {
+		in, out := &in.VPCUUIDSelector, &out.VPCUUIDSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
 	}
 	if in.VolumeIds != nil {
 		in, out := &in.VolumeIds, &out.VolumeIds
