@@ -49,9 +49,6 @@ type ClusterInitParameters struct {
 	// A list of tag names applied to the node pool.
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
-	// The ID of the VPC where the Kubernetes cluster will be located.
-	VPCUUID *string `json:"vpcUuid,omitempty" tf:"vpc_uuid,omitempty"`
-
 	// The slug identifier for the version of Kubernetes used for the cluster. Use doctl to find the available versions doctl kubernetes options versions. (Note: A cluster may only be upgraded to newer versions in-place. If the version is decreased, a new resource will be created.)
 	Version *string `json:"version,omitempty" tf:"version,omitempty"`
 }
@@ -165,8 +162,17 @@ type ClusterParameters struct {
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
 	// The ID of the VPC where the Kubernetes cluster will be located.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/vpc/v1alpha1.VPC
 	// +kubebuilder:validation:Optional
 	VPCUUID *string `json:"vpcUuid,omitempty" tf:"vpc_uuid,omitempty"`
+
+	// Reference to a VPC in vpc to populate vpcUuid.
+	// +kubebuilder:validation:Optional
+	VPCUUIDRef *v1.Reference `json:"vpcUuidRef,omitempty" tf:"-"`
+
+	// Selector for a VPC in vpc to populate vpcUuid.
+	// +kubebuilder:validation:Optional
+	VPCUUIDSelector *v1.Selector `json:"vpcUuidSelector,omitempty" tf:"-"`
 
 	// The slug identifier for the version of Kubernetes used for the cluster. Use doctl to find the available versions doctl kubernetes options versions. (Note: A cluster may only be upgraded to newer versions in-place. If the version is decreased, a new resource will be created.)
 	// +kubebuilder:validation:Optional

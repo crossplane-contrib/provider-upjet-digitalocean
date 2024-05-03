@@ -264,3 +264,5 @@ run-all: generate k-apply-all run
 
 create-secret-yaml:
 	cp ./examples/providerconfig/secret.yaml.tmpl ./examples/providerconfig/secret.yaml
+
+generate-and-build: generate go.build

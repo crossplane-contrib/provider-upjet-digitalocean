@@ -48,17 +48,6 @@ func (in *CertificateInitParameters) DeepCopyInto(out *CertificateInitParameters
 		*out = new(string)
 		**out = **in
 	}
-	if in.Domains != nil {
-		in, out := &in.Domains, &out.Domains
-		*out = make([]*string, len(*in))
-		for i := range *in {
-			if (*in)[i] != nil {
-				in, out := &(*in)[i], &(*out)[i]
-				*out = new(string)
-				**out = **in
-			}
-		}
-	}
 	if in.LeafCertificate != nil {
 		in, out := &in.LeafCertificate, &out.LeafCertificate
 		*out = new(string)
@@ -207,6 +196,18 @@ func (in *CertificateParameters) DeepCopyInto(out *CertificateParameters) {
 				**out = **in
 			}
 		}
+	}
+	if in.DomainsRefs != nil {
+		in, out := &in.DomainsRefs, &out.DomainsRefs
+		*out = make([]v1.Reference, len(*in))
+		for i := range *in {
+			(*in)[i].DeepCopyInto(&(*out)[i])
+		}
+	}
+	if in.ID != nil {
+		in, out := &in.ID, &out.ID
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
 	}
 	if in.LeafCertificate != nil {
 		in, out := &in.LeafCertificate, &out.LeafCertificate
@@ -1680,11 +1681,6 @@ func (in *LoadbalancerInitParameters) DeepCopyInto(out *LoadbalancerInitParamete
 		*out = new(string)
 		**out = **in
 	}
-	if in.ProjectID != nil {
-		in, out := &in.ProjectID, &out.ProjectID
-		*out = new(string)
-		**out = **in
-	}
 	if in.RedirectHTTPToHTTPS != nil {
 		in, out := &in.RedirectHTTPToHTTPS, &out.RedirectHTTPToHTTPS
 		*out = new(bool)
@@ -1991,6 +1987,16 @@ func (in *LoadbalancerParameters) DeepCopyInto(out *LoadbalancerParameters) {
 		in, out := &in.ProjectID, &out.ProjectID
 		*out = new(string)
 		**out = **in
+	}
+	if in.ProjectIDRef != nil {
+		in, out := &in.ProjectIDRef, &out.ProjectIDRef
+		*out = new(v1.Reference)
+		(*in).DeepCopyInto(*out)
+	}
+	if in.ProjectIDSelector != nil {
+		in, out := &in.ProjectIDSelector, &out.ProjectIDSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
 	}
 	if in.RedirectHTTPToHTTPS != nil {
 		in, out := &in.RedirectHTTPToHTTPS, &out.RedirectHTTPToHTTPS

@@ -8,7 +8,9 @@ metadata:
   name: mycdn
 spec:
   forProvider:
-    origin: ${digitalocean_spaces_bucket.mybucket.bucket_domain_name}
+    bucketDomainName:
+      matchLabels:
+        testing.upbound.io/example-name: mybucket
 
 ---
 

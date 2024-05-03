@@ -81,14 +81,68 @@ func GetProvider() *ujconfig.Provider {
 			ExternalNameConfigurations(),
 		))
 
+	// pc.AddResourceConfigurator("digitalocean_spaces_bucket_policy", func(r *ujconfig.Resource) {
+	// 	r.References["region"] = ujconfig.Reference{
+	// 		Type:              "Bucket",
+	// 		TerraformName:     "digitalocean_spaces_bucket",
+	// 		SelectorFieldName: "Region",
+	// 	}
+	// 	r.References["bucket"] = ujconfig.Reference{
+	// 		Type:              "Bucket",
+	// 		TerraformName:     "digitalocean_spaces_bucket",
+	// 		SelectorFieldName: "Name",
+	// 	}
+	// })
+	// pc.AddResourceConfigurator("digitalocean_spaces_bucket_object", func(r *ujconfig.Resource) {
+	// 	r.References["region"] = ujconfig.Reference{
+	// 		Type:              "Bucket",
+	// 		TerraformName:     "digitalocean_spaces_bucket",
+	// 		SelectorFieldName: "Region",
+	// 	}
+	// 	r.References["bucket"] = ujconfig.Reference{
+	// 		Type:          "Bucket",
+	// 		TerraformName: "digitalocean_spaces_bucket",
+	// 	}
+	// })
+	pc.AddResourceConfigurator("digitalocean_spaces_cors_configuration", func(r *ujconfig.Resource) {
+		r.References["region"] = ujconfig.Reference{
+			Type:              "Bucket",
+			TerraformName:     "digitalocean_spaces_bucket",
+			SelectorFieldName: "Region",
+		}
+		r.References["bucket"] = ujconfig.Reference{
+			Type:          "Bucket",
+			TerraformName: "digitalocean_spaces_bucket",
+		}
+	})
 	pc.AddResourceConfigurator("digitalocean_certificate", func(r *ujconfig.Resource) {
 		r.ShortGroup = networkingShortGroup
+		r.References["domains"] = ujconfig.Reference{
+			Type:              referenceType(pc, "dns", "v1alpha1", "Domain"),
+			SelectorFieldName: "ID",
+			TerraformName:     "digitalocean_domain",
+		}
 	})
 	pc.AddResourceConfigurator("digitalocean_project", func(r *ujconfig.Resource) {
 		r.ShortGroup = "project"
 	})
 	pc.AddResourceConfigurator("digitalocean_cdn", func(r *ujconfig.Resource) {
 		r.ShortGroup = "spaces"
+		r.References["custom_domain"] = ujconfig.Reference{
+			Type:              referenceType(pc, "dns", "v1alpha1", "Domain"),
+			SelectorFieldName: "ID",
+			TerraformName:     "digitalocean_domain",
+		}
+		r.References["certificate_name"] = ujconfig.Reference{
+			Type:              referenceType(pc, networkingShortGroup, "v1alpha1", "Certificate"),
+			SelectorFieldName: "Name",
+			TerraformName:     "digitalocean_certificate",
+		}
+		r.References["origin"] = ujconfig.Reference{
+			Type:              "Bucket",
+			SelectorFieldName: "BucketDomainName",
+			TerraformName:     "digitalocean_spaces_bucket",
+		}
 	})
 	pc.AddResourceConfigurator("digitalocean_project_resources", func(r *ujconfig.Resource) {
 		r.References["project"] = ujconfig.Reference{
@@ -178,7 +232,7 @@ func GetProvider() *ujconfig.Provider {
 		r.ShortGroup = "volume"
 		r.UseAsync = false
 		r.References["snapshot_id"] = ujconfig.Reference{
-			Type:          referenceType(pc, "volume", "v1alpha1", "Snapshot"),
+			Type:          "Snapshot",
 			TerraformName: "digitalocean_volume_snapshot",
 		}
 	})
@@ -224,6 +278,11 @@ func GetProvider() *ujconfig.Provider {
 	})
 	pc.AddResourceConfigurator("digitalocean_database_replica", func(r *ujconfig.Resource) {
 		r.UseAsync = false
+		// r.References["region"] = ujconfig.Reference{
+		// 	Type:          "Cluster",
+		// 	TerraformName: "digitalocean_database_cluster",
+		// 	SelectorFieldName: "Region",
+		// }
 		r.References["cluster_id"] = ujconfig.Reference{
 			Type:          "Cluster",
 			TerraformName: "digitalocean_database_cluster",
@@ -258,6 +317,10 @@ func GetProvider() *ujconfig.Provider {
 		r.References["vpc_uuid"] = ujconfig.Reference{
 			Type:          referenceType(pc, "vpc", "v1alpha1", "VPC"),
 			TerraformName: "digitalocean_vpc",
+		}
+		r.References["project_id"] = ujconfig.Reference{
+			Type:          referenceType(pc, "project", "v1alpha1", "Project"),
+			TerraformName: "digitalocean_project",
 		}
 	})
 	pc.AddResourceConfigurator("digitalocean_domain", func(r *ujconfig.Resource) {
@@ -299,6 +362,15 @@ func GetProvider() *ujconfig.Provider {
 	})
 	pc.AddResourceConfigurator("digitalocean_kubernetes_cluster", func(r *ujconfig.Resource) {
 		r.UseAsync = false
+		r.References["vpc_uuid"] = ujconfig.Reference{
+			Type:          referenceType(pc, "vpc", "v1alpha1", "VPC"),
+			TerraformName: "digitalocean_vpc",
+		}
+		// r.References["tags"] = ujconfig.Reference{
+		// 	Type:          referenceType(pc, "digitalocean", "v1alpha1", "Tag"),
+		// 	TerraformName: "digitalocean_tag",
+		// 	SelectorFieldName: "Name",
+		// }
 	})
 	pc.AddResourceConfigurator("digitalocean_kubernetes_node_pool", func(r *ujconfig.Resource) {
 		r.UseAsync = false

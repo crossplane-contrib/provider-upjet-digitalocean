@@ -248,9 +248,6 @@ type LoadbalancerInitParameters struct {
 	// The Load Balancer name
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
 
-	// The ID of the project that the load balancer is associated with. If no ID is provided at creation, the load balancer associates with the user's default project.
-	ProjectID *string `json:"projectId,omitempty" tf:"project_id,omitempty"`
-
 	// A boolean value indicating whether
 	// HTTP requests to the Load Balancer on port 80 will be redirected to HTTPS on port 443.
 	// Default value is false.
@@ -418,8 +415,17 @@ type LoadbalancerParameters struct {
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
 
 	// The ID of the project that the load balancer is associated with. If no ID is provided at creation, the load balancer associates with the user's default project.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/project/v1alpha1.Project
 	// +kubebuilder:validation:Optional
 	ProjectID *string `json:"projectId,omitempty" tf:"project_id,omitempty"`
+
+	// Reference to a Project in project to populate projectId.
+	// +kubebuilder:validation:Optional
+	ProjectIDRef *v1.Reference `json:"projectIdRef,omitempty" tf:"-"`
+
+	// Selector for a Project in project to populate projectId.
+	// +kubebuilder:validation:Optional
+	ProjectIDSelector *v1.Selector `json:"projectIdSelector,omitempty" tf:"-"`
 
 	// A boolean value indicating whether
 	// HTTP requests to the Load Balancer on port 80 will be redirected to HTTPS on port 443.
