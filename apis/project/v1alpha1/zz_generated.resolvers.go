@@ -7,7 +7,6 @@ package v1alpha1
 
 import (
 	"context"
-	v1alpha1 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1"
 	reference "github.com/crossplane/crossplane-runtime/pkg/reference"
 	errors "github.com/pkg/errors"
 	client "sigs.k8s.io/controller-runtime/pkg/client"
@@ -26,8 +25,8 @@ func (mg *Resources) ResolveReferences(ctx context.Context, c client.Reader) err
 		Reference:    mg.Spec.ForProvider.ProjectRef,
 		Selector:     mg.Spec.ForProvider.ProjectSelector,
 		To: reference.To{
-			List:    &v1alpha1.ProjectList{},
-			Managed: &v1alpha1.Project{},
+			List:    &ProjectList{},
+			Managed: &Project{},
 		},
 	})
 	if err != nil {

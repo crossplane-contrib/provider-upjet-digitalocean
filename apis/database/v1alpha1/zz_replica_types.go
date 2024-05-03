@@ -98,15 +98,15 @@ type ReplicaParameters struct {
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
 
 	// The ID of the VPC where the database replica will be located.
-	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1.VPC
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/vpc/v1alpha1.VPC
 	// +kubebuilder:validation:Optional
 	PrivateNetworkUUID *string `json:"privateNetworkUuid,omitempty" tf:"private_network_uuid,omitempty"`
 
-	// Reference to a VPC in digitalocean to populate privateNetworkUuid.
+	// Reference to a VPC in vpc to populate privateNetworkUuid.
 	// +kubebuilder:validation:Optional
 	PrivateNetworkUUIDRef *v1.Reference `json:"privateNetworkUuidRef,omitempty" tf:"-"`
 
-	// Selector for a VPC in digitalocean to populate privateNetworkUuid.
+	// Selector for a VPC in vpc to populate privateNetworkUuid.
 	// +kubebuilder:validation:Optional
 	PrivateNetworkUUIDSelector *v1.Selector `json:"privateNetworkUuidSelector,omitempty" tf:"-"`
 

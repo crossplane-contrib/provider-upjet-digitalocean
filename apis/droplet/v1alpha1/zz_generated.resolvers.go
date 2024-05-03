@@ -7,11 +7,89 @@ package v1alpha1
 
 import (
 	"context"
-	v1alpha1 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1"
+	v1alpha1 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/custom/v1alpha1"
+	v1alpha12 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1"
+	v1alpha11 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/ssh/v1alpha1"
+	v1alpha13 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/vpc/v1alpha1"
 	reference "github.com/crossplane/crossplane-runtime/pkg/reference"
 	errors "github.com/pkg/errors"
 	client "sigs.k8s.io/controller-runtime/pkg/client"
 )
+
+// ResolveReferences of this Droplet.
+func (mg *Droplet) ResolveReferences(ctx context.Context, c client.Reader) error {
+	r := reference.NewAPIResolver(c, mg)
+
+	var rsp reference.ResolutionResponse
+	var mrsp reference.MultiResolutionResponse
+	var err error
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.Image),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.ForProvider.ImageRef,
+		Selector:     mg.Spec.ForProvider.ImageSelector,
+		To: reference.To{
+			List:    &v1alpha1.ImageList{},
+			Managed: &v1alpha1.Image{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.Image")
+	}
+	mg.Spec.ForProvider.Image = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.ImageRef = rsp.ResolvedReference
+
+	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
+		CurrentValues: reference.FromPtrValues(mg.Spec.ForProvider.SSHKeys),
+		Extract:       reference.ExternalName(),
+		References:    mg.Spec.ForProvider.SSHKeysRefs,
+		Selector:      mg.Spec.ForProvider.SSHKeysSelector,
+		To: reference.To{
+			List:    &v1alpha11.KeyList{},
+			Managed: &v1alpha11.Key{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.SSHKeys")
+	}
+	mg.Spec.ForProvider.SSHKeys = reference.ToPtrValues(mrsp.ResolvedValues)
+	mg.Spec.ForProvider.SSHKeysRefs = mrsp.ResolvedReferences
+
+	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
+		CurrentValues: reference.FromPtrValues(mg.Spec.ForProvider.Tags),
+		Extract:       reference.ExternalName(),
+		References:    mg.Spec.ForProvider.TagsRefs,
+		Selector:      mg.Spec.ForProvider.TagsSelector,
+		To: reference.To{
+			List:    &v1alpha12.TagList{},
+			Managed: &v1alpha12.Tag{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.Tags")
+	}
+	mg.Spec.ForProvider.Tags = reference.ToPtrValues(mrsp.ResolvedValues)
+	mg.Spec.ForProvider.TagsRefs = mrsp.ResolvedReferences
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.VPCUUID),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.ForProvider.VPCUUIDRef,
+		Selector:     mg.Spec.ForProvider.VPCUUIDSelector,
+		To: reference.To{
+			List:    &v1alpha13.VPCList{},
+			Managed: &v1alpha13.VPC{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.VPCUUID")
+	}
+	mg.Spec.ForProvider.VPCUUID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.VPCUUIDRef = rsp.ResolvedReference
+
+	return nil
+}
 
 // ResolveReferences of this Snapshot.
 func (mg *Snapshot) ResolveReferences(ctx context.Context, c client.Reader) error {
@@ -26,8 +104,8 @@ func (mg *Snapshot) ResolveReferences(ctx context.Context, c client.Reader) erro
 		Reference:    mg.Spec.ForProvider.DropletIDRef,
 		Selector:     mg.Spec.ForProvider.DropletIDSelector,
 		To: reference.To{
-			List:    &v1alpha1.DropletList{},
-			Managed: &v1alpha1.Droplet{},
+			List:    &DropletList{},
+			Managed: &Droplet{},
 		},
 	})
 	if err != nil {

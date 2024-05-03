@@ -146,15 +146,15 @@ type AlertParameters struct {
 
 	// A list of IDs for the resources to which the alert policy applies.
 	// The droplets to apply the alert policy to
-	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1.Droplet
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/droplet/v1alpha1.Droplet
 	// +kubebuilder:validation:Optional
 	Entities []*string `json:"entities,omitempty" tf:"entities,omitempty"`
 
-	// References to Droplet in digitalocean to populate entities.
+	// References to Droplet in droplet to populate entities.
 	// +kubebuilder:validation:Optional
 	EntitiesRefs []v1.Reference `json:"entitiesRefs,omitempty" tf:"-"`
 
-	// Selector for a list of Droplet in digitalocean to populate entities.
+	// Selector for a list of Droplet in droplet to populate entities.
 	// +kubebuilder:validation:Optional
 	EntitiesSelector *v1.Selector `json:"entitiesSelector,omitempty" tf:"-"`
 

@@ -70,8 +70,7 @@ spec:
                     description: the ID of the project project ID
                     type: string
                   projectRef:
-                    description: Reference to a Project in digitalocean to populate
-                      project.
+                    description: Reference to a Project in project to populate project.
                     properties:
                       name:
                         description: Name of the referenced object.
@@ -105,8 +104,7 @@ spec:
                     - name
                     type: object
                   projectSelector:
-                    description: Selector for a Project in digitalocean to populate
-                      project.
+                    description: Selector for a Project in project to populate project.
                     properties:
                       matchControllerRef:
                         description: MatchControllerRef ensures an object with the
