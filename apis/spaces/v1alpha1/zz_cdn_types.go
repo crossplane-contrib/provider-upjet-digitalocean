@@ -23,17 +23,6 @@ type CdnInitParameters struct {
 	// ID of a DigitalOcean managed TLS certificate for use with custom domains
 	CertificateID *string `json:"certificateId,omitempty" tf:"certificate_id,omitempty"`
 
-	// The unique name of a DigitalOcean managed TLS certificate used for SSL when a custom subdomain is provided.
-	CertificateName *string `json:"certificateName,omitempty" tf:"certificate_name,omitempty"`
-
-	// The fully qualified domain name (FQDN) of the custom subdomain used with the CDN Endpoint.
-	// fully qualified domain name (FQDN) for custom subdomain, (requires certificate_id)
-	CustomDomain *string `json:"customDomain,omitempty" tf:"custom_domain,omitempty"`
-
-	// The fully qualified domain name, (FQDN) for a Space.
-	// fully qualified domain name (FQDN) for the origin server
-	Origin *string `json:"origin,omitempty" tf:"origin,omitempty"`
-
 	// The time to live for the CDN Endpoint, in seconds. Default is 3600 seconds.
 	// The amount of time the content is cached in the CDN
 	TTL *float64 `json:"ttl,omitempty" tf:"ttl,omitempty"`
@@ -74,24 +63,54 @@ type CdnObservation struct {
 
 type CdnParameters struct {
 
+	// Selector for a Bucket to populate origin.
+	// +kubebuilder:validation:Optional
+	BucketDomainName *v1.Selector `json:"bucketDomainName,omitempty" tf:"-"`
+
 	// Deprecated The ID of a DigitalOcean managed TLS certificate used for SSL when a custom subdomain is provided.
 	// ID of a DigitalOcean managed TLS certificate for use with custom domains
 	// +kubebuilder:validation:Optional
 	CertificateID *string `json:"certificateId,omitempty" tf:"certificate_id,omitempty"`
 
 	// The unique name of a DigitalOcean managed TLS certificate used for SSL when a custom subdomain is provided.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/networking/v1alpha1.Certificate
+	// +crossplane:generate:reference:selectorFieldName=Name
 	// +kubebuilder:validation:Optional
 	CertificateName *string `json:"certificateName,omitempty" tf:"certificate_name,omitempty"`
 
+	// Reference to a Certificate in networking to populate certificateName.
+	// +kubebuilder:validation:Optional
+	CertificateNameRef *v1.Reference `json:"certificateNameRef,omitempty" tf:"-"`
+
 	// The fully qualified domain name (FQDN) of the custom subdomain used with the CDN Endpoint.
 	// fully qualified domain name (FQDN) for custom subdomain, (requires certificate_id)
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/dns/v1alpha1.Domain
+	// +crossplane:generate:reference:selectorFieldName=ID
 	// +kubebuilder:validation:Optional
 	CustomDomain *string `json:"customDomain,omitempty" tf:"custom_domain,omitempty"`
 
+	// Reference to a Domain in dns to populate customDomain.
+	// +kubebuilder:validation:Optional
+	CustomDomainRef *v1.Reference `json:"customDomainRef,omitempty" tf:"-"`
+
+	// A unique ID that can be used to identify and reference a CDN Endpoint.
+	// +kubebuilder:validation:Optional
+	ID *v1.Selector `json:"id,omitempty" tf:"-"`
+
+	// Selector for a Certificate in networking to populate certificateName.
+	// +kubebuilder:validation:Optional
+	Name *v1.Selector `json:"name,omitempty" tf:"-"`
+
 	// The fully qualified domain name, (FQDN) for a Space.
 	// fully qualified domain name (FQDN) for the origin server
+	// +crossplane:generate:reference:type=Bucket
+	// +crossplane:generate:reference:selectorFieldName=BucketDomainName
 	// +kubebuilder:validation:Optional
 	Origin *string `json:"origin,omitempty" tf:"origin,omitempty"`
+
+	// Reference to a Bucket to populate origin.
+	// +kubebuilder:validation:Optional
+	OriginRef *v1.Reference `json:"originRef,omitempty" tf:"-"`
 
 	// The time to live for the CDN Endpoint, in seconds. Default is 3600 seconds.
 	// The amount of time the content is cached in the CDN
@@ -134,9 +153,8 @@ type CdnStatus struct {
 type Cdn struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
-	// +kubebuilder:validation:XValidation:rule="!('*' in self.managementPolicies || 'Create' in self.managementPolicies || 'Update' in self.managementPolicies) || has(self.forProvider.origin) || (has(self.initProvider) && has(self.initProvider.origin))",message="spec.forProvider.origin is a required parameter"
-	Spec   CdnSpec   `json:"spec"`
-	Status CdnStatus `json:"status,omitempty"`
+	Spec              CdnSpec   `json:"spec"`
+	Status            CdnStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true

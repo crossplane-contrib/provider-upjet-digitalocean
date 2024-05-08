@@ -24,11 +24,6 @@ type CertificateInitParameters struct {
 	// certificate. Only valid when type is custom.
 	CertificateChain *string `json:"certificateChain,omitempty" tf:"certificate_chain,omitempty"`
 
-	// List of fully qualified domain names (FQDNs) for
-	// which the certificate will be issued. The domains must be managed using
-	// DigitalOcean's DNS. Only valid when type is lets_encrypt.
-	Domains []*string `json:"domains,omitempty" tf:"domains,omitempty"`
-
 	// The contents of a PEM-formatted public
 	// TLS certificate. Only valid when type is custom.
 	LeafCertificate *string `json:"leafCertificate,omitempty" tf:"leaf_certificate,omitempty"`
@@ -90,8 +85,18 @@ type CertificateParameters struct {
 	// List of fully qualified domain names (FQDNs) for
 	// which the certificate will be issued. The domains must be managed using
 	// DigitalOcean's DNS. Only valid when type is lets_encrypt.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/dns/v1alpha1.Domain
+	// +crossplane:generate:reference:selectorFieldName=ID
 	// +kubebuilder:validation:Optional
 	Domains []*string `json:"domains,omitempty" tf:"domains,omitempty"`
+
+	// References to Domain in dns to populate domains.
+	// +kubebuilder:validation:Optional
+	DomainsRefs []v1.Reference `json:"domainsRefs,omitempty" tf:"-"`
+
+	// The unique name of the certificate
+	// +kubebuilder:validation:Optional
+	ID *v1.Selector `json:"id,omitempty" tf:"-"`
 
 	// The contents of a PEM-formatted public
 	// TLS certificate. Only valid when type is custom.
