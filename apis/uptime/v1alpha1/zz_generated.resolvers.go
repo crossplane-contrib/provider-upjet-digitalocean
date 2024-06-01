@@ -35,5 +35,21 @@ func (mg *Alert) ResolveReferences(ctx context.Context, c client.Reader) error {
 	mg.Spec.ForProvider.CheckID = reference.ToPtrValue(rsp.ResolvedValue)
 	mg.Spec.ForProvider.CheckIDRef = rsp.ResolvedReference
 
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.CheckID),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.CheckIDRef,
+		Selector:     mg.Spec.InitProvider.CheckIDSelector,
+		To: reference.To{
+			List:    &CheckList{},
+			Managed: &Check{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.CheckID")
+	}
+	mg.Spec.InitProvider.CheckID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.CheckIDRef = rsp.ResolvedReference
+
 	return nil
 }

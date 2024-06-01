@@ -1,7 +1,3 @@
-// SPDX-FileCopyrightText: 2023 The Crossplane Authors <https://crossplane.io>
-//
-// SPDX-License-Identifier: Apache-2.0
-
 /*
 Copyright 2022 Upbound Inc.
 */
@@ -18,6 +14,19 @@ import (
 )
 
 type AlertInitParameters struct {
+
+	// A unique identifier for a check
+	// A unique identifier for a check.
+	// +crossplane:generate:reference:type=Check
+	CheckID *string `json:"checkId,omitempty" tf:"check_id,omitempty"`
+
+	// Reference to a Check to populate checkId.
+	// +kubebuilder:validation:Optional
+	CheckIDRef *v1.Reference `json:"checkIdRef,omitempty" tf:"-"`
+
+	// Selector for a Check to populate checkId.
+	// +kubebuilder:validation:Optional
+	CheckIDSelector *v1.Selector `json:"checkIdSelector,omitempty" tf:"-"`
 
 	// The comparison operator used against the alert's threshold. Must be one of greater_than or less_than.
 	// The comparison operator used against the alert's threshold. Enum: 'greater_than' 'less_than
@@ -213,13 +222,14 @@ type AlertStatus struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+// +kubebuilder:storageversion
 
 // Alert is the Schema for the Alerts API.
-// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
+// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
-// +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,do}
 type Alert struct {
 	metav1.TypeMeta   `json:",inline"`

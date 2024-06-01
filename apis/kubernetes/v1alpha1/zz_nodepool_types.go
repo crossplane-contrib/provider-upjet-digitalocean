@@ -1,7 +1,3 @@
-// SPDX-FileCopyrightText: 2023 The Crossplane Authors <https://crossplane.io>
-//
-// SPDX-License-Identifier: Apache-2.0
-
 /*
 Copyright 2022 Upbound Inc.
 */
@@ -22,7 +18,20 @@ type NodePoolInitParameters_2 struct {
 	// Enable auto-scaling of the number of nodes in the node pool within the given min/max range.
 	AutoScale *bool `json:"autoScale,omitempty" tf:"auto_scale,omitempty"`
 
+	// The ID of the Kubernetes cluster to which the node pool is associated.
+	// +crossplane:generate:reference:type=Cluster
+	ClusterID *string `json:"clusterId,omitempty" tf:"cluster_id,omitempty"`
+
+	// Reference to a Cluster to populate clusterId.
+	// +kubebuilder:validation:Optional
+	ClusterIDRef *v1.Reference `json:"clusterIdRef,omitempty" tf:"-"`
+
+	// Selector for a Cluster to populate clusterId.
+	// +kubebuilder:validation:Optional
+	ClusterIDSelector *v1.Selector `json:"clusterIdSelector,omitempty" tf:"-"`
+
 	// A map of key/value pairs to apply to nodes in the pool. The labels are exposed in the Kubernetes API as labels in the metadata of the corresponding Node resources.
+	// +mapType=granular
 	Labels map[string]*string `json:"labels,omitempty" tf:"labels,omitempty"`
 
 	// If auto-scaling is enabled, this represents the maximum number of nodes that the node pool can be scaled up to.
@@ -41,6 +50,7 @@ type NodePoolInitParameters_2 struct {
 	Size *string `json:"size,omitempty" tf:"size,omitempty"`
 
 	// A list of tag names to be applied to the Kubernetes cluster.
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
 	// A list of taints applied to all nodes in the pool.
@@ -89,6 +99,7 @@ type NodePoolObservation_2 struct {
 	ID *string `json:"id,omitempty" tf:"id,omitempty"`
 
 	// A map of key/value pairs to apply to nodes in the pool. The labels are exposed in the Kubernetes API as labels in the metadata of the corresponding Node resources.
+	// +mapType=granular
 	Labels map[string]*string `json:"labels,omitempty" tf:"labels,omitempty"`
 
 	// If auto-scaling is enabled, this represents the maximum number of nodes that the node pool can be scaled up to.
@@ -110,6 +121,7 @@ type NodePoolObservation_2 struct {
 	Size *string `json:"size,omitempty" tf:"size,omitempty"`
 
 	// A list of tag names to be applied to the Kubernetes cluster.
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
 	// A list of taints applied to all nodes in the pool.
@@ -137,6 +149,7 @@ type NodePoolParameters_2 struct {
 
 	// A map of key/value pairs to apply to nodes in the pool. The labels are exposed in the Kubernetes API as labels in the metadata of the corresponding Node resources.
 	// +kubebuilder:validation:Optional
+	// +mapType=granular
 	Labels map[string]*string `json:"labels,omitempty" tf:"labels,omitempty"`
 
 	// If auto-scaling is enabled, this represents the maximum number of nodes that the node pool can be scaled up to.
@@ -161,6 +174,7 @@ type NodePoolParameters_2 struct {
 
 	// A list of tag names to be applied to the Kubernetes cluster.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
 	// A list of taints applied to all nodes in the pool.
@@ -231,13 +245,14 @@ type NodePoolStatus struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+// +kubebuilder:storageversion
 
 // NodePool is the Schema for the NodePools API.
-// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
+// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
-// +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,do}
 type NodePool struct {
 	metav1.TypeMeta   `json:",inline"`

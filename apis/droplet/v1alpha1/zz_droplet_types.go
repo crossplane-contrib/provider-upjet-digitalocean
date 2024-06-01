@@ -1,7 +1,3 @@
-// SPDX-FileCopyrightText: 2023 The Crossplane Authors <https://crossplane.io>
-//
-// SPDX-License-Identifier: Apache-2.0
-
 /*
 Copyright 2022 Upbound Inc.
 */
@@ -44,6 +40,18 @@ type DropletInitParameters struct {
 	// The IPv6 address
 	IPv6Address *string `json:"ipv6Address,omitempty" tf:"ipv6_address,omitempty"`
 
+	// The Droplet image ID or slug. This could be either image ID or droplet snapshot ID.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/custom/v1alpha1.Image
+	Image *string `json:"image,omitempty" tf:"image,omitempty"`
+
+	// Reference to a Image in custom to populate image.
+	// +kubebuilder:validation:Optional
+	ImageRef *v1.Reference `json:"imageRef,omitempty" tf:"-"`
+
+	// Selector for a Image in custom to populate image.
+	// +kubebuilder:validation:Optional
+	ImageSelector *v1.Selector `json:"imageSelector,omitempty" tf:"-"`
+
 	// Boolean controlling whether monitoring agent is installed.
 	// Defaults to false. If set to true, you can configure monitor alert policies
 	// monitor alert resource
@@ -65,13 +73,57 @@ type DropletInitParameters struct {
 	// size is a permanent change. Increasing only RAM and CPU is reversible.
 	ResizeDisk *bool `json:"resizeDisk,omitempty" tf:"resize_disk,omitempty"`
 
+	// A list of SSH key IDs or fingerprints to enable in
+	// the format [12345, 123456]. To retrieve this info, use the
+	// DigitalOcean API
+	// or CLI (doctl compute ssh-key list). Once a Droplet is created keys can not
+	// be added or removed via this provider. Modifying this field will prompt you
+	// to destroy and recreate the Droplet.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/ssh/v1alpha1.Key
+	// +listType=set
+	SSHKeys []*string `json:"sshKeys,omitempty" tf:"ssh_keys,omitempty"`
+
+	// References to Key in ssh to populate sshKeys.
+	// +kubebuilder:validation:Optional
+	SSHKeysRefs []v1.Reference `json:"sshKeysRefs,omitempty" tf:"-"`
+
+	// Selector for a list of Key in ssh to populate sshKeys.
+	// +kubebuilder:validation:Optional
+	SSHKeysSelector *v1.Selector `json:"sshKeysSelector,omitempty" tf:"-"`
+
 	// The unique slug that indentifies the type of Droplet. You can find a list of available slugs on DigitalOcean API documentation.
 	Size *string `json:"size,omitempty" tf:"size,omitempty"`
+
+	// A list of the tags to be applied to this Droplet.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1.Tag
+	// +listType=set
+	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
+
+	// References to Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsRefs []v1.Reference `json:"tagsRefs,omitempty" tf:"-"`
+
+	// Selector for a list of Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsSelector *v1.Selector `json:"tagsSelector,omitempty" tf:"-"`
 
 	// A string of the desired User Data for the Droplet.
 	UserData *string `json:"userData,omitempty" tf:"user_data,omitempty"`
 
+	// The ID of the VPC where the Droplet will be located.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/vpc/v1alpha1.VPC
+	VPCUUID *string `json:"vpcUuid,omitempty" tf:"vpc_uuid,omitempty"`
+
+	// Reference to a VPC in vpc to populate vpcUuid.
+	// +kubebuilder:validation:Optional
+	VPCUUIDRef *v1.Reference `json:"vpcUuidRef,omitempty" tf:"-"`
+
+	// Selector for a VPC in vpc to populate vpcUuid.
+	// +kubebuilder:validation:Optional
+	VPCUUIDSelector *v1.Selector `json:"vpcUuidSelector,omitempty" tf:"-"`
+
 	// A list of the IDs of each block storage volume to be attached to the Droplet.
+	// +listType=set
 	VolumeIds []*string `json:"volumeIds,omitempty" tf:"volume_ids,omitempty"`
 }
 
@@ -157,6 +209,7 @@ type DropletObservation struct {
 	// or CLI (doctl compute ssh-key list). Once a Droplet is created keys can not
 	// be added or removed via this provider. Modifying this field will prompt you
 	// to destroy and recreate the Droplet.
+	// +listType=set
 	SSHKeys []*string `json:"sshKeys,omitempty" tf:"ssh_keys,omitempty"`
 
 	// The unique slug that indentifies the type of Droplet. You can find a list of available slugs on DigitalOcean API documentation.
@@ -166,6 +219,7 @@ type DropletObservation struct {
 	Status *string `json:"status,omitempty" tf:"status,omitempty"`
 
 	// A list of the tags to be applied to this Droplet.
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
 	// The uniform resource name of the Droplet
@@ -181,6 +235,7 @@ type DropletObservation struct {
 	Vcpus *float64 `json:"vcpus,omitempty" tf:"vcpus,omitempty"`
 
 	// A list of the IDs of each block storage volume to be attached to the Droplet.
+	// +listType=set
 	VolumeIds []*string `json:"volumeIds,omitempty" tf:"volume_ids,omitempty"`
 }
 
@@ -263,6 +318,7 @@ type DropletParameters struct {
 	// to destroy and recreate the Droplet.
 	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/ssh/v1alpha1.Key
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	SSHKeys []*string `json:"sshKeys,omitempty" tf:"ssh_keys,omitempty"`
 
 	// References to Key in ssh to populate sshKeys.
@@ -280,6 +336,7 @@ type DropletParameters struct {
 	// A list of the tags to be applied to this Droplet.
 	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1.Tag
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
 	// References to Tag in digitalocean to populate tags.
@@ -309,6 +366,7 @@ type DropletParameters struct {
 
 	// A list of the IDs of each block storage volume to be attached to the Droplet.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	VolumeIds []*string `json:"volumeIds,omitempty" tf:"volume_ids,omitempty"`
 }
 
@@ -336,13 +394,14 @@ type DropletStatus struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+// +kubebuilder:storageversion
 
 // Droplet is the Schema for the Droplets API.
-// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
+// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
-// +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,do}
 type Droplet struct {
 	metav1.TypeMeta   `json:",inline"`

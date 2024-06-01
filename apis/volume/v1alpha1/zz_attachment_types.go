@@ -1,7 +1,3 @@
-// SPDX-FileCopyrightText: 2023 The Crossplane Authors <https://crossplane.io>
-//
-// SPDX-License-Identifier: Apache-2.0
-
 /*
 Copyright 2022 Upbound Inc.
 */
@@ -18,6 +14,30 @@ import (
 )
 
 type AttachmentInitParameters struct {
+
+	// ID of the Droplet to attach the volume to.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/droplet/v1alpha1.Droplet
+	DropletID *float64 `json:"dropletId,omitempty" tf:"droplet_id,omitempty"`
+
+	// Reference to a Droplet in droplet to populate dropletId.
+	// +kubebuilder:validation:Optional
+	DropletIDRef *v1.Reference `json:"dropletIdRef,omitempty" tf:"-"`
+
+	// Selector for a Droplet in droplet to populate dropletId.
+	// +kubebuilder:validation:Optional
+	DropletIDSelector *v1.Selector `json:"dropletIdSelector,omitempty" tf:"-"`
+
+	// ID of the Volume to be attached to the Droplet.
+	// +crossplane:generate:reference:type=Volume
+	VolumeID *string `json:"volumeId,omitempty" tf:"volume_id,omitempty"`
+
+	// Reference to a Volume to populate volumeId.
+	// +kubebuilder:validation:Optional
+	VolumeIDRef *v1.Reference `json:"volumeIdRef,omitempty" tf:"-"`
+
+	// Selector for a Volume to populate volumeId.
+	// +kubebuilder:validation:Optional
+	VolumeIDSelector *v1.Selector `json:"volumeIdSelector,omitempty" tf:"-"`
 }
 
 type AttachmentObservation struct {
@@ -85,13 +105,14 @@ type AttachmentStatus struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+// +kubebuilder:storageversion
 
 // Attachment is the Schema for the Attachments API.
-// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
+// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
-// +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,do}
 type Attachment struct {
 	metav1.TypeMeta   `json:",inline"`

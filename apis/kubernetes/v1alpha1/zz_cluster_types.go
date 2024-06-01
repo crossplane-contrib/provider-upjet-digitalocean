@@ -1,7 +1,3 @@
-// SPDX-FileCopyrightText: 2023 The Crossplane Authors <https://crossplane.io>
-//
-// SPDX-License-Identifier: Apache-2.0
-
 /*
 Copyright 2022 Upbound Inc.
 */
@@ -47,7 +43,20 @@ type ClusterInitParameters struct {
 	SurgeUpgrade *bool `json:"surgeUpgrade,omitempty" tf:"surge_upgrade,omitempty"`
 
 	// A list of tag names applied to the node pool.
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
+
+	// The ID of the VPC where the Kubernetes cluster will be located.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/vpc/v1alpha1.VPC
+	VPCUUID *string `json:"vpcUuid,omitempty" tf:"vpc_uuid,omitempty"`
+
+	// Reference to a VPC in vpc to populate vpcUuid.
+	// +kubebuilder:validation:Optional
+	VPCUUIDRef *v1.Reference `json:"vpcUuidRef,omitempty" tf:"-"`
+
+	// Selector for a VPC in vpc to populate vpcUuid.
+	// +kubebuilder:validation:Optional
+	VPCUUIDSelector *v1.Selector `json:"vpcUuidSelector,omitempty" tf:"-"`
 
 	// The slug identifier for the version of Kubernetes used for the cluster. Use doctl to find the available versions doctl kubernetes options versions. (Note: A cluster may only be upgraded to newer versions in-place. If the version is decreased, a new resource will be created.)
 	Version *string `json:"version,omitempty" tf:"version,omitempty"`
@@ -104,6 +113,7 @@ type ClusterObservation struct {
 	SurgeUpgrade *bool `json:"surgeUpgrade,omitempty" tf:"surge_upgrade,omitempty"`
 
 	// A list of tag names applied to the node pool.
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
 	// The date and time when the Kubernetes cluster was last updated.
@@ -159,6 +169,7 @@ type ClusterParameters struct {
 
 	// A list of tag names applied to the node pool.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
 	// The ID of the VPC where the Kubernetes cluster will be located.
@@ -247,6 +258,7 @@ type NodePoolInitParameters struct {
 	AutoScale *bool `json:"autoScale,omitempty" tf:"auto_scale,omitempty"`
 
 	// A map of key/value pairs to apply to nodes in the pool. The labels are exposed in the Kubernetes API as labels in the metadata of the corresponding Node resources.
+	// +mapType=granular
 	Labels map[string]*string `json:"labels,omitempty" tf:"labels,omitempty"`
 
 	// If auto-scaling is enabled, this represents the maximum number of nodes that the node pool can be scaled up to.
@@ -265,6 +277,7 @@ type NodePoolInitParameters struct {
 	Size *string `json:"size,omitempty" tf:"size,omitempty"`
 
 	// A list of tag names applied to the node pool.
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
 	// A block representing a taint applied to all nodes in the pool. Each taint exports the following attributes (taints must be unique by key and effect pair):
@@ -283,6 +296,7 @@ type NodePoolObservation struct {
 	ID *string `json:"id,omitempty" tf:"id,omitempty"`
 
 	// A map of key/value pairs to apply to nodes in the pool. The labels are exposed in the Kubernetes API as labels in the metadata of the corresponding Node resources.
+	// +mapType=granular
 	Labels map[string]*string `json:"labels,omitempty" tf:"labels,omitempty"`
 
 	// If auto-scaling is enabled, this represents the maximum number of nodes that the node pool can be scaled up to.
@@ -304,6 +318,7 @@ type NodePoolObservation struct {
 	Size *string `json:"size,omitempty" tf:"size,omitempty"`
 
 	// A list of tag names applied to the node pool.
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
 	// A block representing a taint applied to all nodes in the pool. Each taint exports the following attributes (taints must be unique by key and effect pair):
@@ -318,6 +333,7 @@ type NodePoolParameters struct {
 
 	// A map of key/value pairs to apply to nodes in the pool. The labels are exposed in the Kubernetes API as labels in the metadata of the corresponding Node resources.
 	// +kubebuilder:validation:Optional
+	// +mapType=granular
 	Labels map[string]*string `json:"labels,omitempty" tf:"labels,omitempty"`
 
 	// If auto-scaling is enabled, this represents the maximum number of nodes that the node pool can be scaled up to.
@@ -342,6 +358,7 @@ type NodePoolParameters struct {
 
 	// A list of tag names applied to the node pool.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
 	// A block representing a taint applied to all nodes in the pool. Each taint exports the following attributes (taints must be unique by key and effect pair):
@@ -439,13 +456,14 @@ type ClusterStatus struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+// +kubebuilder:storageversion
 
 // Cluster is the Schema for the Clusters API.
-// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
+// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
-// +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,do}
 type Cluster struct {
 	metav1.TypeMeta   `json:",inline"`

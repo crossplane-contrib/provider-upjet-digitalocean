@@ -103,6 +103,21 @@ func (in *ClusterInitParameters) DeepCopyInto(out *ClusterInitParameters) {
 			}
 		}
 	}
+	if in.VPCUUID != nil {
+		in, out := &in.VPCUUID, &out.VPCUUID
+		*out = new(string)
+		**out = **in
+	}
+	if in.VPCUUIDRef != nil {
+		in, out := &in.VPCUUIDRef, &out.VPCUUIDRef
+		*out = new(v1.Reference)
+		(*in).DeepCopyInto(*out)
+	}
+	if in.VPCUUIDSelector != nil {
+		in, out := &in.VPCUUIDSelector, &out.VPCUUIDSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
+	}
 	if in.Version != nil {
 		in, out := &in.Version, &out.Version
 		*out = new(string)
@@ -685,6 +700,21 @@ func (in *NodePoolInitParameters_2) DeepCopyInto(out *NodePoolInitParameters_2) 
 		in, out := &in.AutoScale, &out.AutoScale
 		*out = new(bool)
 		**out = **in
+	}
+	if in.ClusterID != nil {
+		in, out := &in.ClusterID, &out.ClusterID
+		*out = new(string)
+		**out = **in
+	}
+	if in.ClusterIDRef != nil {
+		in, out := &in.ClusterIDRef, &out.ClusterIDRef
+		*out = new(v1.Reference)
+		(*in).DeepCopyInto(*out)
+	}
+	if in.ClusterIDSelector != nil {
+		in, out := &in.ClusterIDSelector, &out.ClusterIDSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
 	}
 	if in.Labels != nil {
 		in, out := &in.Labels, &out.Labels

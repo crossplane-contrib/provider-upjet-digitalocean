@@ -1,7 +1,3 @@
-// SPDX-FileCopyrightText: 2023 The Crossplane Authors <https://crossplane.io>
-//
-// SPDX-License-Identifier: Apache-2.0
-
 /*
 Copyright 2022 Upbound Inc.
 */
@@ -19,6 +15,20 @@ import (
 
 type FirewallInitParameters struct {
 
+	// The list of the IDs of the Droplets assigned
+	// to the Firewall.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/droplet/v1alpha1.Droplet
+	// +listType=set
+	DropletIds []*float64 `json:"dropletIds,omitempty" tf:"droplet_ids,omitempty"`
+
+	// References to Droplet in droplet to populate dropletIds.
+	// +kubebuilder:validation:Optional
+	DropletIdsRefs []v1.Reference `json:"dropletIdsRefs,omitempty" tf:"-"`
+
+	// Selector for a list of Droplet in droplet to populate dropletIds.
+	// +kubebuilder:validation:Optional
+	DropletIdsSelector *v1.Selector `json:"dropletIdsSelector,omitempty" tf:"-"`
+
 	// The inbound access rule block for the Firewall.
 	// The inbound_rule block is documented below.
 	InboundRule []InboundRuleInitParameters `json:"inboundRule,omitempty" tf:"inbound_rule,omitempty"`
@@ -31,6 +41,7 @@ type FirewallInitParameters struct {
 	OutboundRule []OutboundRuleInitParameters `json:"outboundRule,omitempty" tf:"outbound_rule,omitempty"`
 
 	// The names of the Tags assigned to the Firewall.
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 }
 
@@ -42,6 +53,7 @@ type FirewallObservation struct {
 
 	// The list of the IDs of the Droplets assigned
 	// to the Firewall.
+	// +listType=set
 	DropletIds []*float64 `json:"dropletIds,omitempty" tf:"droplet_ids,omitempty"`
 
 	// A unique ID that can be used to identify and reference a Firewall.
@@ -69,6 +81,7 @@ type FirewallObservation struct {
 	Status *string `json:"status,omitempty" tf:"status,omitempty"`
 
 	// The names of the Tags assigned to the Firewall.
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 }
 
@@ -78,6 +91,7 @@ type FirewallParameters struct {
 	// to the Firewall.
 	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/droplet/v1alpha1.Droplet
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	DropletIds []*float64 `json:"dropletIds,omitempty" tf:"droplet_ids,omitempty"`
 
 	// References to Droplet in droplet to populate dropletIds.
@@ -104,6 +118,7 @@ type FirewallParameters struct {
 
 	// The names of the Tags assigned to the Firewall.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 }
 
@@ -122,23 +137,28 @@ type InboundRuleInitParameters struct {
 	// An array of strings containing the IPv4
 	// addresses, IPv6 addresses, IPv4 CIDRs, and/or IPv6 CIDRs from which the
 	// inbound traffic will be accepted.
+	// +listType=set
 	SourceAddresses []*string `json:"sourceAddresses,omitempty" tf:"source_addresses,omitempty"`
 
 	// An array containing the IDs of
 	// the Droplets from which the inbound traffic will be accepted.
+	// +listType=set
 	SourceDropletIds []*float64 `json:"sourceDropletIds,omitempty" tf:"source_droplet_ids,omitempty"`
 
 	// An array containing the IDs of
 	// the Kubernetes clusters from which the inbound traffic will be accepted.
+	// +listType=set
 	SourceKubernetesIds []*string `json:"sourceKubernetesIds,omitempty" tf:"source_kubernetes_ids,omitempty"`
 
 	// An array containing the IDs
 	// of the Load Balancers from which the inbound traffic will be accepted.
+	// +listType=set
 	SourceLoadBalancerUids []*string `json:"sourceLoadBalancerUids,omitempty" tf:"source_load_balancer_uids,omitempty"`
 
 	// An array containing the names of Tags
 	// corresponding to groups of Droplets from which the inbound traffic
 	// will be accepted.
+	// +listType=set
 	SourceTags []*string `json:"sourceTags,omitempty" tf:"source_tags,omitempty"`
 }
 
@@ -157,23 +177,28 @@ type InboundRuleObservation struct {
 	// An array of strings containing the IPv4
 	// addresses, IPv6 addresses, IPv4 CIDRs, and/or IPv6 CIDRs from which the
 	// inbound traffic will be accepted.
+	// +listType=set
 	SourceAddresses []*string `json:"sourceAddresses,omitempty" tf:"source_addresses,omitempty"`
 
 	// An array containing the IDs of
 	// the Droplets from which the inbound traffic will be accepted.
+	// +listType=set
 	SourceDropletIds []*float64 `json:"sourceDropletIds,omitempty" tf:"source_droplet_ids,omitempty"`
 
 	// An array containing the IDs of
 	// the Kubernetes clusters from which the inbound traffic will be accepted.
+	// +listType=set
 	SourceKubernetesIds []*string `json:"sourceKubernetesIds,omitempty" tf:"source_kubernetes_ids,omitempty"`
 
 	// An array containing the IDs
 	// of the Load Balancers from which the inbound traffic will be accepted.
+	// +listType=set
 	SourceLoadBalancerUids []*string `json:"sourceLoadBalancerUids,omitempty" tf:"source_load_balancer_uids,omitempty"`
 
 	// An array containing the names of Tags
 	// corresponding to groups of Droplets from which the inbound traffic
 	// will be accepted.
+	// +listType=set
 	SourceTags []*string `json:"sourceTags,omitempty" tf:"source_tags,omitempty"`
 }
 
@@ -195,27 +220,32 @@ type InboundRuleParameters struct {
 	// addresses, IPv6 addresses, IPv4 CIDRs, and/or IPv6 CIDRs from which the
 	// inbound traffic will be accepted.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	SourceAddresses []*string `json:"sourceAddresses,omitempty" tf:"source_addresses,omitempty"`
 
 	// An array containing the IDs of
 	// the Droplets from which the inbound traffic will be accepted.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	SourceDropletIds []*float64 `json:"sourceDropletIds,omitempty" tf:"source_droplet_ids,omitempty"`
 
 	// An array containing the IDs of
 	// the Kubernetes clusters from which the inbound traffic will be accepted.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	SourceKubernetesIds []*string `json:"sourceKubernetesIds,omitempty" tf:"source_kubernetes_ids,omitempty"`
 
 	// An array containing the IDs
 	// of the Load Balancers from which the inbound traffic will be accepted.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	SourceLoadBalancerUids []*string `json:"sourceLoadBalancerUids,omitempty" tf:"source_load_balancer_uids,omitempty"`
 
 	// An array containing the names of Tags
 	// corresponding to groups of Droplets from which the inbound traffic
 	// will be accepted.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	SourceTags []*string `json:"sourceTags,omitempty" tf:"source_tags,omitempty"`
 }
 
@@ -224,23 +254,28 @@ type OutboundRuleInitParameters struct {
 	// An array of strings containing the IPv4
 	// addresses, IPv6 addresses, IPv4 CIDRs, and/or IPv6 CIDRs to which the
 	// outbound traffic will be allowed.
+	// +listType=set
 	DestinationAddresses []*string `json:"destinationAddresses,omitempty" tf:"destination_addresses,omitempty"`
 
 	// An array containing the IDs of
 	// the Droplets to which the outbound traffic will be allowed.
+	// +listType=set
 	DestinationDropletIds []*float64 `json:"destinationDropletIds,omitempty" tf:"destination_droplet_ids,omitempty"`
 
 	// An array containing the IDs of
 	// the Kubernetes clusters to which the outbound traffic will be allowed.
+	// +listType=set
 	DestinationKubernetesIds []*string `json:"destinationKubernetesIds,omitempty" tf:"destination_kubernetes_ids,omitempty"`
 
 	// An array containing the IDs
 	// of the Load Balancers to which the outbound traffic will be allowed.
+	// +listType=set
 	DestinationLoadBalancerUids []*string `json:"destinationLoadBalancerUids,omitempty" tf:"destination_load_balancer_uids,omitempty"`
 
 	// An array containing the names of Tags
 	// corresponding to groups of Droplets to which the outbound traffic will
 	// be allowed.
+	// +listType=set
 	DestinationTags []*string `json:"destinationTags,omitempty" tf:"destination_tags,omitempty"`
 
 	// The ports on which traffic will be allowed
@@ -259,23 +294,28 @@ type OutboundRuleObservation struct {
 	// An array of strings containing the IPv4
 	// addresses, IPv6 addresses, IPv4 CIDRs, and/or IPv6 CIDRs to which the
 	// outbound traffic will be allowed.
+	// +listType=set
 	DestinationAddresses []*string `json:"destinationAddresses,omitempty" tf:"destination_addresses,omitempty"`
 
 	// An array containing the IDs of
 	// the Droplets to which the outbound traffic will be allowed.
+	// +listType=set
 	DestinationDropletIds []*float64 `json:"destinationDropletIds,omitempty" tf:"destination_droplet_ids,omitempty"`
 
 	// An array containing the IDs of
 	// the Kubernetes clusters to which the outbound traffic will be allowed.
+	// +listType=set
 	DestinationKubernetesIds []*string `json:"destinationKubernetesIds,omitempty" tf:"destination_kubernetes_ids,omitempty"`
 
 	// An array containing the IDs
 	// of the Load Balancers to which the outbound traffic will be allowed.
+	// +listType=set
 	DestinationLoadBalancerUids []*string `json:"destinationLoadBalancerUids,omitempty" tf:"destination_load_balancer_uids,omitempty"`
 
 	// An array containing the names of Tags
 	// corresponding to groups of Droplets to which the outbound traffic will
 	// be allowed.
+	// +listType=set
 	DestinationTags []*string `json:"destinationTags,omitempty" tf:"destination_tags,omitempty"`
 
 	// The ports on which traffic will be allowed
@@ -295,27 +335,32 @@ type OutboundRuleParameters struct {
 	// addresses, IPv6 addresses, IPv4 CIDRs, and/or IPv6 CIDRs to which the
 	// outbound traffic will be allowed.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	DestinationAddresses []*string `json:"destinationAddresses,omitempty" tf:"destination_addresses,omitempty"`
 
 	// An array containing the IDs of
 	// the Droplets to which the outbound traffic will be allowed.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	DestinationDropletIds []*float64 `json:"destinationDropletIds,omitempty" tf:"destination_droplet_ids,omitempty"`
 
 	// An array containing the IDs of
 	// the Kubernetes clusters to which the outbound traffic will be allowed.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	DestinationKubernetesIds []*string `json:"destinationKubernetesIds,omitempty" tf:"destination_kubernetes_ids,omitempty"`
 
 	// An array containing the IDs
 	// of the Load Balancers to which the outbound traffic will be allowed.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	DestinationLoadBalancerUids []*string `json:"destinationLoadBalancerUids,omitempty" tf:"destination_load_balancer_uids,omitempty"`
 
 	// An array containing the names of Tags
 	// corresponding to groups of Droplets to which the outbound traffic will
 	// be allowed.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	DestinationTags []*string `json:"destinationTags,omitempty" tf:"destination_tags,omitempty"`
 
 	// The ports on which traffic will be allowed
@@ -373,13 +418,14 @@ type FirewallStatus struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+// +kubebuilder:storageversion
 
 // Firewall is the Schema for the Firewalls API.
-// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
+// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
-// +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,do}
 type Firewall struct {
 	metav1.TypeMeta   `json:",inline"`

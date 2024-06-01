@@ -1,7 +1,3 @@
-// SPDX-FileCopyrightText: 2023 The Crossplane Authors <https://crossplane.io>
-//
-// SPDX-License-Identifier: Apache-2.0
-
 /*
 Copyright 2022 Upbound Inc.
 */
@@ -18,6 +14,18 @@ import (
 )
 
 type SnapshotInitParameters struct {
+
+	// The ID of the Droplet from which the snapshot will be taken.
+	// +crossplane:generate:reference:type=Droplet
+	DropletID *string `json:"dropletId,omitempty" tf:"droplet_id,omitempty"`
+
+	// Reference to a Droplet to populate dropletId.
+	// +kubebuilder:validation:Optional
+	DropletIDRef *v1.Reference `json:"dropletIdRef,omitempty" tf:"-"`
+
+	// Selector for a Droplet to populate dropletId.
+	// +kubebuilder:validation:Optional
+	DropletIDSelector *v1.Selector `json:"dropletIdSelector,omitempty" tf:"-"`
 
 	// A name for the Droplet snapshot.
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
@@ -41,6 +49,7 @@ type SnapshotObservation struct {
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
 
 	// A list of DigitalOcean region "slugs" indicating where the droplet snapshot is available.
+	// +listType=set
 	Regions []*string `json:"regions,omitempty" tf:"regions,omitempty"`
 
 	// The billable size of the Droplet snapshot in gigabytes.
@@ -91,13 +100,14 @@ type SnapshotStatus struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+// +kubebuilder:storageversion
 
 // Snapshot is the Schema for the Snapshots API.
-// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
+// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
-// +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,do}
 type Snapshot struct {
 	metav1.TypeMeta   `json:",inline"`

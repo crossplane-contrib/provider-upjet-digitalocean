@@ -1,7 +1,3 @@
-// SPDX-FileCopyrightText: 2023 The Crossplane Authors <https://crossplane.io>
-//
-// SPDX-License-Identifier: Apache-2.0
-
 /*
 Copyright 2022 Upbound Inc.
 */
@@ -66,6 +62,30 @@ type ClusterInitParameters struct {
 	// Number of nodes that will be included in the cluster. For kafka clusters, this must be 3.
 	NodeCount *float64 `json:"nodeCount,omitempty" tf:"node_count,omitempty"`
 
+	// The ID of the VPC where the database cluster will be located.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/vpc/v1alpha1.VPC
+	PrivateNetworkUUID *string `json:"privateNetworkUuid,omitempty" tf:"private_network_uuid,omitempty"`
+
+	// Reference to a VPC in vpc to populate privateNetworkUuid.
+	// +kubebuilder:validation:Optional
+	PrivateNetworkUUIDRef *v1.Reference `json:"privateNetworkUuidRef,omitempty" tf:"-"`
+
+	// Selector for a VPC in vpc to populate privateNetworkUuid.
+	// +kubebuilder:validation:Optional
+	PrivateNetworkUUIDSelector *v1.Selector `json:"privateNetworkUuidSelector,omitempty" tf:"-"`
+
+	// The ID of the project that the database cluster is assigned to. If excluded when creating a new database cluster, it will be assigned to your default project.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/project/v1alpha1.Project
+	ProjectID *string `json:"projectId,omitempty" tf:"project_id,omitempty"`
+
+	// Reference to a Project in project to populate projectId.
+	// +kubebuilder:validation:Optional
+	ProjectIDRef *v1.Reference `json:"projectIdRef,omitempty" tf:"-"`
+
+	// Selector for a Project in project to populate projectId.
+	// +kubebuilder:validation:Optional
+	ProjectIDSelector *v1.Selector `json:"projectIdSelector,omitempty" tf:"-"`
+
 	// DigitalOcean region where the cluster will reside.
 	Region *string `json:"region,omitempty" tf:"region,omitempty"`
 
@@ -79,6 +99,7 @@ type ClusterInitParameters struct {
 	StorageSizeMib *string `json:"storageSizeMib,omitempty" tf:"storage_size_mib,omitempty"`
 
 	// A list of tag names to be applied to the database cluster.
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
 	// Engine version used by the cluster (ex. 14 for PostgreSQL 14).
@@ -140,6 +161,7 @@ type ClusterObservation struct {
 	StorageSizeMib *string `json:"storageSizeMib,omitempty" tf:"storage_size_mib,omitempty"`
 
 	// A list of tag names to be applied to the database cluster.
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
 	// The uniform resource name of the database cluster.
@@ -223,6 +245,7 @@ type ClusterParameters struct {
 
 	// A list of tag names to be applied to the database cluster.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
 	// Engine version used by the cluster (ex. 14 for PostgreSQL 14).
@@ -284,13 +307,14 @@ type ClusterStatus struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+// +kubebuilder:storageversion
 
 // Cluster is the Schema for the Clusters API.
-// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
+// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
-// +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,do}
 type Cluster struct {
 	metav1.TypeMeta   `json:",inline"`
