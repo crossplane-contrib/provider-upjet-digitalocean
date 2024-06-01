@@ -6,7 +6,7 @@
 
 1. Clone the repository.
 2. Run `make submodules` to initialize the submodules.
-3. Run `create-secret-yaml` to create the secret yaml file.
+3. Run `make create-secret-yaml` to create the secret yaml file.
 4. Fix the configuration of `./examples/providerconfig/secret.yaml` manifest.
 5. Run `make k-apply-requires` to apply the required resources.
 
