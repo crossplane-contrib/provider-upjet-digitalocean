@@ -81,29 +81,6 @@ func GetProvider() *ujconfig.Provider {
 			ExternalNameConfigurations(),
 		))
 
-	// pc.AddResourceConfigurator("digitalocean_spaces_bucket_policy", func(r *ujconfig.Resource) {
-	// 	r.References["region"] = ujconfig.Reference{
-	// 		Type:              "Bucket",
-	// 		TerraformName:     "digitalocean_spaces_bucket",
-	// 		SelectorFieldName: "Region",
-	// 	}
-	// 	r.References["bucket"] = ujconfig.Reference{
-	// 		Type:              "Bucket",
-	// 		TerraformName:     "digitalocean_spaces_bucket",
-	// 		SelectorFieldName: "Name",
-	// 	}
-	// })
-	// pc.AddResourceConfigurator("digitalocean_spaces_bucket_object", func(r *ujconfig.Resource) {
-	// 	r.References["region"] = ujconfig.Reference{
-	// 		Type:              "Bucket",
-	// 		TerraformName:     "digitalocean_spaces_bucket",
-	// 		SelectorFieldName: "Region",
-	// 	}
-	// 	r.References["bucket"] = ujconfig.Reference{
-	// 		Type:          "Bucket",
-	// 		TerraformName: "digitalocean_spaces_bucket",
-	// 	}
-	// })
 	pc.AddResourceConfigurator("digitalocean_spaces_cors_configuration", func(r *ujconfig.Resource) {
 		r.References["region"] = ujconfig.Reference{
 			Type:              "Bucket",
@@ -278,11 +255,6 @@ func GetProvider() *ujconfig.Provider {
 	})
 	pc.AddResourceConfigurator("digitalocean_database_replica", func(r *ujconfig.Resource) {
 		r.UseAsync = false
-		// r.References["region"] = ujconfig.Reference{
-		// 	Type:          "Cluster",
-		// 	TerraformName: "digitalocean_database_cluster",
-		// 	SelectorFieldName: "Region",
-		// }
 		r.References["cluster_id"] = ujconfig.Reference{
 			Type:          "Cluster",
 			TerraformName: "digitalocean_database_cluster",
