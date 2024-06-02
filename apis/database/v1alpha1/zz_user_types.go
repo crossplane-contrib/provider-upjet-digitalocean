@@ -1,7 +1,3 @@
-// SPDX-FileCopyrightText: 2023 The Crossplane Authors <https://crossplane.io>
-//
-// SPDX-License-Identifier: Apache-2.0
-
 /*
 Copyright 2022 Upbound Inc.
 */
@@ -69,6 +65,18 @@ type SettingsParameters struct {
 }
 
 type UserInitParameters struct {
+
+	// The ID of the original source database cluster.
+	// +crossplane:generate:reference:type=Cluster
+	ClusterID *string `json:"clusterId,omitempty" tf:"cluster_id,omitempty"`
+
+	// Reference to a Cluster to populate clusterId.
+	// +kubebuilder:validation:Optional
+	ClusterIDRef *v1.Reference `json:"clusterIdRef,omitempty" tf:"-"`
+
+	// Selector for a Cluster to populate clusterId.
+	// +kubebuilder:validation:Optional
+	ClusterIDSelector *v1.Selector `json:"clusterIdSelector,omitempty" tf:"-"`
 
 	// The authentication method to use for connections to the MySQL user account. The valid values are mysql_native_password or caching_sha2_password (this is the default).
 	MySQLAuthPlugin *string `json:"mysqlAuthPlugin,omitempty" tf:"mysql_auth_plugin,omitempty"`
@@ -146,13 +154,14 @@ type UserStatus struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+// +kubebuilder:storageversion
 
 // User is the Schema for the Users API.
-// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
+// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
-// +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,do}
 type User struct {
 	metav1.TypeMeta   `json:",inline"`

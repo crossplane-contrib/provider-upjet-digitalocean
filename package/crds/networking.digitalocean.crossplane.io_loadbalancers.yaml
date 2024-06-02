@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.13.0
+    controller-gen.kubebuilder.io/version: v0.14.0
   name: loadbalancers.networking.digitalocean.crossplane.io
 spec:
   group: networking.digitalocean.crossplane.io
@@ -19,11 +19,11 @@ spec:
   scope: Cluster
   versions:
   - additionalPrinterColumns:
-    - jsonPath: .status.conditions[?(@.type=='Ready')].status
-      name: READY
-      type: string
     - jsonPath: .status.conditions[?(@.type=='Synced')].status
       name: SYNCED
+      type: string
+    - jsonPath: .status.conditions[?(@.type=='Ready')].status
+      name: READY
       type: string
     - jsonPath: .metadata.annotations.crossplane\.io/external-name
       name: EXTERNAL-NAME
@@ -37,14 +37,19 @@ spec:
         description: Loadbalancer is the Schema for the Loadbalancers API.
         properties:
           apiVersion:
-            description: 'APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
             type: string
           kind:
-            description: 'Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
             type: string
           metadata:
             type: object
@@ -53,13 +58,14 @@ spec:
             properties:
               deletionPolicy:
                 default: Delete
-                description: 'DeletionPolicy specifies what will happen to the underlying
-                  external when this managed resource is deleted - either "Delete"
-                  or "Orphan" the external resource. This field is planned to be deprecated
-                  in favor of the ManagementPolicies field in a future release. Currently,
-                  both could be set independently and non-default values would be
-                  honored if the feature flag is enabled. See the design doc for more
-                  information: https://github.com/crossplane/crossplane/blob/499895a25d1a1a0ba1604944ef98ac7a1a71f197/design/design-doc-observe-only-resources.md?plain=1#L223'
+                description: |-
+                  DeletionPolicy specifies what will happen to the underlying external
+                  when this managed resource is deleted - either "Delete" or "Orphan" the
+                  external resource.
+                  This field is planned to be deprecated in favor of the ManagementPolicies
+                  field in a future release. Currently, both could be set independently and
+                  non-default values would be honored if the feature flag is enabled.
+                  See the design doc for more information: https://github.com/crossplane/crossplane/blob/499895a25d1a1a0ba1604944ef98ac7a1a71f197/design/design-doc-observe-only-resources.md?plain=1#L223
                 enum:
                 - Orphan
                 - Delete
@@ -67,9 +73,10 @@ spec:
               forProvider:
                 properties:
                   algorithm:
-                    description: The load balancing algorithm used to determine which
-                      backend Droplet will be selected by a client. It must be either
-                      round_robin or least_connections. The default value is round_robin.
+                    description: |-
+                      The load balancing algorithm used to determine
+                      which backend Droplet will be selected by a client. It must be either round_robin
+                      or least_connections. The default value is round_robin.
                     type: string
                   disableLetsEncryptDnsRecords:
                     description: A boolean value indicating whether to disable automatic
@@ -82,6 +89,7 @@ spec:
                     items:
                       type: number
                     type: array
+                    x-kubernetes-list-type: set
                   dropletIdsRefs:
                     description: References to Droplet in droplet to populate dropletIds.
                     items:
@@ -95,21 +103,21 @@ spec:
                           properties:
                             resolution:
                               default: Required
-                              description: Resolution specifies whether resolution
-                                of this reference is required. The default is 'Required',
-                                which means the reconcile will fail if the reference
-                                cannot be resolved. 'Optional' means this reference
-                                will be a no-op if it cannot be resolved.
+                              description: |-
+                                Resolution specifies whether resolution of this reference is required.
+                                The default is 'Required', which means the reconcile will fail if the
+                                reference cannot be resolved. 'Optional' means this reference will be
+                                a no-op if it cannot be resolved.
                               enum:
                               - Required
                               - Optional
                               type: string
                             resolve:
-                              description: Resolve specifies when this reference should
-                                be resolved. The default is 'IfNotPresent', which
-                                will attempt to resolve the reference only when the
-                                corresponding field is not present. Use 'Always' to
-                                resolve the reference on every reconcile.
+                              description: |-
+                                Resolve specifies when this reference should be resolved. The default
+                                is 'IfNotPresent', which will attempt to resolve the reference only when
+                                the corresponding field is not present. Use 'Always' to resolve the
+                                reference on every reconcile.
                               enum:
                               - Always
                               - IfNotPresent
@@ -124,8 +132,9 @@ spec:
                       dropletIds.
                     properties:
                       matchControllerRef:
-                        description: MatchControllerRef ensures an object with the
-                          same controller reference as the selecting object is selected.
+                        description: |-
+                          MatchControllerRef ensures an object with the same controller reference
+                          as the selecting object is selected.
                         type: boolean
                       matchLabels:
                         additionalProperties:
@@ -138,21 +147,21 @@ spec:
                         properties:
                           resolution:
                             default: Required
-                            description: Resolution specifies whether resolution of
-                              this reference is required. The default is 'Required',
-                              which means the reconcile will fail if the reference
-                              cannot be resolved. 'Optional' means this reference
-                              will be a no-op if it cannot be resolved.
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
                             enum:
                             - Required
                             - Optional
                             type: string
                           resolve:
-                            description: Resolve specifies when this reference should
-                              be resolved. The default is 'IfNotPresent', which will
-                              attempt to resolve the reference only when the corresponding
-                              field is not present. Use 'Always' to resolve the reference
-                              on every reconcile.
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
                             enum:
                             - Always
                             - IfNotPresent
@@ -169,9 +178,10 @@ spec:
                       is false.
                     type: boolean
                   enableProxyProtocol:
-                    description: A boolean value indicating whether PROXY Protocol
-                      should be used to pass information from connecting client requests
-                      to the backend service. Default value is false.
+                    description: |-
+                      A boolean value indicating whether PROXY
+                      Protocol should be used to pass information from connecting client requests to
+                      the backend service. Default value is false.
                     type: boolean
                   firewall:
                     description: A block containing rules for allowing/denying traffic
@@ -180,26 +190,25 @@ spec:
                     items:
                       properties:
                         allow:
-                          description: 'A list of strings describing allow rules.
-                            Must be colon delimited strings of the form {type}:{source}
-                            the rules for ALLOWING traffic to the LB (strings in the
-                            form: ''ip:1.2.3.4'' or ''cidr:1.2.0.0/16'')'
+                          description: |-
+                            A list of strings describing allow rules. Must be colon delimited strings of the form {type}:{source}
+                            the rules for ALLOWING traffic to the LB (strings in the form: 'ip:1.2.3.4' or 'cidr:1.2.0.0/16')
                           items:
                             type: string
                           type: array
                         deny:
-                          description: 'A list of strings describing deny rules. Must
-                            be colon delimited strings of the form {type}:{source}
-                            the rules for DENYING traffic to the LB (strings in the
-                            form: ''ip:1.2.3.4'' or ''cidr:1.2.0.0/16'')'
+                          description: |-
+                            A list of strings describing deny rules. Must be colon delimited strings of the form {type}:{source}
+                            the rules for DENYING traffic to the LB (strings in the form: 'ip:1.2.3.4' or 'cidr:1.2.0.0/16')
                           items:
                             type: string
                           type: array
                       type: object
                     type: array
                   forwardingRule:
-                    description: A list of forwarding_rule to be assigned to the Load
-                      Balancer. The forwarding_rule block is documented below.
+                    description: |-
+                      A list of forwarding_rule to be assigned to the
+                      Load Balancer. The forwarding_rule block is documented below.
                     items:
                       properties:
                         certificateId:
@@ -210,6 +219,82 @@ spec:
                           description: The unique name of the TLS certificate to be
                             used for SSL termination.
                           type: string
+                        certificateNameRef:
+                          description: Reference to a Certificate in networking to
+                            populate certificateName.
+                          properties:
+                            name:
+                              description: Name of the referenced object.
+                              type: string
+                            policy:
+                              description: Policies for referencing.
+                              properties:
+                                resolution:
+                                  default: Required
+                                  description: |-
+                                    Resolution specifies whether resolution of this reference is required.
+                                    The default is 'Required', which means the reconcile will fail if the
+                                    reference cannot be resolved. 'Optional' means this reference will be
+                                    a no-op if it cannot be resolved.
+                                  enum:
+                                  - Required
+                                  - Optional
+                                  type: string
+                                resolve:
+                                  description: |-
+                                    Resolve specifies when this reference should be resolved. The default
+                                    is 'IfNotPresent', which will attempt to resolve the reference only when
+                                    the corresponding field is not present. Use 'Always' to resolve the
+                                    reference on every reconcile.
+                                  enum:
+                                  - Always
+                                  - IfNotPresent
+                                  type: string
+                              type: object
+                          required:
+                          - name
+                          type: object
+                        certificateNameSelector:
+                          description: Selector for a Certificate in networking to
+                            populate certificateName.
+                          properties:
+                            matchControllerRef:
+                              description: |-
+                                MatchControllerRef ensures an object with the same controller reference
+                                as the selecting object is selected.
+                              type: boolean
+                            matchLabels:
+                              additionalProperties:
+                                type: string
+                              description: MatchLabels ensures an object with matching
+                                labels is selected.
+                              type: object
+                            policy:
+                              description: Policies for selection.
+                              properties:
+                                resolution:
+                                  default: Required
+                                  description: |-
+                                    Resolution specifies whether resolution of this reference is required.
+                                    The default is 'Required', which means the reconcile will fail if the
+                                    reference cannot be resolved. 'Optional' means this reference will be
+                                    a no-op if it cannot be resolved.
+                                  enum:
+                                  - Required
+                                  - Optional
+                                  type: string
+                                resolve:
+                                  description: |-
+                                    Resolve specifies when this reference should be resolved. The default
+                                    is 'IfNotPresent', which will attempt to resolve the reference only when
+                                    the corresponding field is not present. Use 'Always' to resolve the
+                                    reference on every reconcile.
+                                  enum:
+                                  - Always
+                                  - IfNotPresent
+                                  type: string
+                              type: object
+                          type: object
                         entryPort:
                           description: An integer representing the port on which the
                             Load Balancer instance will listen.
@@ -236,9 +321,9 @@ spec:
                       type: object
                     type: array
                   healthcheck:
-                    description: A healthcheck block to be assigned to the Load Balancer.
-                      The healthcheck block is documented below. Only 1 healthcheck
-                      is allowed.
+                    description: |-
+                      A healthcheck block to be assigned to the
+                      Load Balancer. The healthcheck block is documented below. Only 1 healthcheck is allowed.
                     items:
                       properties:
                         checkIntervalSeconds:
@@ -300,21 +385,21 @@ spec:
                         properties:
                           resolution:
                             default: Required
-                            description: Resolution specifies whether resolution of
-                              this reference is required. The default is 'Required',
-                              which means the reconcile will fail if the reference
-                              cannot be resolved. 'Optional' means this reference
-                              will be a no-op if it cannot be resolved.
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
                             enum:
                             - Required
                             - Optional
                             type: string
                           resolve:
-                            description: Resolve specifies when this reference should
-                              be resolved. The default is 'IfNotPresent', which will
-                              attempt to resolve the reference only when the corresponding
-                              field is not present. Use 'Always' to resolve the reference
-                              on every reconcile.
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
                             enum:
                             - Always
                             - IfNotPresent
@@ -327,8 +412,9 @@ spec:
                     description: Selector for a Project in project to populate projectId.
                     properties:
                       matchControllerRef:
-                        description: MatchControllerRef ensures an object with the
-                          same controller reference as the selecting object is selected.
+                        description: |-
+                          MatchControllerRef ensures an object with the same controller reference
+                          as the selecting object is selected.
                         type: boolean
                       matchLabels:
                         additionalProperties:
@@ -341,21 +427,21 @@ spec:
                         properties:
                           resolution:
                             default: Required
-                            description: Resolution specifies whether resolution of
-                              this reference is required. The default is 'Required',
-                              which means the reconcile will fail if the reference
-                              cannot be resolved. 'Optional' means this reference
-                              will be a no-op if it cannot be resolved.
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
                             enum:
                             - Required
                             - Optional
                             type: string
                           resolve:
-                            description: Resolve specifies when this reference should
-                              be resolved. The default is 'IfNotPresent', which will
-                              attempt to resolve the reference only when the corresponding
-                              field is not present. Use 'Always' to resolve the reference
-                              on every reconcile.
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
                             enum:
                             - Always
                             - IfNotPresent
@@ -363,9 +449,10 @@ spec:
                         type: object
                     type: object
                   redirectHttpToHttps:
-                    description: A boolean value indicating whether HTTP requests
-                      to the Load Balancer on port 80 will be redirected to HTTPS
-                      on port 443. Default value is false.
+                    description: |-
+                      A boolean value indicating whether
+                      HTTP requests to the Load Balancer on port 80 will be redirected to HTTPS on port 443.
+                      Default value is false.
                     type: boolean
                   region:
                     description: The region to start in
@@ -381,9 +468,9 @@ spec:
                       may be provided.
                     type: number
                   stickySessions:
-                    description: A sticky_sessions block to be assigned to the Load
-                      Balancer. The sticky_sessions block is documented below. Only
-                      1 sticky_sessions block is allowed.
+                    description: |-
+                      A sticky_sessions block to be assigned to the
+                      Load Balancer. The sticky_sessions block is documented below. Only 1 sticky_sessions block is allowed.
                     items:
                       properties:
                         cookieName:
@@ -405,11 +492,9 @@ spec:
                       type: object
                     type: array
                   type:
-                    description: An attribute indicating how and if requests from
-                      a client will be persistently served by the same backend Droplet.
-                      The possible values are cookies or none. If not specified, the
-                      default value is none. the type of the load balancer (GLOBAL
-                      or REGIONAL)
+                    description: |-
+                      An attribute indicating how and if requests from a client will be persistently served by the same backend Droplet. The possible values are cookies or none. If not specified, the default value is none.
+                      the type of the load balancer (GLOBAL or REGIONAL)
                     type: string
                   vpcUuid:
                     description: The ID of the VPC where the load balancer will be
@@ -426,21 +511,21 @@ spec:
                         properties:
                           resolution:
                             default: Required
-                            description: Resolution specifies whether resolution of
-                              this reference is required. The default is 'Required',
-                              which means the reconcile will fail if the reference
-                              cannot be resolved. 'Optional' means this reference
-                              will be a no-op if it cannot be resolved.
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
                             enum:
                             - Required
                             - Optional
                             type: string
                           resolve:
-                            description: Resolve specifies when this reference should
-                              be resolved. The default is 'IfNotPresent', which will
-                              attempt to resolve the reference only when the corresponding
-                              field is not present. Use 'Always' to resolve the reference
-                              on every reconcile.
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
                             enum:
                             - Always
                             - IfNotPresent
@@ -453,8 +538,9 @@ spec:
                     description: Selector for a VPC in vpc to populate vpcUuid.
                     properties:
                       matchControllerRef:
-                        description: MatchControllerRef ensures an object with the
-                          same controller reference as the selecting object is selected.
+                        description: |-
+                          MatchControllerRef ensures an object with the same controller reference
+                          as the selecting object is selected.
                         type: boolean
                       matchLabels:
                         additionalProperties:
@@ -467,21 +553,21 @@ spec:
                         properties:
                           resolution:
                             default: Required
-                            description: Resolution specifies whether resolution of
-                              this reference is required. The default is 'Required',
-                              which means the reconcile will fail if the reference
-                              cannot be resolved. 'Optional' means this reference
-                              will be a no-op if it cannot be resolved.
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
                             enum:
                             - Required
                             - Optional
                             type: string
                           resolve:
-                            description: Resolve specifies when this reference should
-                              be resolved. The default is 'IfNotPresent', which will
-                              attempt to resolve the reference only when the corresponding
-                              field is not present. Use 'Always' to resolve the reference
-                              on every reconcile.
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
                             enum:
                             - Always
                             - IfNotPresent
@@ -490,27 +576,114 @@ spec:
                     type: object
                 type: object
               initProvider:
-                description: THIS IS A BETA FIELD. It will be honored unless the Management
-                  Policies feature flag is disabled. InitProvider holds the same fields
-                  as ForProvider, with the exception of Identifier and other resource
-                  reference fields. The fields that are in InitProvider are merged
-                  into ForProvider when the resource is created. The same fields are
-                  also added to the terraform ignore_changes hook, to avoid updating
-                  them after creation. This is useful for fields that are required
-                  on creation, but we do not desire to update them after creation,
-                  for example because of an external controller is managing them,
-                  like an autoscaler.
+                description: |-
+                  THIS IS A BETA FIELD. It will be honored
+                  unless the Management Policies feature flag is disabled.
+                  InitProvider holds the same fields as ForProvider, with the exception
+                  of Identifier and other resource reference fields. The fields that are
+                  in InitProvider are merged into ForProvider when the resource is created.
+                  The same fields are also added to the terraform ignore_changes hook, to
+                  avoid updating them after creation. This is useful for fields that are
+                  required on creation, but we do not desire to update them after creation,
+                  for example because of an external controller is managing them, like an
+                  autoscaler.
                 properties:
                   algorithm:
-                    description: The load balancing algorithm used to determine which
-                      backend Droplet will be selected by a client. It must be either
-                      round_robin or least_connections. The default value is round_robin.
+                    description: |-
+                      The load balancing algorithm used to determine
+                      which backend Droplet will be selected by a client. It must be either round_robin
+                      or least_connections. The default value is round_robin.
                     type: string
                   disableLetsEncryptDnsRecords:
                     description: A boolean value indicating whether to disable automatic
                       DNS record creation for Let's Encrypt certificates that are
                       added to the load balancer. Default value is false.
                     type: boolean
+                  dropletIds:
+                    description: A list of the IDs of each droplet to be attached
+                      to the Load Balancer.
+                    items:
+                      type: number
+                    type: array
+                    x-kubernetes-list-type: set
+                  dropletIdsRefs:
+                    description: References to Droplet in droplet to populate dropletIds.
+                    items:
+                      description: A Reference to a named object.
+                      properties:
+                        name:
+                          description: Name of the referenced object.
+                          type: string
+                        policy:
+                          description: Policies for referencing.
+                          properties:
+                            resolution:
+                              default: Required
+                              description: |-
+                                Resolution specifies whether resolution of this reference is required.
+                                The default is 'Required', which means the reconcile will fail if the
+                                reference cannot be resolved. 'Optional' means this reference will be
+                                a no-op if it cannot be resolved.
+                              enum:
+                              - Required
+                              - Optional
+                              type: string
+                            resolve:
+                              description: |-
+                                Resolve specifies when this reference should be resolved. The default
+                                is 'IfNotPresent', which will attempt to resolve the reference only when
+                                the corresponding field is not present. Use 'Always' to resolve the
+                                reference on every reconcile.
+                              enum:
+                              - Always
+                              - IfNotPresent
+                              type: string
+                          type: object
+                      required:
+                      - name
+                      type: object
+                    type: array
+                  dropletIdsSelector:
+                    description: Selector for a list of Droplet in droplet to populate
+                      dropletIds.
+                    properties:
+                      matchControllerRef:
+                        description: |-
+                          MatchControllerRef ensures an object with the same controller reference
+                          as the selecting object is selected.
+                        type: boolean
+                      matchLabels:
+                        additionalProperties:
+                          type: string
+                        description: MatchLabels ensures an object with matching labels
+                          is selected.
+                        type: object
+                      policy:
+                        description: Policies for selection.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    type: object
                   dropletTag:
                     description: The name of a Droplet tag corresponding to Droplets
                       to be assigned to the Load Balancer.
@@ -521,9 +694,10 @@ spec:
                       is false.
                     type: boolean
                   enableProxyProtocol:
-                    description: A boolean value indicating whether PROXY Protocol
-                      should be used to pass information from connecting client requests
-                      to the backend service. Default value is false.
+                    description: |-
+                      A boolean value indicating whether PROXY
+                      Protocol should be used to pass information from connecting client requests to
+                      the backend service. Default value is false.
                     type: boolean
                   firewall:
                     description: A block containing rules for allowing/denying traffic
@@ -532,26 +706,25 @@ spec:
                     items:
                       properties:
                         allow:
-                          description: 'A list of strings describing allow rules.
-                            Must be colon delimited strings of the form {type}:{source}
-                            the rules for ALLOWING traffic to the LB (strings in the
-                            form: ''ip:1.2.3.4'' or ''cidr:1.2.0.0/16'')'
+                          description: |-
+                            A list of strings describing allow rules. Must be colon delimited strings of the form {type}:{source}
+                            the rules for ALLOWING traffic to the LB (strings in the form: 'ip:1.2.3.4' or 'cidr:1.2.0.0/16')
                           items:
                             type: string
                           type: array
                         deny:
-                          description: 'A list of strings describing deny rules. Must
-                            be colon delimited strings of the form {type}:{source}
-                            the rules for DENYING traffic to the LB (strings in the
-                            form: ''ip:1.2.3.4'' or ''cidr:1.2.0.0/16'')'
+                          description: |-
+                            A list of strings describing deny rules. Must be colon delimited strings of the form {type}:{source}
+                            the rules for DENYING traffic to the LB (strings in the form: 'ip:1.2.3.4' or 'cidr:1.2.0.0/16')
                           items:
                             type: string
                           type: array
                       type: object
                     type: array
                   forwardingRule:
-                    description: A list of forwarding_rule to be assigned to the Load
-                      Balancer. The forwarding_rule block is documented below.
+                    description: |-
+                      A list of forwarding_rule to be assigned to the
+                      Load Balancer. The forwarding_rule block is documented below.
                     items:
                       properties:
                         certificateId:
@@ -562,6 +735,82 @@ spec:
                           description: The unique name of the TLS certificate to be
                             used for SSL termination.
                           type: string
+                        certificateNameRef:
+                          description: Reference to a Certificate in networking to
+                            populate certificateName.
+                          properties:
+                            name:
+                              description: Name of the referenced object.
+                              type: string
+                            policy:
+                              description: Policies for referencing.
+                              properties:
+                                resolution:
+                                  default: Required
+                                  description: |-
+                                    Resolution specifies whether resolution of this reference is required.
+                                    The default is 'Required', which means the reconcile will fail if the
+                                    reference cannot be resolved. 'Optional' means this reference will be
+                                    a no-op if it cannot be resolved.
+                                  enum:
+                                  - Required
+                                  - Optional
+                                  type: string
+                                resolve:
+                                  description: |-
+                                    Resolve specifies when this reference should be resolved. The default
+                                    is 'IfNotPresent', which will attempt to resolve the reference only when
+                                    the corresponding field is not present. Use 'Always' to resolve the
+                                    reference on every reconcile.
+                                  enum:
+                                  - Always
+                                  - IfNotPresent
+                                  type: string
+                              type: object
+                          required:
+                          - name
+                          type: object
+                        certificateNameSelector:
+                          description: Selector for a Certificate in networking to
+                            populate certificateName.
+                          properties:
+                            matchControllerRef:
+                              description: |-
+                                MatchControllerRef ensures an object with the same controller reference
+                                as the selecting object is selected.
+                              type: boolean
+                            matchLabels:
+                              additionalProperties:
+                                type: string
+                              description: MatchLabels ensures an object with matching
+                                labels is selected.
+                              type: object
+                            policy:
+                              description: Policies for selection.
+                              properties:
+                                resolution:
+                                  default: Required
+                                  description: |-
+                                    Resolution specifies whether resolution of this reference is required.
+                                    The default is 'Required', which means the reconcile will fail if the
+                                    reference cannot be resolved. 'Optional' means this reference will be
+                                    a no-op if it cannot be resolved.
+                                  enum:
+                                  - Required
+                                  - Optional
+                                  type: string
+                                resolve:
+                                  description: |-
+                                    Resolve specifies when this reference should be resolved. The default
+                                    is 'IfNotPresent', which will attempt to resolve the reference only when
+                                    the corresponding field is not present. Use 'Always' to resolve the
+                                    reference on every reconcile.
+                                  enum:
+                                  - Always
+                                  - IfNotPresent
+                                  type: string
+                              type: object
+                          type: object
                         entryPort:
                           description: An integer representing the port on which the
                             Load Balancer instance will listen.
@@ -588,9 +837,9 @@ spec:
                       type: object
                     type: array
                   healthcheck:
-                    description: A healthcheck block to be assigned to the Load Balancer.
-                      The healthcheck block is documented below. Only 1 healthcheck
-                      is allowed.
+                    description: |-
+                      A healthcheck block to be assigned to the
+                      Load Balancer. The healthcheck block is documented below. Only 1 healthcheck is allowed.
                     items:
                       properties:
                         checkIntervalSeconds:
@@ -636,10 +885,90 @@ spec:
                   name:
                     description: The Load Balancer name
                     type: string
+                  projectId:
+                    description: The ID of the project that the load balancer is associated
+                      with. If no ID is provided at creation, the load balancer associates
+                      with the user's default project.
+                    type: string
+                  projectIdRef:
+                    description: Reference to a Project in project to populate projectId.
+                    properties:
+                      name:
+                        description: Name of the referenced object.
+                        type: string
+                      policy:
+                        description: Policies for referencing.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    required:
+                    - name
+                    type: object
+                  projectIdSelector:
+                    description: Selector for a Project in project to populate projectId.
+                    properties:
+                      matchControllerRef:
+                        description: |-
+                          MatchControllerRef ensures an object with the same controller reference
+                          as the selecting object is selected.
+                        type: boolean
+                      matchLabels:
+                        additionalProperties:
+                          type: string
+                        description: MatchLabels ensures an object with matching labels
+                          is selected.
+                        type: object
+                      policy:
+                        description: Policies for selection.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    type: object
                   redirectHttpToHttps:
-                    description: A boolean value indicating whether HTTP requests
-                      to the Load Balancer on port 80 will be redirected to HTTPS
-                      on port 443. Default value is false.
+                    description: |-
+                      A boolean value indicating whether
+                      HTTP requests to the Load Balancer on port 80 will be redirected to HTTPS on port 443.
+                      Default value is false.
                     type: boolean
                   region:
                     description: The region to start in
@@ -655,9 +984,9 @@ spec:
                       may be provided.
                     type: number
                   stickySessions:
-                    description: A sticky_sessions block to be assigned to the Load
-                      Balancer. The sticky_sessions block is documented below. Only
-                      1 sticky_sessions block is allowed.
+                    description: |-
+                      A sticky_sessions block to be assigned to the
+                      Load Balancer. The sticky_sessions block is documented below. Only 1 sticky_sessions block is allowed.
                     items:
                       properties:
                         cookieName:
@@ -679,29 +1008,107 @@ spec:
                       type: object
                     type: array
                   type:
-                    description: An attribute indicating how and if requests from
-                      a client will be persistently served by the same backend Droplet.
-                      The possible values are cookies or none. If not specified, the
-                      default value is none. the type of the load balancer (GLOBAL
-                      or REGIONAL)
+                    description: |-
+                      An attribute indicating how and if requests from a client will be persistently served by the same backend Droplet. The possible values are cookies or none. If not specified, the default value is none.
+                      the type of the load balancer (GLOBAL or REGIONAL)
                     type: string
+                  vpcUuid:
+                    description: The ID of the VPC where the load balancer will be
+                      located.
+                    type: string
+                  vpcUuidRef:
+                    description: Reference to a VPC in vpc to populate vpcUuid.
+                    properties:
+                      name:
+                        description: Name of the referenced object.
+                        type: string
+                      policy:
+                        description: Policies for referencing.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    required:
+                    - name
+                    type: object
+                  vpcUuidSelector:
+                    description: Selector for a VPC in vpc to populate vpcUuid.
+                    properties:
+                      matchControllerRef:
+                        description: |-
+                          MatchControllerRef ensures an object with the same controller reference
+                          as the selecting object is selected.
+                        type: boolean
+                      matchLabels:
+                        additionalProperties:
+                          type: string
+                        description: MatchLabels ensures an object with matching labels
+                          is selected.
+                        type: object
+                      policy:
+                        description: Policies for selection.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    type: object
                 type: object
               managementPolicies:
                 default:
                 - '*'
-                description: 'THIS IS A BETA FIELD. It is on by default but can be
-                  opted out through a Crossplane feature flag. ManagementPolicies
-                  specify the array of actions Crossplane is allowed to take on the
-                  managed and external resources. This field is planned to replace
-                  the DeletionPolicy field in a future release. Currently, both could
-                  be set independently and non-default values would be honored if
-                  the feature flag is enabled. If both are custom, the DeletionPolicy
-                  field will be ignored. See the design doc for more information:
-                  https://github.com/crossplane/crossplane/blob/499895a25d1a1a0ba1604944ef98ac7a1a71f197/design/design-doc-observe-only-resources.md?plain=1#L223
-                  and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md'
+                description: |-
+                  THIS IS A BETA FIELD. It is on by default but can be opted out
+                  through a Crossplane feature flag.
+                  ManagementPolicies specify the array of actions Crossplane is allowed to
+                  take on the managed and external resources.
+                  This field is planned to replace the DeletionPolicy field in a future
+                  release. Currently, both could be set independently and non-default
+                  values would be honored if the feature flag is enabled. If both are
+                  custom, the DeletionPolicy field will be ignored.
+                  See the design doc for more information: https://github.com/crossplane/crossplane/blob/499895a25d1a1a0ba1604944ef98ac7a1a71f197/design/design-doc-observe-only-resources.md?plain=1#L223
+                  and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
                 items:
-                  description: A ManagementAction represents an action that the Crossplane
-                    controllers can take on an external resource.
+                  description: |-
+                    A ManagementAction represents an action that the Crossplane controllers
+                    can take on an external resource.
                   enum:
                   - Observe
                   - Create
@@ -714,9 +1121,10 @@ spec:
               providerConfigRef:
                 default:
                   name: default
-                description: ProviderConfigReference specifies how the provider that
-                  will be used to create, observe, update, and delete this managed
-                  resource should be configured.
+                description: |-
+                  ProviderConfigReference specifies how the provider that will be used to
+                  create, observe, update, and delete this managed resource should be
+                  configured.
                 properties:
                   name:
                     description: Name of the referenced object.
@@ -726,21 +1134,21 @@ spec:
                     properties:
                       resolution:
                         default: Required
-                        description: Resolution specifies whether resolution of this
-                          reference is required. The default is 'Required', which
-                          means the reconcile will fail if the reference cannot be
-                          resolved. 'Optional' means this reference will be a no-op
-                          if it cannot be resolved.
+                        description: |-
+                          Resolution specifies whether resolution of this reference is required.
+                          The default is 'Required', which means the reconcile will fail if the
+                          reference cannot be resolved. 'Optional' means this reference will be
+                          a no-op if it cannot be resolved.
                         enum:
                         - Required
                         - Optional
                         type: string
                       resolve:
-                        description: Resolve specifies when this reference should
-                          be resolved. The default is 'IfNotPresent', which will attempt
-                          to resolve the reference only when the corresponding field
-                          is not present. Use 'Always' to resolve the reference on
-                          every reconcile.
+                        description: |-
+                          Resolve specifies when this reference should be resolved. The default
+                          is 'IfNotPresent', which will attempt to resolve the reference only when
+                          the corresponding field is not present. Use 'Always' to resolve the
+                          reference on every reconcile.
                         enum:
                         - Always
                         - IfNotPresent
@@ -750,17 +1158,19 @@ spec:
                 - name
                 type: object
               publishConnectionDetailsTo:
-                description: PublishConnectionDetailsTo specifies the connection secret
-                  config which contains a name, metadata and a reference to secret
-                  store config to which any connection details for this managed resource
-                  should be written. Connection details frequently include the endpoint,
-                  username, and password required to connect to the managed resource.
+                description: |-
+                  PublishConnectionDetailsTo specifies the connection secret config which
+                  contains a name, metadata and a reference to secret store config to
+                  which any connection details for this managed resource should be written.
+                  Connection details frequently include the endpoint, username,
+                  and password required to connect to the managed resource.
                 properties:
                   configRef:
                     default:
                       name: default
-                    description: SecretStoreConfigRef specifies which secret store
-                      config should be used for this ConnectionSecret.
+                    description: |-
+                      SecretStoreConfigRef specifies which secret store config should be used
+                      for this ConnectionSecret.
                     properties:
                       name:
                         description: Name of the referenced object.
@@ -770,21 +1180,21 @@ spec:
                         properties:
                           resolution:
                             default: Required
-                            description: Resolution specifies whether resolution of
-                              this reference is required. The default is 'Required',
-                              which means the reconcile will fail if the reference
-                              cannot be resolved. 'Optional' means this reference
-                              will be a no-op if it cannot be resolved.
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
                             enum:
                             - Required
                             - Optional
                             type: string
                           resolve:
-                            description: Resolve specifies when this reference should
-                              be resolved. The default is 'IfNotPresent', which will
-                              attempt to resolve the reference only when the corresponding
-                              field is not present. Use 'Always' to resolve the reference
-                              on every reconcile.
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
                             enum:
                             - Always
                             - IfNotPresent
@@ -799,21 +1209,22 @@ spec:
                       annotations:
                         additionalProperties:
                           type: string
-                        description: Annotations are the annotations to be added to
-                          connection secret. - For Kubernetes secrets, this will be
-                          used as "metadata.annotations". - It is up to Secret Store
-                          implementation for others store types.
+                        description: |-
+                          Annotations are the annotations to be added to connection secret.
+                          - For Kubernetes secrets, this will be used as "metadata.annotations".
+                          - It is up to Secret Store implementation for others store types.
                         type: object
                       labels:
                         additionalProperties:
                           type: string
-                        description: Labels are the labels/tags to be added to connection
-                          secret. - For Kubernetes secrets, this will be used as "metadata.labels".
-                          - It is up to Secret Store implementation for others store
-                          types.
+                        description: |-
+                          Labels are the labels/tags to be added to connection secret.
+                          - For Kubernetes secrets, this will be used as "metadata.labels".
+                          - It is up to Secret Store implementation for others store types.
                         type: object
                       type:
-                        description: Type is the SecretType for the connection secret.
+                        description: |-
+                          Type is the SecretType for the connection secret.
                           - Only valid for Kubernetes Secret Stores.
                         type: string
                     type: object
@@ -824,14 +1235,15 @@ spec:
                 - name
                 type: object
               writeConnectionSecretToRef:
-                description: WriteConnectionSecretToReference specifies the namespace
-                  and name of a Secret to which any connection details for this managed
-                  resource should be written. Connection details frequently include
-                  the endpoint, username, and password required to connect to the
-                  managed resource. This field is planned to be replaced in a future
-                  release in favor of PublishConnectionDetailsTo. Currently, both
-                  could be set independently and connection details would be published
-                  to both without affecting each other.
+                description: |-
+                  WriteConnectionSecretToReference specifies the namespace and name of a
+                  Secret to which any connection details for this managed resource should
+                  be written. Connection details frequently include the endpoint, username,
+                  and password required to connect to the managed resource.
+                  This field is planned to be replaced in a future release in favor of
+                  PublishConnectionDetailsTo. Currently, both could be set independently
+                  and connection details would be published to both without affecting
+                  each other.
                 properties:
                   name:
                     description: Name of the secret.
@@ -861,9 +1273,10 @@ spec:
               atProvider:
                 properties:
                   algorithm:
-                    description: The load balancing algorithm used to determine which
-                      backend Droplet will be selected by a client. It must be either
-                      round_robin or least_connections. The default value is round_robin.
+                    description: |-
+                      The load balancing algorithm used to determine
+                      which backend Droplet will be selected by a client. It must be either round_robin
+                      or least_connections. The default value is round_robin.
                     type: string
                   disableLetsEncryptDnsRecords:
                     description: A boolean value indicating whether to disable automatic
@@ -876,6 +1289,7 @@ spec:
                     items:
                       type: number
                     type: array
+                    x-kubernetes-list-type: set
                   dropletTag:
                     description: The name of a Droplet tag corresponding to Droplets
                       to be assigned to the Load Balancer.
@@ -886,9 +1300,10 @@ spec:
                       is false.
                     type: boolean
                   enableProxyProtocol:
-                    description: A boolean value indicating whether PROXY Protocol
-                      should be used to pass information from connecting client requests
-                      to the backend service. Default value is false.
+                    description: |-
+                      A boolean value indicating whether PROXY
+                      Protocol should be used to pass information from connecting client requests to
+                      the backend service. Default value is false.
                     type: boolean
                   firewall:
                     description: A block containing rules for allowing/denying traffic
@@ -897,26 +1312,25 @@ spec:
                     items:
                       properties:
                         allow:
-                          description: 'A list of strings describing allow rules.
-                            Must be colon delimited strings of the form {type}:{source}
-                            the rules for ALLOWING traffic to the LB (strings in the
-                            form: ''ip:1.2.3.4'' or ''cidr:1.2.0.0/16'')'
+                          description: |-
+                            A list of strings describing allow rules. Must be colon delimited strings of the form {type}:{source}
+                            the rules for ALLOWING traffic to the LB (strings in the form: 'ip:1.2.3.4' or 'cidr:1.2.0.0/16')
                           items:
                             type: string
                           type: array
                         deny:
-                          description: 'A list of strings describing deny rules. Must
-                            be colon delimited strings of the form {type}:{source}
-                            the rules for DENYING traffic to the LB (strings in the
-                            form: ''ip:1.2.3.4'' or ''cidr:1.2.0.0/16'')'
+                          description: |-
+                            A list of strings describing deny rules. Must be colon delimited strings of the form {type}:{source}
+                            the rules for DENYING traffic to the LB (strings in the form: 'ip:1.2.3.4' or 'cidr:1.2.0.0/16')
                           items:
                             type: string
                           type: array
                       type: object
                     type: array
                   forwardingRule:
-                    description: A list of forwarding_rule to be assigned to the Load
-                      Balancer. The forwarding_rule block is documented below.
+                    description: |-
+                      A list of forwarding_rule to be assigned to the
+                      Load Balancer. The forwarding_rule block is documented below.
                     items:
                       properties:
                         certificateId:
@@ -953,9 +1367,9 @@ spec:
                       type: object
                     type: array
                   healthcheck:
-                    description: A healthcheck block to be assigned to the Load Balancer.
-                      The healthcheck block is documented below. Only 1 healthcheck
-                      is allowed.
+                    description: |-
+                      A healthcheck block to be assigned to the
+                      Load Balancer. The healthcheck block is documented below. Only 1 healthcheck is allowed.
                     items:
                       properties:
                         checkIntervalSeconds:
@@ -1013,9 +1427,10 @@ spec:
                       with the user's default project.
                     type: string
                   redirectHttpToHttps:
-                    description: A boolean value indicating whether HTTP requests
-                      to the Load Balancer on port 80 will be redirected to HTTPS
-                      on port 443. Default value is false.
+                    description: |-
+                      A boolean value indicating whether
+                      HTTP requests to the Load Balancer on port 80 will be redirected to HTTPS on port 443.
+                      Default value is false.
                     type: boolean
                   region:
                     description: The region to start in
@@ -1033,9 +1448,9 @@ spec:
                   status:
                     type: string
                   stickySessions:
-                    description: A sticky_sessions block to be assigned to the Load
-                      Balancer. The sticky_sessions block is documented below. Only
-                      1 sticky_sessions block is allowed.
+                    description: |-
+                      A sticky_sessions block to be assigned to the
+                      Load Balancer. The sticky_sessions block is documented below. Only 1 sticky_sessions block is allowed.
                     items:
                       properties:
                         cookieName:
@@ -1057,15 +1472,14 @@ spec:
                       type: object
                     type: array
                   type:
-                    description: An attribute indicating how and if requests from
-                      a client will be persistently served by the same backend Droplet.
-                      The possible values are cookies or none. If not specified, the
-                      default value is none. the type of the load balancer (GLOBAL
-                      or REGIONAL)
+                    description: |-
+                      An attribute indicating how and if requests from a client will be persistently served by the same backend Droplet. The possible values are cookies or none. If not specified, the default value is none.
+                      the type of the load balancer (GLOBAL or REGIONAL)
                     type: string
                   urn:
-                    description: The uniform resource name for the Load Balancer the
-                      uniform resource name for the load balancer
+                    description: |-
+                      The uniform resource name for the Load Balancer
+                      the uniform resource name for the load balancer
                     type: string
                   vpcUuid:
                     description: The ID of the VPC where the load balancer will be
@@ -1078,14 +1492,23 @@ spec:
                   description: A Condition that may apply to a resource.
                   properties:
                     lastTransitionTime:
-                      description: LastTransitionTime is the last time this condition
-                        transitioned from one status to another.
+                      description: |-
+                        LastTransitionTime is the last time this condition transitioned from one
+                        status to another.
                       format: date-time
                       type: string
                     message:
-                      description: A Message containing details about this condition's
-                        last transition from one status to another, if any.
+                      description: |-
+                        A Message containing details about this condition's last transition from
+                        one status to another, if any.
                       type: string
+                    observedGeneration:
+                      description: |-
+                        ObservedGeneration represents the .metadata.generation that the condition was set based upon.
+                        For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+                        with respect to the current state of the instance.
+                      format: int64
+                      type: integer
                     reason:
                       description: A Reason for this condition's last transition from
                         one status to another.
@@ -1095,8 +1518,9 @@ spec:
                         False, or Unknown?
                       type: string
                     type:
-                      description: Type of this condition. At most one of each condition
-                        type may apply to a resource at any point in time.
+                      description: |-
+                        Type of this condition. At most one of each condition type may apply to
+                        a resource at any point in time.
                       type: string
                   required:
                   - lastTransitionTime
@@ -1108,6 +1532,13 @@ spec:
                 x-kubernetes-list-map-keys:
                 - type
                 x-kubernetes-list-type: map
+              observedGeneration:
+                description: |-
+                  ObservedGeneration is the latest metadata.generation
+                  which resulted in either a ready state, or stalled due to error
+                  it can not recover from without human intervention.
+                format: int64
+                type: integer
             type: object
         required:
         - spec

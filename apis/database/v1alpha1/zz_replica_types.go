@@ -1,7 +1,3 @@
-// SPDX-FileCopyrightText: 2023 The Crossplane Authors <https://crossplane.io>
-//
-// SPDX-License-Identifier: Apache-2.0
-
 /*
 Copyright 2022 Upbound Inc.
 */
@@ -19,8 +15,32 @@ import (
 
 type ReplicaInitParameters struct {
 
+	// The ID of the original source database cluster.
+	// +crossplane:generate:reference:type=Cluster
+	ClusterID *string `json:"clusterId,omitempty" tf:"cluster_id,omitempty"`
+
+	// Reference to a Cluster to populate clusterId.
+	// +kubebuilder:validation:Optional
+	ClusterIDRef *v1.Reference `json:"clusterIdRef,omitempty" tf:"-"`
+
+	// Selector for a Cluster to populate clusterId.
+	// +kubebuilder:validation:Optional
+	ClusterIDSelector *v1.Selector `json:"clusterIdSelector,omitempty" tf:"-"`
+
 	// The name for the database replica.
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
+
+	// The ID of the VPC where the database replica will be located.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/vpc/v1alpha1.VPC
+	PrivateNetworkUUID *string `json:"privateNetworkUuid,omitempty" tf:"private_network_uuid,omitempty"`
+
+	// Reference to a VPC in vpc to populate privateNetworkUuid.
+	// +kubebuilder:validation:Optional
+	PrivateNetworkUUIDRef *v1.Reference `json:"privateNetworkUuidRef,omitempty" tf:"-"`
+
+	// Selector for a VPC in vpc to populate privateNetworkUuid.
+	// +kubebuilder:validation:Optional
+	PrivateNetworkUUIDSelector *v1.Selector `json:"privateNetworkUuidSelector,omitempty" tf:"-"`
 
 	// DigitalOcean region where the replica will reside.
 	Region *string `json:"region,omitempty" tf:"region,omitempty"`
@@ -31,6 +51,7 @@ type ReplicaInitParameters struct {
 	StorageSizeMib *string `json:"storageSizeMib,omitempty" tf:"storage_size_mib,omitempty"`
 
 	// A list of tag names to be applied to the database replica.
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 }
 
@@ -68,6 +89,7 @@ type ReplicaObservation struct {
 	StorageSizeMib *string `json:"storageSizeMib,omitempty" tf:"storage_size_mib,omitempty"`
 
 	// A list of tag names to be applied to the database replica.
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
 	// The UUID of the database replica. The uuid can be used to reference the database replica as the target database cluster in other resources. See example  "Create firewall rule for database replica" above.
@@ -123,6 +145,7 @@ type ReplicaParameters struct {
 
 	// A list of tag names to be applied to the database replica.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 }
 
@@ -150,13 +173,14 @@ type ReplicaStatus struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+// +kubebuilder:storageversion
 
 // Replica is the Schema for the Replicas API.
-// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
+// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
-// +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,do}
 type Replica struct {
 	metav1.TypeMeta   `json:",inline"`

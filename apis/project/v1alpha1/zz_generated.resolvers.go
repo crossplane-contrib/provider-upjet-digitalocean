@@ -35,5 +35,21 @@ func (mg *Resources) ResolveReferences(ctx context.Context, c client.Reader) err
 	mg.Spec.ForProvider.Project = reference.ToPtrValue(rsp.ResolvedValue)
 	mg.Spec.ForProvider.ProjectRef = rsp.ResolvedReference
 
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.Project),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.ProjectRef,
+		Selector:     mg.Spec.InitProvider.ProjectSelector,
+		To: reference.To{
+			List:    &ProjectList{},
+			Managed: &Project{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.Project")
+	}
+	mg.Spec.InitProvider.Project = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.ProjectRef = rsp.ResolvedReference
+
 	return nil
 }

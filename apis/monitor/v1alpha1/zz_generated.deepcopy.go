@@ -65,6 +65,29 @@ func (in *AlertInitParameters) DeepCopyInto(out *AlertInitParameters) {
 		*out = new(bool)
 		**out = **in
 	}
+	if in.Entities != nil {
+		in, out := &in.Entities, &out.Entities
+		*out = make([]*string, len(*in))
+		for i := range *in {
+			if (*in)[i] != nil {
+				in, out := &(*in)[i], &(*out)[i]
+				*out = new(string)
+				**out = **in
+			}
+		}
+	}
+	if in.EntitiesRefs != nil {
+		in, out := &in.EntitiesRefs, &out.EntitiesRefs
+		*out = make([]v1.Reference, len(*in))
+		for i := range *in {
+			(*in)[i].DeepCopyInto(&(*out)[i])
+		}
+	}
+	if in.EntitiesSelector != nil {
+		in, out := &in.EntitiesSelector, &out.EntitiesSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
+	}
 	if in.Tags != nil {
 		in, out := &in.Tags, &out.Tags
 		*out = make([]*string, len(*in))

@@ -1,7 +1,3 @@
-// SPDX-FileCopyrightText: 2023 The Crossplane Authors <https://crossplane.io>
-//
-// SPDX-License-Identifier: Apache-2.0
-
 /*
 Copyright 2022 Upbound Inc.
 */
@@ -24,12 +20,31 @@ type CertificateInitParameters struct {
 	// certificate. Only valid when type is custom.
 	CertificateChain *string `json:"certificateChain,omitempty" tf:"certificate_chain,omitempty"`
 
+	// List of fully qualified domain names (FQDNs) for
+	// which the certificate will be issued. The domains must be managed using
+	// DigitalOcean's DNS. Only valid when type is lets_encrypt.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/dns/v1alpha1.Domain
+	// +crossplane:generate:reference:selectorFieldName=ID
+	// +listType=set
+	Domains []*string `json:"domains,omitempty" tf:"domains,omitempty"`
+
+	// References to Domain in dns to populate domains.
+	// +kubebuilder:validation:Optional
+	DomainsRefs []v1.Reference `json:"domainsRefs,omitempty" tf:"-"`
+
+	// The unique name of the certificate
+	ID *v1.Selector `json:"id,omitempty" tf:"-"`
+
 	// The contents of a PEM-formatted public
 	// TLS certificate. Only valid when type is custom.
 	LeafCertificate *string `json:"leafCertificate,omitempty" tf:"leaf_certificate,omitempty"`
 
 	// The name of the certificate for identification.
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
+
+	// The contents of a PEM-formatted private-key
+	// corresponding to the SSL certificate. Only valid when type is custom.
+	PrivateKeySecretRef *v1.SecretKeySelector `json:"privateKeySecretRef,omitempty" tf:"-"`
 
 	// The type of certificate to provision. Can be either
 	// custom or lets_encrypt. Defaults to custom.
@@ -46,6 +61,7 @@ type CertificateObservation struct {
 	// List of fully qualified domain names (FQDNs) for
 	// which the certificate will be issued. The domains must be managed using
 	// DigitalOcean's DNS. Only valid when type is lets_encrypt.
+	// +listType=set
 	Domains []*string `json:"domains,omitempty" tf:"domains,omitempty"`
 
 	// The unique name of the certificate
@@ -88,6 +104,7 @@ type CertificateParameters struct {
 	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/dns/v1alpha1.Domain
 	// +crossplane:generate:reference:selectorFieldName=ID
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	Domains []*string `json:"domains,omitempty" tf:"domains,omitempty"`
 
 	// References to Domain in dns to populate domains.
@@ -142,13 +159,14 @@ type CertificateStatus struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+// +kubebuilder:storageversion
 
 // Certificate is the Schema for the Certificates API.
-// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
+// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
-// +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,do}
 type Certificate struct {
 	metav1.TypeMeta   `json:",inline"`

@@ -36,5 +36,21 @@ func (mg *Alert) ResolveReferences(ctx context.Context, c client.Reader) error {
 	mg.Spec.ForProvider.Entities = reference.ToPtrValues(mrsp.ResolvedValues)
 	mg.Spec.ForProvider.EntitiesRefs = mrsp.ResolvedReferences
 
+	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
+		CurrentValues: reference.FromPtrValues(mg.Spec.InitProvider.Entities),
+		Extract:       reference.ExternalName(),
+		References:    mg.Spec.InitProvider.EntitiesRefs,
+		Selector:      mg.Spec.InitProvider.EntitiesSelector,
+		To: reference.To{
+			List:    &v1alpha1.DropletList{},
+			Managed: &v1alpha1.Droplet{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.Entities")
+	}
+	mg.Spec.InitProvider.Entities = reference.ToPtrValues(mrsp.ResolvedValues)
+	mg.Spec.InitProvider.EntitiesRefs = mrsp.ResolvedReferences
+
 	return nil
 }

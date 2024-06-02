@@ -1,7 +1,3 @@
-// SPDX-FileCopyrightText: 2023 The Crossplane Authors <https://crossplane.io>
-//
-// SPDX-License-Identifier: Apache-2.0
-
 /*
 Copyright 2022 Upbound Inc.
 */
@@ -95,6 +91,18 @@ type AllowOriginsParameters struct {
 }
 
 type AppInitParameters struct {
+
+	// The ID of the project that the app is assigned to.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/project/v1alpha1.Project
+	ProjectID *string `json:"projectId,omitempty" tf:"project_id,omitempty"`
+
+	// Reference to a Project in project to populate projectId.
+	// +kubebuilder:validation:Optional
+	ProjectIDRef *v1.Reference `json:"projectIdRef,omitempty" tf:"-"`
+
+	// Selector for a Project in project to populate projectId.
+	// +kubebuilder:validation:Optional
+	ProjectIDSelector *v1.Selector `json:"projectIdSelector,omitempty" tf:"-"`
 
 	// A DigitalOcean App spec describing the app.
 	// A DigitalOcean App Platform Spec
@@ -253,10 +261,12 @@ type CorsInitParameters struct {
 
 	// The set of allowed HTTP request headers. This configures the Access-Control-Allow-Headers header.
 	// The set of allowed HTTP request headers. This configures the Access-Control-Allow-Headers header.
+	// +listType=set
 	AllowHeaders []*string `json:"allowHeaders,omitempty" tf:"allow_headers,omitempty"`
 
 	// The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.
 	// The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.
+	// +listType=set
 	AllowMethods []*string `json:"allowMethods,omitempty" tf:"allow_methods,omitempty"`
 
 	// The Access-Control-Allow-Origin can be
@@ -265,6 +275,7 @@ type CorsInitParameters struct {
 
 	// The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.
 	// The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.
+	// +listType=set
 	ExposeHeaders []*string `json:"exposeHeaders,omitempty" tf:"expose_headers,omitempty"`
 
 	// An optional duration specifying how long browsers can cache the results of a preflight request. This configures the Access-Control-Max-Age header. Example: 5h30m.
@@ -280,10 +291,12 @@ type CorsObservation struct {
 
 	// The set of allowed HTTP request headers. This configures the Access-Control-Allow-Headers header.
 	// The set of allowed HTTP request headers. This configures the Access-Control-Allow-Headers header.
+	// +listType=set
 	AllowHeaders []*string `json:"allowHeaders,omitempty" tf:"allow_headers,omitempty"`
 
 	// The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.
 	// The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.
+	// +listType=set
 	AllowMethods []*string `json:"allowMethods,omitempty" tf:"allow_methods,omitempty"`
 
 	// The Access-Control-Allow-Origin can be
@@ -292,6 +305,7 @@ type CorsObservation struct {
 
 	// The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.
 	// The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.
+	// +listType=set
 	ExposeHeaders []*string `json:"exposeHeaders,omitempty" tf:"expose_headers,omitempty"`
 
 	// An optional duration specifying how long browsers can cache the results of a preflight request. This configures the Access-Control-Max-Age header. Example: 5h30m.
@@ -309,11 +323,13 @@ type CorsParameters struct {
 	// The set of allowed HTTP request headers. This configures the Access-Control-Allow-Headers header.
 	// The set of allowed HTTP request headers. This configures the Access-Control-Allow-Headers header.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	AllowHeaders []*string `json:"allowHeaders,omitempty" tf:"allow_headers,omitempty"`
 
 	// The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.
 	// The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	AllowMethods []*string `json:"allowMethods,omitempty" tf:"allow_methods,omitempty"`
 
 	// The Access-Control-Allow-Origin can be
@@ -324,6 +340,7 @@ type CorsParameters struct {
 	// The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.
 	// The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	ExposeHeaders []*string `json:"exposeHeaders,omitempty" tf:"expose_headers,omitempty"`
 
 	// An optional duration specifying how long browsers can cache the results of a preflight request. This configures the Access-Control-Max-Age header. Example: 5h30m.
@@ -563,6 +580,10 @@ type EnvInitParameters struct {
 	// The domain type, which can be one of the following:
 	// The type of the environment variable.
 	Type *string `json:"type,omitempty" tf:"type,omitempty"`
+
+	// The value of the environment variable.
+	// The value of the environment variable.
+	ValueSecretRef *v1.SecretKeySelector `json:"valueSecretRef,omitempty" tf:"-"`
 }
 
 type EnvObservation struct {
@@ -675,6 +696,10 @@ type FunctionEnvInitParameters struct {
 	// The domain type, which can be one of the following:
 	// The type of the environment variable.
 	Type *string `json:"type,omitempty" tf:"type,omitempty"`
+
+	// The value of the environment variable.
+	// The value of the environment variable.
+	ValueSecretRef *v1.SecretKeySelector `json:"valueSecretRef,omitempty" tf:"-"`
 }
 
 type FunctionEnvObservation struct {
@@ -1254,6 +1279,10 @@ type JobEnvInitParameters struct {
 	// The domain type, which can be one of the following:
 	// The type of the environment variable.
 	Type *string `json:"type,omitempty" tf:"type,omitempty"`
+
+	// The value of the environment variable.
+	// The value of the environment variable.
+	ValueSecretRef *v1.SecretKeySelector `json:"valueSecretRef,omitempty" tf:"-"`
 }
 
 type JobEnvObservation struct {
@@ -2012,10 +2041,12 @@ type RuleCorsInitParameters struct {
 
 	// The set of allowed HTTP request headers. This configures the Access-Control-Allow-Headers header.
 	// The set of allowed HTTP request headers. This configures the Access-Control-Allow-Headers header.
+	// +listType=set
 	AllowHeaders []*string `json:"allowHeaders,omitempty" tf:"allow_headers,omitempty"`
 
 	// The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.
 	// The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.
+	// +listType=set
 	AllowMethods []*string `json:"allowMethods,omitempty" tf:"allow_methods,omitempty"`
 
 	// The Access-Control-Allow-Origin can be
@@ -2024,6 +2055,7 @@ type RuleCorsInitParameters struct {
 
 	// The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.
 	// The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.
+	// +listType=set
 	ExposeHeaders []*string `json:"exposeHeaders,omitempty" tf:"expose_headers,omitempty"`
 
 	// An optional duration specifying how long browsers can cache the results of a preflight request. This configures the Access-Control-Max-Age header. Example: 5h30m.
@@ -2039,10 +2071,12 @@ type RuleCorsObservation struct {
 
 	// The set of allowed HTTP request headers. This configures the Access-Control-Allow-Headers header.
 	// The set of allowed HTTP request headers. This configures the Access-Control-Allow-Headers header.
+	// +listType=set
 	AllowHeaders []*string `json:"allowHeaders,omitempty" tf:"allow_headers,omitempty"`
 
 	// The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.
 	// The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.
+	// +listType=set
 	AllowMethods []*string `json:"allowMethods,omitempty" tf:"allow_methods,omitempty"`
 
 	// The Access-Control-Allow-Origin can be
@@ -2051,6 +2085,7 @@ type RuleCorsObservation struct {
 
 	// The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.
 	// The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.
+	// +listType=set
 	ExposeHeaders []*string `json:"exposeHeaders,omitempty" tf:"expose_headers,omitempty"`
 
 	// An optional duration specifying how long browsers can cache the results of a preflight request. This configures the Access-Control-Max-Age header. Example: 5h30m.
@@ -2068,11 +2103,13 @@ type RuleCorsParameters struct {
 	// The set of allowed HTTP request headers. This configures the Access-Control-Allow-Headers header.
 	// The set of allowed HTTP request headers. This configures the Access-Control-Allow-Headers header.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	AllowHeaders []*string `json:"allowHeaders,omitempty" tf:"allow_headers,omitempty"`
 
 	// The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.
 	// The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	AllowMethods []*string `json:"allowMethods,omitempty" tf:"allow_methods,omitempty"`
 
 	// The Access-Control-Allow-Origin can be
@@ -2083,6 +2120,7 @@ type RuleCorsParameters struct {
 	// The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.
 	// The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	ExposeHeaders []*string `json:"exposeHeaders,omitempty" tf:"expose_headers,omitempty"`
 
 	// An optional duration specifying how long browsers can cache the results of a preflight request. This configures the Access-Control-Max-Age header. Example: 5h30m.
@@ -2255,10 +2293,12 @@ type ServiceCorsInitParameters struct {
 
 	// The set of allowed HTTP request headers. This configures the Access-Control-Allow-Headers header.
 	// The set of allowed HTTP request headers. This configures the Access-Control-Allow-Headers header.
+	// +listType=set
 	AllowHeaders []*string `json:"allowHeaders,omitempty" tf:"allow_headers,omitempty"`
 
 	// The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.
 	// The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.
+	// +listType=set
 	AllowMethods []*string `json:"allowMethods,omitempty" tf:"allow_methods,omitempty"`
 
 	// The Access-Control-Allow-Origin can be
@@ -2267,6 +2307,7 @@ type ServiceCorsInitParameters struct {
 
 	// The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.
 	// The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.
+	// +listType=set
 	ExposeHeaders []*string `json:"exposeHeaders,omitempty" tf:"expose_headers,omitempty"`
 
 	// An optional duration specifying how long browsers can cache the results of a preflight request. This configures the Access-Control-Max-Age header. Example: 5h30m.
@@ -2282,10 +2323,12 @@ type ServiceCorsObservation struct {
 
 	// The set of allowed HTTP request headers. This configures the Access-Control-Allow-Headers header.
 	// The set of allowed HTTP request headers. This configures the Access-Control-Allow-Headers header.
+	// +listType=set
 	AllowHeaders []*string `json:"allowHeaders,omitempty" tf:"allow_headers,omitempty"`
 
 	// The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.
 	// The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.
+	// +listType=set
 	AllowMethods []*string `json:"allowMethods,omitempty" tf:"allow_methods,omitempty"`
 
 	// The Access-Control-Allow-Origin can be
@@ -2294,6 +2337,7 @@ type ServiceCorsObservation struct {
 
 	// The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.
 	// The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.
+	// +listType=set
 	ExposeHeaders []*string `json:"exposeHeaders,omitempty" tf:"expose_headers,omitempty"`
 
 	// An optional duration specifying how long browsers can cache the results of a preflight request. This configures the Access-Control-Max-Age header. Example: 5h30m.
@@ -2311,11 +2355,13 @@ type ServiceCorsParameters struct {
 	// The set of allowed HTTP request headers. This configures the Access-Control-Allow-Headers header.
 	// The set of allowed HTTP request headers. This configures the Access-Control-Allow-Headers header.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	AllowHeaders []*string `json:"allowHeaders,omitempty" tf:"allow_headers,omitempty"`
 
 	// The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.
 	// The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	AllowMethods []*string `json:"allowMethods,omitempty" tf:"allow_methods,omitempty"`
 
 	// The Access-Control-Allow-Origin can be
@@ -2326,6 +2372,7 @@ type ServiceCorsParameters struct {
 	// The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.
 	// The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	ExposeHeaders []*string `json:"exposeHeaders,omitempty" tf:"expose_headers,omitempty"`
 
 	// An optional duration specifying how long browsers can cache the results of a preflight request. This configures the Access-Control-Max-Age header. Example: 5h30m.
@@ -2347,6 +2394,10 @@ type ServiceEnvInitParameters struct {
 	// The domain type, which can be one of the following:
 	// The type of the environment variable.
 	Type *string `json:"type,omitempty" tf:"type,omitempty"`
+
+	// The value of the environment variable.
+	// The value of the environment variable.
+	ValueSecretRef *v1.SecretKeySelector `json:"valueSecretRef,omitempty" tf:"-"`
 }
 
 type ServiceEnvObservation struct {
@@ -2644,6 +2695,7 @@ type ServiceInitParameters struct {
 	InstanceSizeSlug *string `json:"instanceSizeSlug,omitempty" tf:"instance_size_slug,omitempty"`
 
 	// A list of ports on which this service will listen for internal traffic.
+	// +listType=set
 	InternalPorts []*float64 `json:"internalPorts,omitempty" tf:"internal_ports,omitempty"`
 
 	// Describes a log forwarding destination.
@@ -2858,6 +2910,7 @@ type ServiceObservation struct {
 	InstanceSizeSlug *string `json:"instanceSizeSlug,omitempty" tf:"instance_size_slug,omitempty"`
 
 	// A list of ports on which this service will listen for internal traffic.
+	// +listType=set
 	InternalPorts []*float64 `json:"internalPorts,omitempty" tf:"internal_ports,omitempty"`
 
 	// Describes a log forwarding destination.
@@ -2947,6 +3000,7 @@ type ServiceParameters struct {
 
 	// A list of ports on which this service will listen for internal traffic.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	InternalPorts []*float64 `json:"internalPorts,omitempty" tf:"internal_ports,omitempty"`
 
 	// Describes a log forwarding destination.
@@ -3019,6 +3073,7 @@ type SpecInitParameters struct {
 	// Describes a domain where the application will be made available.
 	Domain []DomainInitParameters `json:"domain,omitempty" tf:"domain,omitempty"`
 
+	// +listType=set
 	Domains []*string `json:"domains,omitempty" tf:"domains,omitempty"`
 
 	// Describes an app-wide environment variable made available to all components.
@@ -3026,6 +3081,7 @@ type SpecInitParameters struct {
 
 	// A list of the features applied to the app. The default buildpack can be overridden here. List of available buildpacks can be found using the doctl CLI
 	// List of features which is applied to the app
+	// +listType=set
 	Features []*string `json:"features,omitempty" tf:"features,omitempty"`
 
 	Function []FunctionInitParameters `json:"function,omitempty" tf:"function,omitempty"`
@@ -3060,6 +3116,7 @@ type SpecObservation struct {
 	// Describes a domain where the application will be made available.
 	Domain []DomainObservation `json:"domain,omitempty" tf:"domain,omitempty"`
 
+	// +listType=set
 	Domains []*string `json:"domains,omitempty" tf:"domains,omitempty"`
 
 	// Describes an app-wide environment variable made available to all components.
@@ -3067,6 +3124,7 @@ type SpecObservation struct {
 
 	// A list of the features applied to the app. The default buildpack can be overridden here. List of available buildpacks can be found using the doctl CLI
 	// List of features which is applied to the app
+	// +listType=set
 	Features []*string `json:"features,omitempty" tf:"features,omitempty"`
 
 	Function []FunctionObservation `json:"function,omitempty" tf:"function,omitempty"`
@@ -3105,6 +3163,7 @@ type SpecParameters struct {
 	Domain []DomainParameters `json:"domain,omitempty" tf:"domain,omitempty"`
 
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	Domains []*string `json:"domains,omitempty" tf:"domains,omitempty"`
 
 	// Describes an app-wide environment variable made available to all components.
@@ -3114,6 +3173,7 @@ type SpecParameters struct {
 	// A list of the features applied to the app. The default buildpack can be overridden here. List of available buildpacks can be found using the doctl CLI
 	// List of features which is applied to the app
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	Features []*string `json:"features,omitempty" tf:"features,omitempty"`
 
 	// +kubebuilder:validation:Optional
@@ -3202,10 +3262,12 @@ type StaticSiteCorsInitParameters struct {
 
 	// The set of allowed HTTP request headers. This configures the Access-Control-Allow-Headers header.
 	// The set of allowed HTTP request headers. This configures the Access-Control-Allow-Headers header.
+	// +listType=set
 	AllowHeaders []*string `json:"allowHeaders,omitempty" tf:"allow_headers,omitempty"`
 
 	// The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.
 	// The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.
+	// +listType=set
 	AllowMethods []*string `json:"allowMethods,omitempty" tf:"allow_methods,omitempty"`
 
 	// The Access-Control-Allow-Origin can be
@@ -3214,6 +3276,7 @@ type StaticSiteCorsInitParameters struct {
 
 	// The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.
 	// The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.
+	// +listType=set
 	ExposeHeaders []*string `json:"exposeHeaders,omitempty" tf:"expose_headers,omitempty"`
 
 	// An optional duration specifying how long browsers can cache the results of a preflight request. This configures the Access-Control-Max-Age header. Example: 5h30m.
@@ -3229,10 +3292,12 @@ type StaticSiteCorsObservation struct {
 
 	// The set of allowed HTTP request headers. This configures the Access-Control-Allow-Headers header.
 	// The set of allowed HTTP request headers. This configures the Access-Control-Allow-Headers header.
+	// +listType=set
 	AllowHeaders []*string `json:"allowHeaders,omitempty" tf:"allow_headers,omitempty"`
 
 	// The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.
 	// The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.
+	// +listType=set
 	AllowMethods []*string `json:"allowMethods,omitempty" tf:"allow_methods,omitempty"`
 
 	// The Access-Control-Allow-Origin can be
@@ -3241,6 +3306,7 @@ type StaticSiteCorsObservation struct {
 
 	// The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.
 	// The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.
+	// +listType=set
 	ExposeHeaders []*string `json:"exposeHeaders,omitempty" tf:"expose_headers,omitempty"`
 
 	// An optional duration specifying how long browsers can cache the results of a preflight request. This configures the Access-Control-Max-Age header. Example: 5h30m.
@@ -3258,11 +3324,13 @@ type StaticSiteCorsParameters struct {
 	// The set of allowed HTTP request headers. This configures the Access-Control-Allow-Headers header.
 	// The set of allowed HTTP request headers. This configures the Access-Control-Allow-Headers header.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	AllowHeaders []*string `json:"allowHeaders,omitempty" tf:"allow_headers,omitempty"`
 
 	// The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.
 	// The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	AllowMethods []*string `json:"allowMethods,omitempty" tf:"allow_methods,omitempty"`
 
 	// The Access-Control-Allow-Origin can be
@@ -3273,6 +3341,7 @@ type StaticSiteCorsParameters struct {
 	// The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.
 	// The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	ExposeHeaders []*string `json:"exposeHeaders,omitempty" tf:"expose_headers,omitempty"`
 
 	// An optional duration specifying how long browsers can cache the results of a preflight request. This configures the Access-Control-Max-Age header. Example: 5h30m.
@@ -3294,6 +3363,10 @@ type StaticSiteEnvInitParameters struct {
 	// The domain type, which can be one of the following:
 	// The type of the environment variable.
 	Type *string `json:"type,omitempty" tf:"type,omitempty"`
+
+	// The value of the environment variable.
+	// The value of the environment variable.
+	ValueSecretRef *v1.SecretKeySelector `json:"valueSecretRef,omitempty" tf:"-"`
 }
 
 type StaticSiteEnvObservation struct {
@@ -3758,6 +3831,10 @@ type WorkerEnvInitParameters struct {
 	// The domain type, which can be one of the following:
 	// The type of the environment variable.
 	Type *string `json:"type,omitempty" tf:"type,omitempty"`
+
+	// The value of the environment variable.
+	// The value of the environment variable.
+	ValueSecretRef *v1.SecretKeySelector `json:"valueSecretRef,omitempty" tf:"-"`
 }
 
 type WorkerEnvObservation struct {
@@ -4378,13 +4455,14 @@ type AppStatus struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+// +kubebuilder:storageversion
 
 // App is the Schema for the Apps API.
-// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
+// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
-// +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,do}
 type App struct {
 	metav1.TypeMeta   `json:",inline"`

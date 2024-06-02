@@ -69,5 +69,53 @@ func (mg *Cdn) ResolveReferences(ctx context.Context, c client.Reader) error {
 	mg.Spec.ForProvider.Origin = reference.ToPtrValue(rsp.ResolvedValue)
 	mg.Spec.ForProvider.OriginRef = rsp.ResolvedReference
 
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.CertificateName),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.CertificateNameRef,
+		Selector:     mg.Spec.InitProvider.Name,
+		To: reference.To{
+			List:    &v1alpha1.CertificateList{},
+			Managed: &v1alpha1.Certificate{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.CertificateName")
+	}
+	mg.Spec.InitProvider.CertificateName = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.CertificateNameRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.CustomDomain),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.CustomDomainRef,
+		Selector:     mg.Spec.InitProvider.ID,
+		To: reference.To{
+			List:    &v1alpha11.DomainList{},
+			Managed: &v1alpha11.Domain{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.CustomDomain")
+	}
+	mg.Spec.InitProvider.CustomDomain = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.CustomDomainRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.Origin),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.OriginRef,
+		Selector:     mg.Spec.InitProvider.BucketDomainName,
+		To: reference.To{
+			List:    &BucketList{},
+			Managed: &Bucket{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.Origin")
+	}
+	mg.Spec.InitProvider.Origin = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.OriginRef = rsp.ResolvedReference
+
 	return nil
 }

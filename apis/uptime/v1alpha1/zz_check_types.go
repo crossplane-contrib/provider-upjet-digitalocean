@@ -1,7 +1,3 @@
-// SPDX-FileCopyrightText: 2023 The Crossplane Authors <https://crossplane.io>
-//
-// SPDX-License-Identifier: Apache-2.0
-
 /*
 Copyright 2022 Upbound Inc.
 */
@@ -29,6 +25,7 @@ type CheckInitParameters struct {
 
 	// An array containing the selected regions to perform healthchecks from: "us_east", "us_west", "eu_west", "se_asia"
 	// An array containing the selected regions to perform healthchecks from.
+	// +listType=set
 	Regions []*string `json:"regions,omitempty" tf:"regions,omitempty"`
 
 	// The endpoint to perform healthchecks on.
@@ -55,6 +52,7 @@ type CheckObservation struct {
 
 	// An array containing the selected regions to perform healthchecks from: "us_east", "us_west", "eu_west", "se_asia"
 	// An array containing the selected regions to perform healthchecks from.
+	// +listType=set
 	Regions []*string `json:"regions,omitempty" tf:"regions,omitempty"`
 
 	// The endpoint to perform healthchecks on.
@@ -81,6 +79,7 @@ type CheckParameters struct {
 	// An array containing the selected regions to perform healthchecks from: "us_east", "us_west", "eu_west", "se_asia"
 	// An array containing the selected regions to perform healthchecks from.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	Regions []*string `json:"regions,omitempty" tf:"regions,omitempty"`
 
 	// The endpoint to perform healthchecks on.
@@ -118,13 +117,14 @@ type CheckStatus struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+// +kubebuilder:storageversion
 
 // Check is the Schema for the Checks API.
-// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
+// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
-// +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,do}
 type Check struct {
 	metav1.TypeMeta   `json:",inline"`

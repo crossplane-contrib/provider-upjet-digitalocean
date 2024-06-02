@@ -1,7 +1,3 @@
-// SPDX-FileCopyrightText: 2023 The Crossplane Authors <https://crossplane.io>
-//
-// SPDX-License-Identifier: Apache-2.0
-
 /*
 Copyright 2022 Upbound Inc.
 */
@@ -40,7 +36,20 @@ type VolumeInitParameters struct {
 	// The size of the block storage volume in GiB. If updated, can only be expanded.
 	Size *float64 `json:"size,omitempty" tf:"size,omitempty"`
 
+	// The ID of an existing volume snapshot from which the new volume will be created. If supplied, the region and size will be limitied on creation to that of the referenced snapshot
+	// +crossplane:generate:reference:type=Snapshot
+	SnapshotID *string `json:"snapshotId,omitempty" tf:"snapshot_id,omitempty"`
+
+	// Reference to a Snapshot to populate snapshotId.
+	// +kubebuilder:validation:Optional
+	SnapshotIDRef *v1.Reference `json:"snapshotIdRef,omitempty" tf:"-"`
+
+	// Selector for a Snapshot to populate snapshotId.
+	// +kubebuilder:validation:Optional
+	SnapshotIDSelector *v1.Selector `json:"snapshotIdSelector,omitempty" tf:"-"`
+
 	// A list of the tags to be applied to this Volume.
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 }
 
@@ -50,6 +59,7 @@ type VolumeObservation struct {
 	Description *string `json:"description,omitempty" tf:"description,omitempty"`
 
 	// A list of associated droplet ids.
+	// +listType=set
 	DropletIds []*float64 `json:"dropletIds,omitempty" tf:"droplet_ids,omitempty"`
 
 	// Filesystem label for the block storage volume.
@@ -80,6 +90,7 @@ type VolumeObservation struct {
 	SnapshotID *string `json:"snapshotId,omitempty" tf:"snapshot_id,omitempty"`
 
 	// A list of the tags to be applied to this Volume.
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
 	// The uniform resource name for the volume.
@@ -132,6 +143,7 @@ type VolumeParameters struct {
 
 	// A list of the tags to be applied to this Volume.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 }
 
@@ -159,13 +171,14 @@ type VolumeStatus struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+// +kubebuilder:storageversion
 
 // Volume is the Schema for the Volumes API.
-// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
+// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
-// +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,do}
 type Volume struct {
 	metav1.TypeMeta   `json:",inline"`

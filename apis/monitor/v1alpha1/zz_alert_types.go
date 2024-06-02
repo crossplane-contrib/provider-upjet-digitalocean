@@ -1,7 +1,3 @@
-// SPDX-FileCopyrightText: 2023 The Crossplane Authors <https://crossplane.io>
-//
-// SPDX-License-Identifier: Apache-2.0
-
 /*
 Copyright 2022 Upbound Inc.
 */
@@ -37,7 +33,22 @@ type AlertInitParameters struct {
 	// The status of the alert.
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 
+	// A list of IDs for the resources to which the alert policy applies.
+	// The droplets to apply the alert policy to
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/droplet/v1alpha1.Droplet
+	// +listType=set
+	Entities []*string `json:"entities,omitempty" tf:"entities,omitempty"`
+
+	// References to Droplet in droplet to populate entities.
+	// +kubebuilder:validation:Optional
+	EntitiesRefs []v1.Reference `json:"entitiesRefs,omitempty" tf:"-"`
+
+	// Selector for a list of Droplet in droplet to populate entities.
+	// +kubebuilder:validation:Optional
+	EntitiesSelector *v1.Selector `json:"entitiesSelector,omitempty" tf:"-"`
+
 	// A list of tags. When an included tag is added to a resource, the alert policy will apply to it.
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
 	// The type of the alert.
@@ -86,11 +97,13 @@ type AlertObservation struct {
 
 	// A list of IDs for the resources to which the alert policy applies.
 	// The droplets to apply the alert policy to
+	// +listType=set
 	Entities []*string `json:"entities,omitempty" tf:"entities,omitempty"`
 
 	ID *string `json:"id,omitempty" tf:"id,omitempty"`
 
 	// A list of tags. When an included tag is added to a resource, the alert policy will apply to it.
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
 	// The type of the alert.
@@ -148,6 +161,7 @@ type AlertParameters struct {
 	// The droplets to apply the alert policy to
 	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/droplet/v1alpha1.Droplet
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	Entities []*string `json:"entities,omitempty" tf:"entities,omitempty"`
 
 	// References to Droplet in droplet to populate entities.
@@ -160,6 +174,7 @@ type AlertParameters struct {
 
 	// A list of tags. When an included tag is added to a resource, the alert policy will apply to it.
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
 	// The type of the alert.
@@ -268,13 +283,14 @@ type AlertStatus struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+// +kubebuilder:storageversion
 
 // Alert is the Schema for the Alerts API.
-// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
+// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
-// +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,do}
 type Alert struct {
 	metav1.TypeMeta   `json:",inline"`

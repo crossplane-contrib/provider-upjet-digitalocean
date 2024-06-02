@@ -53,6 +53,38 @@ func (mg *Cluster) ResolveReferences(ctx context.Context, c client.Reader) error
 	mg.Spec.ForProvider.ProjectID = reference.ToPtrValue(rsp.ResolvedValue)
 	mg.Spec.ForProvider.ProjectIDRef = rsp.ResolvedReference
 
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.PrivateNetworkUUID),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.PrivateNetworkUUIDRef,
+		Selector:     mg.Spec.InitProvider.PrivateNetworkUUIDSelector,
+		To: reference.To{
+			List:    &v1alpha1.VPCList{},
+			Managed: &v1alpha1.VPC{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.PrivateNetworkUUID")
+	}
+	mg.Spec.InitProvider.PrivateNetworkUUID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.PrivateNetworkUUIDRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.ProjectID),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.ProjectIDRef,
+		Selector:     mg.Spec.InitProvider.ProjectIDSelector,
+		To: reference.To{
+			List:    &v1alpha11.ProjectList{},
+			Managed: &v1alpha11.Project{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.ProjectID")
+	}
+	mg.Spec.InitProvider.ProjectID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.ProjectIDRef = rsp.ResolvedReference
+
 	return nil
 }
 
@@ -78,6 +110,22 @@ func (mg *ConnectionPool) ResolveReferences(ctx context.Context, c client.Reader
 	}
 	mg.Spec.ForProvider.ClusterID = reference.ToPtrValue(rsp.ResolvedValue)
 	mg.Spec.ForProvider.ClusterIDRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.ClusterID),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.ClusterIDRef,
+		Selector:     mg.Spec.InitProvider.ClusterIDSelector,
+		To: reference.To{
+			List:    &ClusterList{},
+			Managed: &Cluster{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.ClusterID")
+	}
+	mg.Spec.InitProvider.ClusterID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.ClusterIDRef = rsp.ResolvedReference
 
 	return nil
 }
@@ -105,6 +153,22 @@ func (mg *DB) ResolveReferences(ctx context.Context, c client.Reader) error {
 	mg.Spec.ForProvider.ClusterID = reference.ToPtrValue(rsp.ResolvedValue)
 	mg.Spec.ForProvider.ClusterIDRef = rsp.ResolvedReference
 
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.ClusterID),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.ClusterIDRef,
+		Selector:     mg.Spec.InitProvider.ClusterIDSelector,
+		To: reference.To{
+			List:    &ClusterList{},
+			Managed: &Cluster{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.ClusterID")
+	}
+	mg.Spec.InitProvider.ClusterID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.ClusterIDRef = rsp.ResolvedReference
+
 	return nil
 }
 
@@ -130,6 +194,22 @@ func (mg *Firewall) ResolveReferences(ctx context.Context, c client.Reader) erro
 	}
 	mg.Spec.ForProvider.ClusterID = reference.ToPtrValue(rsp.ResolvedValue)
 	mg.Spec.ForProvider.ClusterIDRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.ClusterID),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.ClusterIDRef,
+		Selector:     mg.Spec.InitProvider.ClusterIDSelector,
+		To: reference.To{
+			List:    &ClusterList{},
+			Managed: &Cluster{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.ClusterID")
+	}
+	mg.Spec.InitProvider.ClusterID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.ClusterIDRef = rsp.ResolvedReference
 
 	return nil
 }
@@ -157,6 +237,22 @@ func (mg *KafkaTopic) ResolveReferences(ctx context.Context, c client.Reader) er
 	mg.Spec.ForProvider.ClusterID = reference.ToPtrValue(rsp.ResolvedValue)
 	mg.Spec.ForProvider.ClusterIDRef = rsp.ResolvedReference
 
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.ClusterID),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.ClusterIDRef,
+		Selector:     mg.Spec.InitProvider.ClusterIDSelector,
+		To: reference.To{
+			List:    &ClusterList{},
+			Managed: &Cluster{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.ClusterID")
+	}
+	mg.Spec.InitProvider.ClusterID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.ClusterIDRef = rsp.ResolvedReference
+
 	return nil
 }
 
@@ -183,6 +279,22 @@ func (mg *MySQLConfig) ResolveReferences(ctx context.Context, c client.Reader) e
 	mg.Spec.ForProvider.ClusterID = reference.ToPtrValue(rsp.ResolvedValue)
 	mg.Spec.ForProvider.ClusterIDRef = rsp.ResolvedReference
 
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.ClusterID),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.ClusterIDRef,
+		Selector:     mg.Spec.InitProvider.ClusterIDSelector,
+		To: reference.To{
+			List:    &ClusterList{},
+			Managed: &Cluster{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.ClusterID")
+	}
+	mg.Spec.InitProvider.ClusterID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.ClusterIDRef = rsp.ResolvedReference
+
 	return nil
 }
 
@@ -208,6 +320,22 @@ func (mg *RedisConfig) ResolveReferences(ctx context.Context, c client.Reader) e
 	}
 	mg.Spec.ForProvider.ClusterID = reference.ToPtrValue(rsp.ResolvedValue)
 	mg.Spec.ForProvider.ClusterIDRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.ClusterID),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.ClusterIDRef,
+		Selector:     mg.Spec.InitProvider.ClusterIDSelector,
+		To: reference.To{
+			List:    &ClusterList{},
+			Managed: &Cluster{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.ClusterID")
+	}
+	mg.Spec.InitProvider.ClusterID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.ClusterIDRef = rsp.ResolvedReference
 
 	return nil
 }
@@ -251,6 +379,38 @@ func (mg *Replica) ResolveReferences(ctx context.Context, c client.Reader) error
 	mg.Spec.ForProvider.PrivateNetworkUUID = reference.ToPtrValue(rsp.ResolvedValue)
 	mg.Spec.ForProvider.PrivateNetworkUUIDRef = rsp.ResolvedReference
 
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.ClusterID),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.ClusterIDRef,
+		Selector:     mg.Spec.InitProvider.ClusterIDSelector,
+		To: reference.To{
+			List:    &ClusterList{},
+			Managed: &Cluster{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.ClusterID")
+	}
+	mg.Spec.InitProvider.ClusterID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.ClusterIDRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.PrivateNetworkUUID),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.PrivateNetworkUUIDRef,
+		Selector:     mg.Spec.InitProvider.PrivateNetworkUUIDSelector,
+		To: reference.To{
+			List:    &v1alpha1.VPCList{},
+			Managed: &v1alpha1.VPC{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.PrivateNetworkUUID")
+	}
+	mg.Spec.InitProvider.PrivateNetworkUUID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.PrivateNetworkUUIDRef = rsp.ResolvedReference
+
 	return nil
 }
 
@@ -276,6 +436,22 @@ func (mg *User) ResolveReferences(ctx context.Context, c client.Reader) error {
 	}
 	mg.Spec.ForProvider.ClusterID = reference.ToPtrValue(rsp.ResolvedValue)
 	mg.Spec.ForProvider.ClusterIDRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.ClusterID),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.ClusterIDRef,
+		Selector:     mg.Spec.InitProvider.ClusterIDSelector,
+		To: reference.To{
+			List:    &ClusterList{},
+			Managed: &Cluster{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.ClusterID")
+	}
+	mg.Spec.InitProvider.ClusterID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.ClusterIDRef = rsp.ResolvedReference
 
 	return nil
 }

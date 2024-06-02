@@ -1,7 +1,3 @@
-// SPDX-FileCopyrightText: 2023 The Crossplane Authors <https://crossplane.io>
-//
-// SPDX-License-Identifier: Apache-2.0
-
 /*
 Copyright 2022 Upbound Inc.
 */
@@ -27,6 +23,18 @@ type MySQLConfigInitParameters struct {
 
 	// The minimum amount of time, in seconds, to keep binlog entries before deletion. This may be extended for services that require binlog entries for longer than the default, for example if using the MySQL Debezium Kafka connector.
 	BinlogRetentionPeriod *float64 `json:"binlogRetentionPeriod,omitempty" tf:"binlog_retention_period,omitempty"`
+
+	// The ID of the target MySQL cluster.
+	// +crossplane:generate:reference:type=Cluster
+	ClusterID *string `json:"clusterId,omitempty" tf:"cluster_id,omitempty"`
+
+	// Reference to a Cluster to populate clusterId.
+	// +kubebuilder:validation:Optional
+	ClusterIDRef *v1.Reference `json:"clusterIdRef,omitempty" tf:"-"`
+
+	// Selector for a Cluster to populate clusterId.
+	// +kubebuilder:validation:Optional
+	ClusterIDSelector *v1.Selector `json:"clusterIdSelector,omitempty" tf:"-"`
 
 	// The number of seconds that the mysqld server waits for a connect packet before responding with bad handshake.
 	ConnectTimeout *float64 `json:"connectTimeout,omitempty" tf:"connect_timeout,omitempty"`
@@ -338,13 +346,14 @@ type MySQLConfigStatus struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+// +kubebuilder:storageversion
 
 // MySQLConfig is the Schema for the MySQLConfigs API.
-// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
+// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
-// +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,do}
 type MySQLConfig struct {
 	metav1.TypeMeta   `json:",inline"`

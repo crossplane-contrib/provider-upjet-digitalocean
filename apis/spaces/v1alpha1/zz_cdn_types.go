@@ -1,7 +1,3 @@
-// SPDX-FileCopyrightText: 2023 The Crossplane Authors <https://crossplane.io>
-//
-// SPDX-License-Identifier: Apache-2.0
-
 /*
 Copyright 2022 Upbound Inc.
 */
@@ -19,9 +15,49 @@ import (
 
 type CdnInitParameters struct {
 
+	// Selector for a Bucket to populate origin.
+	// +kubebuilder:validation:Optional
+	BucketDomainName *v1.Selector `json:"bucketDomainName,omitempty" tf:"-"`
+
 	// Deprecated The ID of a DigitalOcean managed TLS certificate used for SSL when a custom subdomain is provided.
 	// ID of a DigitalOcean managed TLS certificate for use with custom domains
 	CertificateID *string `json:"certificateId,omitempty" tf:"certificate_id,omitempty"`
+
+	// The unique name of a DigitalOcean managed TLS certificate used for SSL when a custom subdomain is provided.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/networking/v1alpha1.Certificate
+	// +crossplane:generate:reference:selectorFieldName=Name
+	CertificateName *string `json:"certificateName,omitempty" tf:"certificate_name,omitempty"`
+
+	// Reference to a Certificate in networking to populate certificateName.
+	// +kubebuilder:validation:Optional
+	CertificateNameRef *v1.Reference `json:"certificateNameRef,omitempty" tf:"-"`
+
+	// The fully qualified domain name (FQDN) of the custom subdomain used with the CDN Endpoint.
+	// fully qualified domain name (FQDN) for custom subdomain, (requires certificate_id)
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/dns/v1alpha1.Domain
+	// +crossplane:generate:reference:selectorFieldName=ID
+	CustomDomain *string `json:"customDomain,omitempty" tf:"custom_domain,omitempty"`
+
+	// Reference to a Domain in dns to populate customDomain.
+	// +kubebuilder:validation:Optional
+	CustomDomainRef *v1.Reference `json:"customDomainRef,omitempty" tf:"-"`
+
+	// A unique ID that can be used to identify and reference a CDN Endpoint.
+	ID *v1.Selector `json:"id,omitempty" tf:"-"`
+
+	// Selector for a Certificate in networking to populate certificateName.
+	// +kubebuilder:validation:Optional
+	Name *v1.Selector `json:"name,omitempty" tf:"-"`
+
+	// The fully qualified domain name, (FQDN) for a Space.
+	// fully qualified domain name (FQDN) for the origin server
+	// +crossplane:generate:reference:type=Bucket
+	// +crossplane:generate:reference:selectorFieldName=BucketDomainName
+	Origin *string `json:"origin,omitempty" tf:"origin,omitempty"`
+
+	// Reference to a Bucket to populate origin.
+	// +kubebuilder:validation:Optional
+	OriginRef *v1.Reference `json:"originRef,omitempty" tf:"-"`
 
 	// The time to live for the CDN Endpoint, in seconds. Default is 3600 seconds.
 	// The amount of time the content is cached in the CDN
@@ -142,13 +178,14 @@ type CdnStatus struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+// +kubebuilder:storageversion
 
 // Cdn is the Schema for the Cdns API.
-// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
+// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
-// +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,do}
 type Cdn struct {
 	metav1.TypeMeta   `json:",inline"`

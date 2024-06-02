@@ -294,6 +294,11 @@ func GetProvider() *ujconfig.Provider {
 			Type:          referenceType(pc, "project", "v1alpha1", "Project"),
 			TerraformName: "digitalocean_project",
 		}
+
+		r.References["forwarding_rule.certificate_name"] = ujconfig.Reference{
+			TerraformName: "digitalocean_certificate",
+		}
+
 	})
 	pc.AddResourceConfigurator("digitalocean_domain", func(r *ujconfig.Resource) {
 		r.ShortGroup = "dns"

@@ -1,7 +1,3 @@
-// SPDX-FileCopyrightText: 2023 The Crossplane Authors <https://crossplane.io>
-//
-// SPDX-License-Identifier: Apache-2.0
-
 /*
 Copyright 2022 Upbound Inc.
 */
@@ -23,7 +19,16 @@ type ForwardingRuleInitParameters struct {
 	CertificateID *string `json:"certificateId,omitempty" tf:"certificate_id,omitempty"`
 
 	// The unique name of the TLS certificate to be used for SSL termination.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/networking/v1alpha1.Certificate
 	CertificateName *string `json:"certificateName,omitempty" tf:"certificate_name,omitempty"`
+
+	// Reference to a Certificate in networking to populate certificateName.
+	// +kubebuilder:validation:Optional
+	CertificateNameRef *v1.Reference `json:"certificateNameRef,omitempty" tf:"-"`
+
+	// Selector for a Certificate in networking to populate certificateName.
+	// +kubebuilder:validation:Optional
+	CertificateNameSelector *v1.Selector `json:"certificateNameSelector,omitempty" tf:"-"`
 
 	// An integer representing the port on which the Load Balancer instance will listen.
 	EntryPort *float64 `json:"entryPort,omitempty" tf:"entry_port,omitempty"`
@@ -72,8 +77,17 @@ type ForwardingRuleParameters struct {
 	CertificateID *string `json:"certificateId,omitempty" tf:"certificate_id,omitempty"`
 
 	// The unique name of the TLS certificate to be used for SSL termination.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/networking/v1alpha1.Certificate
 	// +kubebuilder:validation:Optional
 	CertificateName *string `json:"certificateName,omitempty" tf:"certificate_name,omitempty"`
+
+	// Reference to a Certificate in networking to populate certificateName.
+	// +kubebuilder:validation:Optional
+	CertificateNameRef *v1.Reference `json:"certificateNameRef,omitempty" tf:"-"`
+
+	// Selector for a Certificate in networking to populate certificateName.
+	// +kubebuilder:validation:Optional
+	CertificateNameSelector *v1.Selector `json:"certificateNameSelector,omitempty" tf:"-"`
 
 	// An integer representing the port on which the Load Balancer instance will listen.
 	// +kubebuilder:validation:Optional
@@ -220,6 +234,19 @@ type LoadbalancerInitParameters struct {
 	// A boolean value indicating whether to disable automatic DNS record creation for Let's Encrypt certificates that are added to the load balancer. Default value is false.
 	DisableLetsEncryptDNSRecords *bool `json:"disableLetsEncryptDnsRecords,omitempty" tf:"disable_lets_encrypt_dns_records,omitempty"`
 
+	// A list of the IDs of each droplet to be attached to the Load Balancer.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/droplet/v1alpha1.Droplet
+	// +listType=set
+	DropletIds []*float64 `json:"dropletIds,omitempty" tf:"droplet_ids,omitempty"`
+
+	// References to Droplet in droplet to populate dropletIds.
+	// +kubebuilder:validation:Optional
+	DropletIdsRefs []v1.Reference `json:"dropletIdsRefs,omitempty" tf:"-"`
+
+	// Selector for a list of Droplet in droplet to populate dropletIds.
+	// +kubebuilder:validation:Optional
+	DropletIdsSelector *v1.Selector `json:"dropletIdsSelector,omitempty" tf:"-"`
+
 	// The name of a Droplet tag corresponding to Droplets to be assigned to the Load Balancer.
 	DropletTag *string `json:"dropletTag,omitempty" tf:"droplet_tag,omitempty"`
 
@@ -248,6 +275,18 @@ type LoadbalancerInitParameters struct {
 	// The Load Balancer name
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
 
+	// The ID of the project that the load balancer is associated with. If no ID is provided at creation, the load balancer associates with the user's default project.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/project/v1alpha1.Project
+	ProjectID *string `json:"projectId,omitempty" tf:"project_id,omitempty"`
+
+	// Reference to a Project in project to populate projectId.
+	// +kubebuilder:validation:Optional
+	ProjectIDRef *v1.Reference `json:"projectIdRef,omitempty" tf:"-"`
+
+	// Selector for a Project in project to populate projectId.
+	// +kubebuilder:validation:Optional
+	ProjectIDSelector *v1.Selector `json:"projectIdSelector,omitempty" tf:"-"`
+
 	// A boolean value indicating whether
 	// HTTP requests to the Load Balancer on port 80 will be redirected to HTTPS on port 443.
 	// Default value is false.
@@ -269,6 +308,18 @@ type LoadbalancerInitParameters struct {
 	// An attribute indicating how and if requests from a client will be persistently served by the same backend Droplet. The possible values are cookies or none. If not specified, the default value is none.
 	// the type of the load balancer (GLOBAL or REGIONAL)
 	Type *string `json:"type,omitempty" tf:"type,omitempty"`
+
+	// The ID of the VPC where the load balancer will be located.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/vpc/v1alpha1.VPC
+	VPCUUID *string `json:"vpcUuid,omitempty" tf:"vpc_uuid,omitempty"`
+
+	// Reference to a VPC in vpc to populate vpcUuid.
+	// +kubebuilder:validation:Optional
+	VPCUUIDRef *v1.Reference `json:"vpcUuidRef,omitempty" tf:"-"`
+
+	// Selector for a VPC in vpc to populate vpcUuid.
+	// +kubebuilder:validation:Optional
+	VPCUUIDSelector *v1.Selector `json:"vpcUuidSelector,omitempty" tf:"-"`
 }
 
 type LoadbalancerObservation struct {
@@ -282,6 +333,7 @@ type LoadbalancerObservation struct {
 	DisableLetsEncryptDNSRecords *bool `json:"disableLetsEncryptDnsRecords,omitempty" tf:"disable_lets_encrypt_dns_records,omitempty"`
 
 	// A list of the IDs of each droplet to be attached to the Load Balancer.
+	// +listType=set
 	DropletIds []*float64 `json:"dropletIds,omitempty" tf:"droplet_ids,omitempty"`
 
 	// The name of a Droplet tag corresponding to Droplets to be assigned to the Load Balancer.
@@ -368,6 +420,7 @@ type LoadbalancerParameters struct {
 	// A list of the IDs of each droplet to be attached to the Load Balancer.
 	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/droplet/v1alpha1.Droplet
 	// +kubebuilder:validation:Optional
+	// +listType=set
 	DropletIds []*float64 `json:"dropletIds,omitempty" tf:"droplet_ids,omitempty"`
 
 	// References to Droplet in droplet to populate dropletIds.
@@ -532,13 +585,14 @@ type LoadbalancerStatus struct {
 }
 
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+// +kubebuilder:storageversion
 
 // Loadbalancer is the Schema for the Loadbalancers API.
-// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
+// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 // +kubebuilder:printcolumn:name="EXTERNAL-NAME",type="string",JSONPath=".metadata.annotations.crossplane\\.io/external-name"
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
-// +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,do}
 type Loadbalancer struct {
 	metav1.TypeMeta   `json:",inline"`
