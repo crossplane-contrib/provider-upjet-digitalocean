@@ -1762,6 +1762,18 @@ func (in *LoadbalancerInitParameters) DeepCopyInto(out *LoadbalancerInitParamete
 			}
 		}
 	}
+	if in.DropletIdsRefs != nil {
+		in, out := &in.DropletIdsRefs, &out.DropletIdsRefs
+		*out = make([]v1.Reference, len(*in))
+		for i := range *in {
+			(*in)[i].DeepCopyInto(&(*out)[i])
+		}
+	}
+	if in.DropletIdsSelector != nil {
+		in, out := &in.DropletIdsSelector, &out.DropletIdsSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
+	}
 	if in.DropletTag != nil {
 		in, out := &in.DropletTag, &out.DropletTag
 		*out = new(string)
@@ -1813,6 +1825,16 @@ func (in *LoadbalancerInitParameters) DeepCopyInto(out *LoadbalancerInitParamete
 		*out = new(string)
 		**out = **in
 	}
+	if in.ProjectIDRef != nil {
+		in, out := &in.ProjectIDRef, &out.ProjectIDRef
+		*out = new(v1.Reference)
+		(*in).DeepCopyInto(*out)
+	}
+	if in.ProjectIDSelector != nil {
+		in, out := &in.ProjectIDSelector, &out.ProjectIDSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
+	}
 	if in.RedirectHTTPToHTTPS != nil {
 		in, out := &in.RedirectHTTPToHTTPS, &out.RedirectHTTPToHTTPS
 		*out = new(bool)
@@ -1849,6 +1871,16 @@ func (in *LoadbalancerInitParameters) DeepCopyInto(out *LoadbalancerInitParamete
 		in, out := &in.VPCUUID, &out.VPCUUID
 		*out = new(string)
 		**out = **in
+	}
+	if in.VPCUUIDRef != nil {
+		in, out := &in.VPCUUIDRef, &out.VPCUUIDRef
+		*out = new(v1.Reference)
+		(*in).DeepCopyInto(*out)
+	}
+	if in.VPCUUIDSelector != nil {
+		in, out := &in.VPCUUIDSelector, &out.VPCUUIDSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
 	}
 }
 
@@ -2062,6 +2094,18 @@ func (in *LoadbalancerParameters) DeepCopyInto(out *LoadbalancerParameters) {
 			}
 		}
 	}
+	if in.DropletIdsRefs != nil {
+		in, out := &in.DropletIdsRefs, &out.DropletIdsRefs
+		*out = make([]v1.Reference, len(*in))
+		for i := range *in {
+			(*in)[i].DeepCopyInto(&(*out)[i])
+		}
+	}
+	if in.DropletIdsSelector != nil {
+		in, out := &in.DropletIdsSelector, &out.DropletIdsSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
+	}
 	if in.DropletTag != nil {
 		in, out := &in.DropletTag, &out.DropletTag
 		*out = new(string)
@@ -2113,6 +2157,16 @@ func (in *LoadbalancerParameters) DeepCopyInto(out *LoadbalancerParameters) {
 		*out = new(string)
 		**out = **in
 	}
+	if in.ProjectIDRef != nil {
+		in, out := &in.ProjectIDRef, &out.ProjectIDRef
+		*out = new(v1.Reference)
+		(*in).DeepCopyInto(*out)
+	}
+	if in.ProjectIDSelector != nil {
+		in, out := &in.ProjectIDSelector, &out.ProjectIDSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
+	}
 	if in.RedirectHTTPToHTTPS != nil {
 		in, out := &in.RedirectHTTPToHTTPS, &out.RedirectHTTPToHTTPS
 		*out = new(bool)
@@ -2149,6 +2203,16 @@ func (in *LoadbalancerParameters) DeepCopyInto(out *LoadbalancerParameters) {
 		in, out := &in.VPCUUID, &out.VPCUUID
 		*out = new(string)
 		**out = **in
+	}
+	if in.VPCUUIDRef != nil {
+		in, out := &in.VPCUUIDRef, &out.VPCUUIDRef
+		*out = new(v1.Reference)
+		(*in).DeepCopyInto(*out)
+	}
+	if in.VPCUUIDSelector != nil {
+		in, out := &in.VPCUUIDSelector, &out.VPCUUIDSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
 	}
 }
 

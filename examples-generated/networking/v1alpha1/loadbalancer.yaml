@@ -8,8 +8,8 @@ metadata:
   name: public
 spec:
   forProvider:
-    dropletIds:
-    - ${digitalocean_droplet.web.id}
+    dropletIdsRefs:
+    - name: web
     forwardingRule:
     - entryPort: 80
       entryProtocol: http

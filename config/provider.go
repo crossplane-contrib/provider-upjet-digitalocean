@@ -295,10 +295,8 @@ func GetProvider() *ujconfig.Provider {
 			TerraformName: "digitalocean_project",
 		}
 
-		r.References = map[string]ujconfig.Reference{
-			"forwarding_rule.certificate_name": {
-				TerraformName: "digitalocean_certificate",
-			},
+		r.References["forwarding_rule.certificate_name"] = ujconfig.Reference{
+			TerraformName: "digitalocean_certificate",
 		}
 
 	})

@@ -9,6 +9,8 @@ import (
 	"context"
 	v1alpha1 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/dns/v1alpha1"
 	v1alpha11 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/droplet/v1alpha1"
+	v1alpha12 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/project/v1alpha1"
+	v1alpha13 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/vpc/v1alpha1"
 	reference "github.com/crossplane/crossplane-runtime/pkg/reference"
 	errors "github.com/pkg/errors"
 	client "sigs.k8s.io/controller-runtime/pkg/client"
@@ -219,7 +221,24 @@ func (mg *Loadbalancer) ResolveReferences(ctx context.Context, c client.Reader) 
 	r := reference.NewAPIResolver(c, mg)
 
 	var rsp reference.ResolutionResponse
+	var mrsp reference.MultiResolutionResponse
 	var err error
+
+	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
+		CurrentValues: reference.FromFloatPtrValues(mg.Spec.ForProvider.DropletIds),
+		Extract:       reference.ExternalName(),
+		References:    mg.Spec.ForProvider.DropletIdsRefs,
+		Selector:      mg.Spec.ForProvider.DropletIdsSelector,
+		To: reference.To{
+			List:    &v1alpha11.DropletList{},
+			Managed: &v1alpha11.Droplet{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.DropletIds")
+	}
+	mg.Spec.ForProvider.DropletIds = reference.ToFloatPtrValues(mrsp.ResolvedValues)
+	mg.Spec.ForProvider.DropletIdsRefs = mrsp.ResolvedReferences
 
 	for i3 := 0; i3 < len(mg.Spec.ForProvider.ForwardingRule); i3++ {
 		rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
@@ -239,6 +258,54 @@ func (mg *Loadbalancer) ResolveReferences(ctx context.Context, c client.Reader) 
 		mg.Spec.ForProvider.ForwardingRule[i3].CertificateNameRef = rsp.ResolvedReference
 
 	}
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.ProjectID),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.ForProvider.ProjectIDRef,
+		Selector:     mg.Spec.ForProvider.ProjectIDSelector,
+		To: reference.To{
+			List:    &v1alpha12.ProjectList{},
+			Managed: &v1alpha12.Project{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.ProjectID")
+	}
+	mg.Spec.ForProvider.ProjectID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.ProjectIDRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.VPCUUID),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.ForProvider.VPCUUIDRef,
+		Selector:     mg.Spec.ForProvider.VPCUUIDSelector,
+		To: reference.To{
+			List:    &v1alpha13.VPCList{},
+			Managed: &v1alpha13.VPC{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.VPCUUID")
+	}
+	mg.Spec.ForProvider.VPCUUID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.VPCUUIDRef = rsp.ResolvedReference
+
+	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
+		CurrentValues: reference.FromFloatPtrValues(mg.Spec.InitProvider.DropletIds),
+		Extract:       reference.ExternalName(),
+		References:    mg.Spec.InitProvider.DropletIdsRefs,
+		Selector:      mg.Spec.InitProvider.DropletIdsSelector,
+		To: reference.To{
+			List:    &v1alpha11.DropletList{},
+			Managed: &v1alpha11.Droplet{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.DropletIds")
+	}
+	mg.Spec.InitProvider.DropletIds = reference.ToFloatPtrValues(mrsp.ResolvedValues)
+	mg.Spec.InitProvider.DropletIdsRefs = mrsp.ResolvedReferences
+
 	for i3 := 0; i3 < len(mg.Spec.InitProvider.ForwardingRule); i3++ {
 		rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
 			CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.ForwardingRule[i3].CertificateName),
@@ -257,6 +324,37 @@ func (mg *Loadbalancer) ResolveReferences(ctx context.Context, c client.Reader) 
 		mg.Spec.InitProvider.ForwardingRule[i3].CertificateNameRef = rsp.ResolvedReference
 
 	}
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.ProjectID),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.ProjectIDRef,
+		Selector:     mg.Spec.InitProvider.ProjectIDSelector,
+		To: reference.To{
+			List:    &v1alpha12.ProjectList{},
+			Managed: &v1alpha12.Project{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.ProjectID")
+	}
+	mg.Spec.InitProvider.ProjectID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.ProjectIDRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.VPCUUID),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.VPCUUIDRef,
+		Selector:     mg.Spec.InitProvider.VPCUUIDSelector,
+		To: reference.To{
+			List:    &v1alpha13.VPCList{},
+			Managed: &v1alpha13.VPC{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.VPCUUID")
+	}
+	mg.Spec.InitProvider.VPCUUID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.VPCUUIDRef = rsp.ResolvedReference
 
 	return nil
 }
