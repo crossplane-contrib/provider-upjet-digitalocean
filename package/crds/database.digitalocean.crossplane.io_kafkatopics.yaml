@@ -77,7 +77,7 @@ spec:
                       must be a Kafka cluster.'
                     type: string
                   clusterIdRef:
-                    description: Reference to a Cluster to populate clusterId.
+                    description: Reference to a Cluster in database to populate clusterId.
                     properties:
                       name:
                         description: Name of the referenced object.
@@ -111,7 +111,7 @@ spec:
                     - name
                     type: object
                   clusterIdSelector:
-                    description: Selector for a Cluster to populate clusterId.
+                    description: Selector for a Cluster in database to populate clusterId.
                     properties:
                       matchControllerRef:
                         description: |-
@@ -303,7 +303,7 @@ spec:
                       must be a Kafka cluster.'
                     type: string
                   clusterIdRef:
-                    description: Reference to a Cluster to populate clusterId.
+                    description: Reference to a Cluster in database to populate clusterId.
                     properties:
                       name:
                         description: Name of the referenced object.
@@ -337,7 +337,7 @@ spec:
                     - name
                     type: object
                   clusterIdSelector:
-                    description: Selector for a Cluster to populate clusterId.
+                    description: Selector for a Cluster in database to populate clusterId.
                     properties:
                       matchControllerRef:
                         description: |-

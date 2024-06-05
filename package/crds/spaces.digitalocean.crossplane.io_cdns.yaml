@@ -73,7 +73,7 @@ spec:
               forProvider:
                 properties:
                   bucketDomainName:
-                    description: Selector for a Bucket to populate origin.
+                    description: Selector for a Bucket in spaces to populate origin.
                     properties:
                       matchControllerRef:
                         description: |-
@@ -283,7 +283,7 @@ spec:
                       fully qualified domain name (FQDN) for the origin server
                     type: string
                   originRef:
-                    description: Reference to a Bucket to populate origin.
+                    description: Reference to a Bucket in spaces to populate origin.
                     properties:
                       name:
                         description: Name of the referenced object.
@@ -336,7 +336,7 @@ spec:
                   autoscaler.
                 properties:
                   bucketDomainName:
-                    description: Selector for a Bucket to populate origin.
+                    description: Selector for a Bucket in spaces to populate origin.
                     properties:
                       matchControllerRef:
                         description: |-
@@ -546,7 +546,7 @@ spec:
                       fully qualified domain name (FQDN) for the origin server
                     type: string
                   originRef:
-                    description: Reference to a Bucket to populate origin.
+                    description: Reference to a Bucket in spaces to populate origin.
                     properties:
                       name:
                         description: Name of the referenced object.

@@ -37,14 +37,14 @@ type VolumeInitParameters struct {
 	Size *float64 `json:"size,omitempty" tf:"size,omitempty"`
 
 	// The ID of an existing volume snapshot from which the new volume will be created. If supplied, the region and size will be limitied on creation to that of the referenced snapshot
-	// +crossplane:generate:reference:type=Snapshot
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/volume/v1alpha1.Snapshot
 	SnapshotID *string `json:"snapshotId,omitempty" tf:"snapshot_id,omitempty"`
 
-	// Reference to a Snapshot to populate snapshotId.
+	// Reference to a Snapshot in volume to populate snapshotId.
 	// +kubebuilder:validation:Optional
 	SnapshotIDRef *v1.Reference `json:"snapshotIdRef,omitempty" tf:"-"`
 
-	// Selector for a Snapshot to populate snapshotId.
+	// Selector for a Snapshot in volume to populate snapshotId.
 	// +kubebuilder:validation:Optional
 	SnapshotIDSelector *v1.Selector `json:"snapshotIdSelector,omitempty" tf:"-"`
 
@@ -129,15 +129,15 @@ type VolumeParameters struct {
 	Size *float64 `json:"size,omitempty" tf:"size,omitempty"`
 
 	// The ID of an existing volume snapshot from which the new volume will be created. If supplied, the region and size will be limitied on creation to that of the referenced snapshot
-	// +crossplane:generate:reference:type=Snapshot
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/volume/v1alpha1.Snapshot
 	// +kubebuilder:validation:Optional
 	SnapshotID *string `json:"snapshotId,omitempty" tf:"snapshot_id,omitempty"`
 
-	// Reference to a Snapshot to populate snapshotId.
+	// Reference to a Snapshot in volume to populate snapshotId.
 	// +kubebuilder:validation:Optional
 	SnapshotIDRef *v1.Reference `json:"snapshotIdRef,omitempty" tf:"-"`
 
-	// Selector for a Snapshot to populate snapshotId.
+	// Selector for a Snapshot in volume to populate snapshotId.
 	// +kubebuilder:validation:Optional
 	SnapshotIDSelector *v1.Selector `json:"snapshotIdSelector,omitempty" tf:"-"`
 

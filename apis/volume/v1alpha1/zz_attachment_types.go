@@ -28,14 +28,14 @@ type AttachmentInitParameters struct {
 	DropletIDSelector *v1.Selector `json:"dropletIdSelector,omitempty" tf:"-"`
 
 	// ID of the Volume to be attached to the Droplet.
-	// +crossplane:generate:reference:type=Volume
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/volume/v1alpha1.Volume
 	VolumeID *string `json:"volumeId,omitempty" tf:"volume_id,omitempty"`
 
-	// Reference to a Volume to populate volumeId.
+	// Reference to a Volume in volume to populate volumeId.
 	// +kubebuilder:validation:Optional
 	VolumeIDRef *v1.Reference `json:"volumeIdRef,omitempty" tf:"-"`
 
-	// Selector for a Volume to populate volumeId.
+	// Selector for a Volume in volume to populate volumeId.
 	// +kubebuilder:validation:Optional
 	VolumeIDSelector *v1.Selector `json:"volumeIdSelector,omitempty" tf:"-"`
 }
@@ -68,15 +68,15 @@ type AttachmentParameters struct {
 	DropletIDSelector *v1.Selector `json:"dropletIdSelector,omitempty" tf:"-"`
 
 	// ID of the Volume to be attached to the Droplet.
-	// +crossplane:generate:reference:type=Volume
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/volume/v1alpha1.Volume
 	// +kubebuilder:validation:Optional
 	VolumeID *string `json:"volumeId,omitempty" tf:"volume_id,omitempty"`
 
-	// Reference to a Volume to populate volumeId.
+	// Reference to a Volume in volume to populate volumeId.
 	// +kubebuilder:validation:Optional
 	VolumeIDRef *v1.Reference `json:"volumeIdRef,omitempty" tf:"-"`
 
-	// Selector for a Volume to populate volumeId.
+	// Selector for a Volume in volume to populate volumeId.
 	// +kubebuilder:validation:Optional
 	VolumeIDSelector *v1.Selector `json:"volumeIdSelector,omitempty" tf:"-"`
 }

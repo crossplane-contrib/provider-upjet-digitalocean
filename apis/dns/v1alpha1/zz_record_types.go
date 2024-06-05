@@ -16,14 +16,14 @@ import (
 type RecordInitParameters struct {
 
 	// The domain to add the record to.
-	// +crossplane:generate:reference:type=Domain
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/dns/v1alpha1.Domain
 	Domain *string `json:"domain,omitempty" tf:"domain,omitempty"`
 
-	// Reference to a Domain to populate domain.
+	// Reference to a Domain in dns to populate domain.
 	// +kubebuilder:validation:Optional
 	DomainRef *v1.Reference `json:"domainRef,omitempty" tf:"-"`
 
-	// Selector for a Domain to populate domain.
+	// Selector for a Domain in dns to populate domain.
 	// +kubebuilder:validation:Optional
 	DomainSelector *v1.Selector `json:"domainSelector,omitempty" tf:"-"`
 
@@ -97,15 +97,15 @@ type RecordObservation struct {
 type RecordParameters struct {
 
 	// The domain to add the record to.
-	// +crossplane:generate:reference:type=Domain
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/dns/v1alpha1.Domain
 	// +kubebuilder:validation:Optional
 	Domain *string `json:"domain,omitempty" tf:"domain,omitempty"`
 
-	// Reference to a Domain to populate domain.
+	// Reference to a Domain in dns to populate domain.
 	// +kubebuilder:validation:Optional
 	DomainRef *v1.Reference `json:"domainRef,omitempty" tf:"-"`
 
-	// Selector for a Domain to populate domain.
+	// Selector for a Domain in dns to populate domain.
 	// +kubebuilder:validation:Optional
 	DomainSelector *v1.Selector `json:"domainSelector,omitempty" tf:"-"`
 

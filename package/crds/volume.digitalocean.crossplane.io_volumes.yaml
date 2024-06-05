@@ -107,7 +107,7 @@ spec:
                       snapshot
                     type: string
                   snapshotIdRef:
-                    description: Reference to a Snapshot to populate snapshotId.
+                    description: Reference to a Snapshot in volume to populate snapshotId.
                     properties:
                       name:
                         description: Name of the referenced object.
@@ -141,7 +141,7 @@ spec:
                     - name
                     type: object
                   snapshotIdSelector:
-                    description: Selector for a Snapshot to populate snapshotId.
+                    description: Selector for a Snapshot in volume to populate snapshotId.
                     properties:
                       matchControllerRef:
                         description: |-
@@ -235,7 +235,7 @@ spec:
                       snapshot
                     type: string
                   snapshotIdRef:
-                    description: Reference to a Snapshot to populate snapshotId.
+                    description: Reference to a Snapshot in volume to populate snapshotId.
                     properties:
                       name:
                         description: Name of the referenced object.
@@ -269,7 +269,7 @@ spec:
                     - name
                     type: object
                   snapshotIdSelector:
-                    description: Selector for a Snapshot to populate snapshotId.
+                    description: Selector for a Snapshot in volume to populate snapshotId.
                     properties:
                       matchControllerRef:
                         description: |-

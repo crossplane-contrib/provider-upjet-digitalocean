@@ -77,7 +77,7 @@ spec:
                       be taken.
                     type: string
                   dropletIdRef:
-                    description: Reference to a Droplet to populate dropletId.
+                    description: Reference to a Droplet in droplet to populate dropletId.
                     properties:
                       name:
                         description: Name of the referenced object.
@@ -111,7 +111,7 @@ spec:
                     - name
                     type: object
                   dropletIdSelector:
-                    description: Selector for a Droplet to populate dropletId.
+                    description: Selector for a Droplet in droplet to populate dropletId.
                     properties:
                       matchControllerRef:
                         description: |-
@@ -172,7 +172,7 @@ spec:
                       be taken.
                     type: string
                   dropletIdRef:
-                    description: Reference to a Droplet to populate dropletId.
+                    description: Reference to a Droplet in droplet to populate dropletId.
                     properties:
                       name:
                         description: Name of the referenced object.
@@ -206,7 +206,7 @@ spec:
                     - name
                     type: object
                   dropletIdSelector:
-                    description: Selector for a Droplet to populate dropletId.
+                    description: Selector for a Droplet in droplet to populate dropletId.
                     properties:
                       matchControllerRef:
                         description: |-

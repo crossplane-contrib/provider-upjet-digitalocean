@@ -16,14 +16,14 @@ import (
 type ReplicaInitParameters struct {
 
 	// The ID of the original source database cluster.
-	// +crossplane:generate:reference:type=Cluster
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/database/v1alpha1.Cluster
 	ClusterID *string `json:"clusterId,omitempty" tf:"cluster_id,omitempty"`
 
-	// Reference to a Cluster to populate clusterId.
+	// Reference to a Cluster in database to populate clusterId.
 	// +kubebuilder:validation:Optional
 	ClusterIDRef *v1.Reference `json:"clusterIdRef,omitempty" tf:"-"`
 
-	// Selector for a Cluster to populate clusterId.
+	// Selector for a Cluster in database to populate clusterId.
 	// +kubebuilder:validation:Optional
 	ClusterIDSelector *v1.Selector `json:"clusterIdSelector,omitempty" tf:"-"`
 
@@ -103,15 +103,15 @@ type ReplicaObservation struct {
 type ReplicaParameters struct {
 
 	// The ID of the original source database cluster.
-	// +crossplane:generate:reference:type=Cluster
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/database/v1alpha1.Cluster
 	// +kubebuilder:validation:Optional
 	ClusterID *string `json:"clusterId,omitempty" tf:"cluster_id,omitempty"`
 
-	// Reference to a Cluster to populate clusterId.
+	// Reference to a Cluster in database to populate clusterId.
 	// +kubebuilder:validation:Optional
 	ClusterIDRef *v1.Reference `json:"clusterIdRef,omitempty" tf:"-"`
 
-	// Selector for a Cluster to populate clusterId.
+	// Selector for a Cluster in database to populate clusterId.
 	// +kubebuilder:validation:Optional
 	ClusterIDSelector *v1.Selector `json:"clusterIdSelector,omitempty" tf:"-"`
 

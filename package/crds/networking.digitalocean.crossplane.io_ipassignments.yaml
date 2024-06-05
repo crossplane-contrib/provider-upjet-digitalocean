@@ -154,7 +154,7 @@ spec:
                     description: The reserved IP to assign to the Droplet.
                     type: string
                   ipAddressRef:
-                    description: Reference to a IP to populate ipAddress.
+                    description: Reference to a IP in networking to populate ipAddress.
                     properties:
                       name:
                         description: Name of the referenced object.
@@ -188,7 +188,7 @@ spec:
                     - name
                     type: object
                   ipAddressSelector:
-                    description: Selector for a IP to populate ipAddress.
+                    description: Selector for a IP in networking to populate ipAddress.
                     properties:
                       matchControllerRef:
                         description: |-
@@ -323,7 +323,7 @@ spec:
                     description: The reserved IP to assign to the Droplet.
                     type: string
                   ipAddressRef:
-                    description: Reference to a IP to populate ipAddress.
+                    description: Reference to a IP in networking to populate ipAddress.
                     properties:
                       name:
                         description: Name of the referenced object.
@@ -357,7 +357,7 @@ spec:
                     - name
                     type: object
                   ipAddressSelector:
-                    description: Selector for a IP to populate ipAddress.
+                    description: Selector for a IP in networking to populate ipAddress.
                     properties:
                       matchControllerRef:
                         description: |-

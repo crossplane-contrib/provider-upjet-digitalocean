@@ -28,14 +28,14 @@ type IPAssignmentInitParameters struct {
 	DropletIDSelector *v1.Selector `json:"dropletIdSelector,omitempty" tf:"-"`
 
 	// The reserved IP to assign to the Droplet.
-	// +crossplane:generate:reference:type=IP
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/networking/v1alpha1.IP
 	IPAddress *string `json:"ipAddress,omitempty" tf:"ip_address,omitempty"`
 
-	// Reference to a IP to populate ipAddress.
+	// Reference to a IP in networking to populate ipAddress.
 	// +kubebuilder:validation:Optional
 	IPAddressRef *v1.Reference `json:"ipAddressRef,omitempty" tf:"-"`
 
-	// Selector for a IP to populate ipAddress.
+	// Selector for a IP in networking to populate ipAddress.
 	// +kubebuilder:validation:Optional
 	IPAddressSelector *v1.Selector `json:"ipAddressSelector,omitempty" tf:"-"`
 }
@@ -67,15 +67,15 @@ type IPAssignmentParameters struct {
 	DropletIDSelector *v1.Selector `json:"dropletIdSelector,omitempty" tf:"-"`
 
 	// The reserved IP to assign to the Droplet.
-	// +crossplane:generate:reference:type=IP
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/networking/v1alpha1.IP
 	// +kubebuilder:validation:Optional
 	IPAddress *string `json:"ipAddress,omitempty" tf:"ip_address,omitempty"`
 
-	// Reference to a IP to populate ipAddress.
+	// Reference to a IP in networking to populate ipAddress.
 	// +kubebuilder:validation:Optional
 	IPAddressRef *v1.Reference `json:"ipAddressRef,omitempty" tf:"-"`
 
-	// Selector for a IP to populate ipAddress.
+	// Selector for a IP in networking to populate ipAddress.
 	// +kubebuilder:validation:Optional
 	IPAddressSelector *v1.Selector `json:"ipAddressSelector,omitempty" tf:"-"`
 }

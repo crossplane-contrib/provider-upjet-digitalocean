@@ -23,14 +23,14 @@ type SnapshotInitParameters struct {
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
 	// The ID of the volume from which the volume snapshot originated.
-	// +crossplane:generate:reference:type=Volume
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/volume/v1alpha1.Volume
 	VolumeID *string `json:"volumeId,omitempty" tf:"volume_id,omitempty"`
 
-	// Reference to a Volume to populate volumeId.
+	// Reference to a Volume in volume to populate volumeId.
 	// +kubebuilder:validation:Optional
 	VolumeIDRef *v1.Reference `json:"volumeIdRef,omitempty" tf:"-"`
 
-	// Selector for a Volume to populate volumeId.
+	// Selector for a Volume in volume to populate volumeId.
 	// +kubebuilder:validation:Optional
 	VolumeIDSelector *v1.Selector `json:"volumeIdSelector,omitempty" tf:"-"`
 }
@@ -76,15 +76,15 @@ type SnapshotParameters struct {
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
 	// The ID of the volume from which the volume snapshot originated.
-	// +crossplane:generate:reference:type=Volume
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/volume/v1alpha1.Volume
 	// +kubebuilder:validation:Optional
 	VolumeID *string `json:"volumeId,omitempty" tf:"volume_id,omitempty"`
 
-	// Reference to a Volume to populate volumeId.
+	// Reference to a Volume in volume to populate volumeId.
 	// +kubebuilder:validation:Optional
 	VolumeIDRef *v1.Reference `json:"volumeIdRef,omitempty" tf:"-"`
 
-	// Selector for a Volume to populate volumeId.
+	// Selector for a Volume in volume to populate volumeId.
 	// +kubebuilder:validation:Optional
 	VolumeIDSelector *v1.Selector `json:"volumeIdSelector,omitempty" tf:"-"`
 }

@@ -19,14 +19,14 @@ type NodePoolInitParameters_2 struct {
 	AutoScale *bool `json:"autoScale,omitempty" tf:"auto_scale,omitempty"`
 
 	// The ID of the Kubernetes cluster to which the node pool is associated.
-	// +crossplane:generate:reference:type=Cluster
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/kubernetes/v1alpha1.Cluster
 	ClusterID *string `json:"clusterId,omitempty" tf:"cluster_id,omitempty"`
 
-	// Reference to a Cluster to populate clusterId.
+	// Reference to a Cluster in kubernetes to populate clusterId.
 	// +kubebuilder:validation:Optional
 	ClusterIDRef *v1.Reference `json:"clusterIdRef,omitempty" tf:"-"`
 
-	// Selector for a Cluster to populate clusterId.
+	// Selector for a Cluster in kubernetes to populate clusterId.
 	// +kubebuilder:validation:Optional
 	ClusterIDSelector *v1.Selector `json:"clusterIdSelector,omitempty" tf:"-"`
 
@@ -135,15 +135,15 @@ type NodePoolParameters_2 struct {
 	AutoScale *bool `json:"autoScale,omitempty" tf:"auto_scale,omitempty"`
 
 	// The ID of the Kubernetes cluster to which the node pool is associated.
-	// +crossplane:generate:reference:type=Cluster
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/kubernetes/v1alpha1.Cluster
 	// +kubebuilder:validation:Optional
 	ClusterID *string `json:"clusterId,omitempty" tf:"cluster_id,omitempty"`
 
-	// Reference to a Cluster to populate clusterId.
+	// Reference to a Cluster in kubernetes to populate clusterId.
 	// +kubebuilder:validation:Optional
 	ClusterIDRef *v1.Reference `json:"clusterIdRef,omitempty" tf:"-"`
 
-	// Selector for a Cluster to populate clusterId.
+	// Selector for a Cluster in kubernetes to populate clusterId.
 	// +kubebuilder:validation:Optional
 	ClusterIDSelector *v1.Selector `json:"clusterIdSelector,omitempty" tf:"-"`
 
