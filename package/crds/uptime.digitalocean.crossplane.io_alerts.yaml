@@ -78,7 +78,7 @@ spec:
                       A unique identifier for a check.
                     type: string
                   checkIdRef:
-                    description: Reference to a Check to populate checkId.
+                    description: Reference to a Check in uptime to populate checkId.
                     properties:
                       name:
                         description: Name of the referenced object.
@@ -112,7 +112,7 @@ spec:
                     - name
                     type: object
                   checkIdSelector:
-                    description: Selector for a Check to populate checkId.
+                    description: Selector for a Check in uptime to populate checkId.
                     properties:
                       matchControllerRef:
                         description: |-
@@ -226,7 +226,7 @@ spec:
                       A unique identifier for a check.
                     type: string
                   checkIdRef:
-                    description: Reference to a Check to populate checkId.
+                    description: Reference to a Check in uptime to populate checkId.
                     properties:
                       name:
                         description: Name of the referenced object.
@@ -260,7 +260,7 @@ spec:
                     - name
                     type: object
                   checkIdSelector:
-                    description: Selector for a Check to populate checkId.
+                    description: Selector for a Check in uptime to populate checkId.
                     properties:
                       matchControllerRef:
                         description: |-

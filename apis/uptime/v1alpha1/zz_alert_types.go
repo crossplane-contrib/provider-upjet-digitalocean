@@ -17,14 +17,14 @@ type AlertInitParameters struct {
 
 	// A unique identifier for a check
 	// A unique identifier for a check.
-	// +crossplane:generate:reference:type=Check
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/uptime/v1alpha1.Check
 	CheckID *string `json:"checkId,omitempty" tf:"check_id,omitempty"`
 
-	// Reference to a Check to populate checkId.
+	// Reference to a Check in uptime to populate checkId.
 	// +kubebuilder:validation:Optional
 	CheckIDRef *v1.Reference `json:"checkIdRef,omitempty" tf:"-"`
 
-	// Selector for a Check to populate checkId.
+	// Selector for a Check in uptime to populate checkId.
 	// +kubebuilder:validation:Optional
 	CheckIDSelector *v1.Selector `json:"checkIdSelector,omitempty" tf:"-"`
 
@@ -91,15 +91,15 @@ type AlertParameters struct {
 
 	// A unique identifier for a check
 	// A unique identifier for a check.
-	// +crossplane:generate:reference:type=Check
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/uptime/v1alpha1.Check
 	// +kubebuilder:validation:Optional
 	CheckID *string `json:"checkId,omitempty" tf:"check_id,omitempty"`
 
-	// Reference to a Check to populate checkId.
+	// Reference to a Check in uptime to populate checkId.
 	// +kubebuilder:validation:Optional
 	CheckIDRef *v1.Reference `json:"checkIdRef,omitempty" tf:"-"`
 
-	// Selector for a Check to populate checkId.
+	// Selector for a Check in uptime to populate checkId.
 	// +kubebuilder:validation:Optional
 	CheckIDSelector *v1.Selector `json:"checkIdSelector,omitempty" tf:"-"`
 

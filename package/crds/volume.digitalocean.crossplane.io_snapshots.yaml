@@ -86,7 +86,7 @@ spec:
                       originated.
                     type: string
                   volumeIdRef:
-                    description: Reference to a Volume to populate volumeId.
+                    description: Reference to a Volume in volume to populate volumeId.
                     properties:
                       name:
                         description: Name of the referenced object.
@@ -120,7 +120,7 @@ spec:
                     - name
                     type: object
                   volumeIdSelector:
-                    description: Selector for a Volume to populate volumeId.
+                    description: Selector for a Volume in volume to populate volumeId.
                     properties:
                       matchControllerRef:
                         description: |-
@@ -187,7 +187,7 @@ spec:
                       originated.
                     type: string
                   volumeIdRef:
-                    description: Reference to a Volume to populate volumeId.
+                    description: Reference to a Volume in volume to populate volumeId.
                     properties:
                       name:
                         description: Name of the referenced object.
@@ -221,7 +221,7 @@ spec:
                     - name
                     type: object
                   volumeIdSelector:
-                    description: Selector for a Volume to populate volumeId.
+                    description: Selector for a Volume in volume to populate volumeId.
                     properties:
                       matchControllerRef:
                         description: |-

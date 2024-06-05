@@ -76,7 +76,7 @@ spec:
                     description: The domain to add the record to.
                     type: string
                   domainRef:
-                    description: Reference to a Domain to populate domain.
+                    description: Reference to a Domain in dns to populate domain.
                     properties:
                       name:
                         description: Name of the referenced object.
@@ -110,7 +110,7 @@ spec:
                     - name
                     type: object
                   domainSelector:
-                    description: Selector for a Domain to populate domain.
+                    description: Selector for a Domain in dns to populate domain.
                     properties:
                       matchControllerRef:
                         description: |-
@@ -202,7 +202,7 @@ spec:
                     description: The domain to add the record to.
                     type: string
                   domainRef:
-                    description: Reference to a Domain to populate domain.
+                    description: Reference to a Domain in dns to populate domain.
                     properties:
                       name:
                         description: Name of the referenced object.
@@ -236,7 +236,7 @@ spec:
                     - name
                     type: object
                   domainSelector:
-                    description: Selector for a Domain to populate domain.
+                    description: Selector for a Domain in dns to populate domain.
                     properties:
                       matchControllerRef:
                         description: |-

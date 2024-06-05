@@ -15,7 +15,7 @@ import (
 
 type CdnInitParameters struct {
 
-	// Selector for a Bucket to populate origin.
+	// Selector for a Bucket in spaces to populate origin.
 	// +kubebuilder:validation:Optional
 	BucketDomainName *v1.Selector `json:"bucketDomainName,omitempty" tf:"-"`
 
@@ -51,11 +51,11 @@ type CdnInitParameters struct {
 
 	// The fully qualified domain name, (FQDN) for a Space.
 	// fully qualified domain name (FQDN) for the origin server
-	// +crossplane:generate:reference:type=Bucket
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/spaces/v1alpha1.Bucket
 	// +crossplane:generate:reference:selectorFieldName=BucketDomainName
 	Origin *string `json:"origin,omitempty" tf:"origin,omitempty"`
 
-	// Reference to a Bucket to populate origin.
+	// Reference to a Bucket in spaces to populate origin.
 	// +kubebuilder:validation:Optional
 	OriginRef *v1.Reference `json:"originRef,omitempty" tf:"-"`
 
@@ -99,7 +99,7 @@ type CdnObservation struct {
 
 type CdnParameters struct {
 
-	// Selector for a Bucket to populate origin.
+	// Selector for a Bucket in spaces to populate origin.
 	// +kubebuilder:validation:Optional
 	BucketDomainName *v1.Selector `json:"bucketDomainName,omitempty" tf:"-"`
 
@@ -139,12 +139,12 @@ type CdnParameters struct {
 
 	// The fully qualified domain name, (FQDN) for a Space.
 	// fully qualified domain name (FQDN) for the origin server
-	// +crossplane:generate:reference:type=Bucket
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/spaces/v1alpha1.Bucket
 	// +crossplane:generate:reference:selectorFieldName=BucketDomainName
 	// +kubebuilder:validation:Optional
 	Origin *string `json:"origin,omitempty" tf:"origin,omitempty"`
 
-	// Reference to a Bucket to populate origin.
+	// Reference to a Bucket in spaces to populate origin.
 	// +kubebuilder:validation:Optional
 	OriginRef *v1.Reference `json:"originRef,omitempty" tf:"-"`
 
