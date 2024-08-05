@@ -78,7 +78,10 @@ func GetProvider() *ujconfig.Provider {
 		ujconfig.WithFeaturesPackage("internal/features"),
 		ujconfig.WithDefaultResourceOptions(
 			ExternalNameConfigurations(),
-		))
+		),
+	)
+
+	pc.BasePackages.ControllerMap["internal/controller/kubernetes/clusterauth"] = "kubernetes"
 
 	pc.AddResourceConfigurator("digitalocean_spaces_cors_configuration", func(r *ujconfig.Resource) {
 		r.References["region"] = ujconfig.Reference{
