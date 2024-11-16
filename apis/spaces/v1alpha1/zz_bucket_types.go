@@ -15,7 +15,7 @@ import (
 
 type BucketInitParameters struct {
 
-	// Canned ACL applied on bucket creation (private or public-read)
+	// Canned ACL applied on bucket creation: private or public-read (Defaults to private)
 	// Canned ACL applied on bucket creation
 	ACL *string `json:"acl,omitempty" tf:"acl,omitempty"`
 
@@ -40,7 +40,7 @@ type BucketInitParameters struct {
 
 type BucketObservation struct {
 
-	// Canned ACL applied on bucket creation (private or public-read)
+	// Canned ACL applied on bucket creation: private or public-read (Defaults to private)
 	// Canned ACL applied on bucket creation
 	ACL *string `json:"acl,omitempty" tf:"acl,omitempty"`
 
@@ -80,7 +80,7 @@ type BucketObservation struct {
 
 type BucketParameters struct {
 
-	// Canned ACL applied on bucket creation (private or public-read)
+	// Canned ACL applied on bucket creation: private or public-read (Defaults to private)
 	// Canned ACL applied on bucket creation
 	// +kubebuilder:validation:Optional
 	ACL *string `json:"acl,omitempty" tf:"acl,omitempty"`

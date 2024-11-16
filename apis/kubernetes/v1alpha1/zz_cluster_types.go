@@ -18,6 +18,9 @@ type ClusterInitParameters struct {
 	// A boolean value indicating whether the cluster will be automatically upgraded to new patch releases during its maintenance window.
 	AutoUpgrade *bool `json:"autoUpgrade,omitempty" tf:"auto_upgrade,omitempty"`
 
+	// The range of IP addresses in the overlay network of the Kubernetes cluster. For more information, see here.
+	ClusterSubnet *string `json:"clusterSubnet,omitempty" tf:"cluster_subnet,omitempty"`
+
 	// Use with caution. When set to true, all associated DigitalOcean resources created via the Kubernetes API (load balancers, volumes, and volume snapshots) will be destroyed along with the cluster when it is destroyed.
 	DestroyAllAssociatedResources *bool `json:"destroyAllAssociatedResources,omitempty" tf:"destroy_all_associated_resources,omitempty"`
 
@@ -39,7 +42,10 @@ type ClusterInitParameters struct {
 	// Enables or disables the DigitalOcean container registry integration for the cluster. This requires that a container registry has first been created for the account. Default: false
 	RegistryIntegration *bool `json:"registryIntegration,omitempty" tf:"registry_integration,omitempty"`
 
-	// Enable/disable surge upgrades for a cluster. Default: false
+	// The range of assignable IP addresses for services running in the Kubernetes cluster. For more information, see here.
+	ServiceSubnet *string `json:"serviceSubnet,omitempty" tf:"service_subnet,omitempty"`
+
+	// Enable/disable surge upgrades for a cluster. Default: true
 	SurgeUpgrade *bool `json:"surgeUpgrade,omitempty" tf:"surge_upgrade,omitempty"`
 
 	// A list of tag names applied to the node pool.
@@ -67,7 +73,7 @@ type ClusterObservation struct {
 	// A boolean value indicating whether the cluster will be automatically upgraded to new patch releases during its maintenance window.
 	AutoUpgrade *bool `json:"autoUpgrade,omitempty" tf:"auto_upgrade,omitempty"`
 
-	// The range of IP addresses in the overlay network of the Kubernetes cluster.
+	// The range of IP addresses in the overlay network of the Kubernetes cluster. For more information, see here.
 	ClusterSubnet *string `json:"clusterSubnet,omitempty" tf:"cluster_subnet,omitempty"`
 
 	// The date and time when the Kubernetes cluster was created.
@@ -103,13 +109,13 @@ type ClusterObservation struct {
 	// Enables or disables the DigitalOcean container registry integration for the cluster. This requires that a container registry has first been created for the account. Default: false
 	RegistryIntegration *bool `json:"registryIntegration,omitempty" tf:"registry_integration,omitempty"`
 
-	// The range of assignable IP addresses for services running in the Kubernetes cluster.
+	// The range of assignable IP addresses for services running in the Kubernetes cluster. For more information, see here.
 	ServiceSubnet *string `json:"serviceSubnet,omitempty" tf:"service_subnet,omitempty"`
 
 	// A string indicating the current status of the cluster. Potential values include running, provisioning, and errored.
 	Status *string `json:"status,omitempty" tf:"status,omitempty"`
 
-	// Enable/disable surge upgrades for a cluster. Default: false
+	// Enable/disable surge upgrades for a cluster. Default: true
 	SurgeUpgrade *bool `json:"surgeUpgrade,omitempty" tf:"surge_upgrade,omitempty"`
 
 	// A list of tag names applied to the node pool.
@@ -134,6 +140,10 @@ type ClusterParameters struct {
 	// A boolean value indicating whether the cluster will be automatically upgraded to new patch releases during its maintenance window.
 	// +kubebuilder:validation:Optional
 	AutoUpgrade *bool `json:"autoUpgrade,omitempty" tf:"auto_upgrade,omitempty"`
+
+	// The range of IP addresses in the overlay network of the Kubernetes cluster. For more information, see here.
+	// +kubebuilder:validation:Optional
+	ClusterSubnet *string `json:"clusterSubnet,omitempty" tf:"cluster_subnet,omitempty"`
 
 	// Use with caution. When set to true, all associated DigitalOcean resources created via the Kubernetes API (load balancers, volumes, and volume snapshots) will be destroyed along with the cluster when it is destroyed.
 	// +kubebuilder:validation:Optional
@@ -163,7 +173,11 @@ type ClusterParameters struct {
 	// +kubebuilder:validation:Optional
 	RegistryIntegration *bool `json:"registryIntegration,omitempty" tf:"registry_integration,omitempty"`
 
-	// Enable/disable surge upgrades for a cluster. Default: false
+	// The range of assignable IP addresses for services running in the Kubernetes cluster. For more information, see here.
+	// +kubebuilder:validation:Optional
+	ServiceSubnet *string `json:"serviceSubnet,omitempty" tf:"service_subnet,omitempty"`
+
+	// Enable/disable surge upgrades for a cluster. Default: true
 	// +kubebuilder:validation:Optional
 	SurgeUpgrade *bool `json:"surgeUpgrade,omitempty" tf:"surge_upgrade,omitempty"`
 

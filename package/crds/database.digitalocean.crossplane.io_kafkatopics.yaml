@@ -158,7 +158,7 @@ spec:
                       properties:
                         cleanupPolicy:
                           description: |-
-                            The topic cleanup policy that decribes whether messages should be deleted, compacted, or both when retention policies are violated.
+                            The topic cleanup policy that describes whether messages should be deleted, compacted, or both when retention policies are violated.
                             This may be one of "delete", "compact", or "compact_delete".
                           type: string
                         compressionType:
@@ -384,7 +384,7 @@ spec:
                       properties:
                         cleanupPolicy:
                           description: |-
-                            The topic cleanup policy that decribes whether messages should be deleted, compacted, or both when retention policies are violated.
+                            The topic cleanup policy that describes whether messages should be deleted, compacted, or both when retention policies are violated.
                             This may be one of "delete", "compact", or "compact_delete".
                           type: string
                         compressionType:
@@ -700,7 +700,7 @@ spec:
                       properties:
                         cleanupPolicy:
                           description: |-
-                            The topic cleanup policy that decribes whether messages should be deleted, compacted, or both when retention policies are violated.
+                            The topic cleanup policy that describes whether messages should be deleted, compacted, or both when retention policies are violated.
                             This may be one of "delete", "compact", or "compact_delete".
                           type: string
                         compressionType:

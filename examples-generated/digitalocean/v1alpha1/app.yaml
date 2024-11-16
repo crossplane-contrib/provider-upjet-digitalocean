@@ -12,10 +12,9 @@ spec:
     - name: golang-sample
       region: ams
       service:
-      - environmentSlug: go
-        git:
+      - git:
         - branch: main
           repoCloneUrl: https://github.com/digitalocean/sample-golang.git
         instanceCount: 1
-        instanceSizeSlug: professional-xs
+        instanceSizeSlug: apps-s-1vcpu-1gb
         name: go-service

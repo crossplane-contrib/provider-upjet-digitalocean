@@ -72,6 +72,25 @@ spec:
                 type: string
               forProvider:
                 properties:
+                  dedicatedIps:
+                    description: The dedicated egress IP addresses associated with
+                      the app.
+                    items:
+                      properties:
+                        id:
+                          description: |-
+                            The ID of the app.
+                            The ID of the dedicated egress IP.
+                          type: string
+                        ip:
+                          description: The IP address of the dedicated egress IP.
+                          type: string
+                        status:
+                          description: 'The status of the dedicated egress IP: ''UNKNOWN'',
+                            ''ASSIGNING'', ''ASSIGNED'', or ''REMOVED'''
+                          type: string
+                      type: object
+                    type: array
                   projectId:
                     description: The ID of the project that the app is assigned to.
                     type: string
@@ -165,8 +184,9 @@ spec:
                                 type: boolean
                               rule:
                                 description: 'The type of the alert to configure.
-                                  Top-level app alert policies can be: DEPLOYMENT_FAILED,
-                                  DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                  Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
+                                  DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
+                                  DOMAIN_FAILED, or DOMAIN_LIVE.'
                                 type: string
                             type: object
                           type: array
@@ -175,7 +195,7 @@ spec:
                             properties:
                               clusterName:
                                 description: |-
-                                  The name of the underlying DigitalOcean DBaaS cluster. This is required for production databases. For dev databases, if cluster_name is not set, a new cluster will be provisioned.
+                                  The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
                                   The name of the underlying DigitalOcean DBaaS cluster. This is required for production databases. For dev databases, if cluster_name is not set, a new cluster will be provisioned.
                                 type: string
                               dbName:
@@ -190,7 +210,7 @@ spec:
                                 type: string
                               engine:
                                 description: |-
-                                  The database engine to use (MYSQL, PG, REDIS, or MONGODB).
+                                  The database engine to use (MYSQL, PG, REDIS, MONGODB, KAFKA, or OPENSEARCH).
                                   The database engine to use.
                                 type: string
                               name:
@@ -242,6 +262,17 @@ spec:
                             type: string
                           type: array
                           x-kubernetes-list-type: set
+                        egress:
+                          description: Specification for app egress configurations.
+                          items:
+                            properties:
+                              type:
+                                description: |-
+                                  The domain type, which can be one of the following:
+                                  The app egress type.
+                                type: string
+                            type: object
+                          type: array
                         env:
                           description: Describes an app-wide environment variable
                             made available to all components.
@@ -310,8 +341,9 @@ spec:
                                       type: string
                                     rule:
                                       description: 'The type of the alert to configure.
-                                        Top-level app alert policies can be: DEPLOYMENT_FAILED,
-                                        DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                        Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
+                                        DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
+                                        DOMAIN_FAILED, or DOMAIN_LIVE.'
                                       type: string
                                     value:
                                       description: The value of the environment variable.
@@ -430,8 +462,8 @@ spec:
                               git:
                                 description: A Git repo to use as the component's
                                   source. The repository must be able to be cloned
-                                  without authentication.  Only one of git, github
-                                  or gitlab  may be set
+                                  without authentication. Only one of git, github
+                                  or gitlab may be set
                                 items:
                                   properties:
                                     branch:
@@ -536,6 +568,60 @@ spec:
                                         The name of the app. Must be unique across all apps in the same account.
                                         Name of the log destination
                                       type: string
+                                    openSearch:
+                                      description: OpenSearch configuration.
+                                      items:
+                                        properties:
+                                          basicAuth:
+                                            description: |-
+                                              OpenSearch basic auth
+                                              Basic authentication details.
+                                            items:
+                                              properties:
+                                                passwordSecretRef:
+                                                  description: |-
+                                                    Password for user defined in User. Is required when endpoint is set. Cannot be set if using a DigitalOcean DBaaS OpenSearch cluster.
+                                                    Password for basic authentication.
+                                                  properties:
+                                                    key:
+                                                      description: The key to select.
+                                                      type: string
+                                                    name:
+                                                      description: Name of the secret.
+                                                      type: string
+                                                    namespace:
+                                                      description: Namespace of the
+                                                        secret.
+                                                      type: string
+                                                  required:
+                                                  - key
+                                                  - name
+                                                  - namespace
+                                                  type: object
+                                                user:
+                                                  description: |-
+                                                    Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.
+                                                    user for basic authentication.
+                                                  type: string
+                                              type: object
+                                            type: array
+                                          clusterName:
+                                            description: |-
+                                              The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
+                                              OpenSearch cluster name.
+                                            type: string
+                                          endpoint:
+                                            description: |-
+                                              Papertrail syslog endpoint.
+                                              OpenSearch endpoint.
+                                            type: string
+                                          indexName:
+                                            description: |-
+                                              The index name to use for the logs. If not set, the default index name is logs.
+                                              OpenSearch index name.
+                                            type: string
+                                        type: object
+                                      type: array
                                     papertrail:
                                       description: |-
                                         Papertrail configuration.
@@ -587,8 +673,9 @@ spec:
                             properties:
                               rule:
                                 description: 'The type of the alert to configure.
-                                  Top-level app alert policies can be: DEPLOYMENT_FAILED,
-                                  DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                  Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
+                                  DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
+                                  DOMAIN_FAILED, or DOMAIN_LIVE.'
                                 items:
                                   properties:
                                     component:
@@ -747,8 +834,9 @@ spec:
                                       type: string
                                     rule:
                                       description: 'The type of the alert to configure.
-                                        Top-level app alert policies can be: DEPLOYMENT_FAILED,
-                                        DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                        Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
+                                        DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
+                                        DOMAIN_FAILED, or DOMAIN_LIVE.'
                                       type: string
                                     value:
                                       description: The value of the environment variable.
@@ -819,8 +907,8 @@ spec:
                               git:
                                 description: A Git repo to use as the component's
                                   source. The repository must be able to be cloned
-                                  without authentication.  Only one of git, github
-                                  or gitlab  may be set
+                                  without authentication. Only one of git, github
+                                  or gitlab may be set
                                 items:
                                   properties:
                                     branch:
@@ -907,6 +995,25 @@ spec:
                                         The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.
                                         The registry name. Must be left empty for the DOCR registry type.
                                       type: string
+                                    registryCredentialsSecretRef:
+                                      description: |-
+                                        The credentials required to access a private Docker Hub or GitHub registry, in the following syntax <username>:<token>.
+                                        Access credentials for third-party registries
+                                      properties:
+                                        key:
+                                          description: The key to select.
+                                          type: string
+                                        name:
+                                          description: Name of the secret.
+                                          type: string
+                                        namespace:
+                                          description: Namespace of the secret.
+                                          type: string
+                                      required:
+                                      - key
+                                      - name
+                                      - namespace
+                                      type: object
                                     registryType:
                                       description: |-
                                         The registry type. One of DOCR (DigitalOcean container registry) or DOCKER_HUB.
@@ -981,6 +1088,60 @@ spec:
                                         The name of the app. Must be unique across all apps in the same account.
                                         Name of the log destination
                                       type: string
+                                    openSearch:
+                                      description: OpenSearch configuration.
+                                      items:
+                                        properties:
+                                          basicAuth:
+                                            description: |-
+                                              OpenSearch basic auth
+                                              Basic authentication details.
+                                            items:
+                                              properties:
+                                                passwordSecretRef:
+                                                  description: |-
+                                                    Password for user defined in User. Is required when endpoint is set. Cannot be set if using a DigitalOcean DBaaS OpenSearch cluster.
+                                                    Password for basic authentication.
+                                                  properties:
+                                                    key:
+                                                      description: The key to select.
+                                                      type: string
+                                                    name:
+                                                      description: Name of the secret.
+                                                      type: string
+                                                    namespace:
+                                                      description: Namespace of the
+                                                        secret.
+                                                      type: string
+                                                  required:
+                                                  - key
+                                                  - name
+                                                  - namespace
+                                                  type: object
+                                                user:
+                                                  description: |-
+                                                    Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.
+                                                    user for basic authentication.
+                                                  type: string
+                                              type: object
+                                            type: array
+                                          clusterName:
+                                            description: |-
+                                              The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
+                                              OpenSearch cluster name.
+                                            type: string
+                                          endpoint:
+                                            description: |-
+                                              Papertrail syslog endpoint.
+                                              OpenSearch endpoint.
+                                            type: string
+                                          indexName:
+                                            description: |-
+                                              The index name to use for the logs. If not set, the default index name is logs.
+                                              OpenSearch index name.
+                                            type: string
+                                        type: object
+                                      type: array
                                     papertrail:
                                       description: |-
                                         Papertrail configuration.
@@ -1042,8 +1203,9 @@ spec:
                                       type: string
                                     rule:
                                       description: 'The type of the alert to configure.
-                                        Top-level app alert policies can be: DEPLOYMENT_FAILED,
-                                        DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                        Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
+                                        DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
+                                        DOMAIN_FAILED, or DOMAIN_LIVE.'
                                       type: string
                                     value:
                                       description: The value of the environment variable.
@@ -1053,6 +1215,44 @@ spec:
                                         be triggered. This is may be one of: FIVE_MINUTES,
                                         TEN_MINUTES, THIRTY_MINUTES, ONE_HOUR.'
                                       type: string
+                                  type: object
+                                type: array
+                              autoscaling:
+                                description: Configuration for automatically scaling
+                                  this component based on metrics.
+                                items:
+                                  properties:
+                                    maxInstanceCount:
+                                      description: |-
+                                        The maximum amount of instances for this component. Must be more than min_instance_count.
+                                        The maximum amount of instances for this component. Must be more than min_instance_count.
+                                      type: number
+                                    metrics:
+                                      description: |-
+                                        The metrics that the component is scaled on.
+                                        The metrics that the component is scaled on.
+                                      items:
+                                        properties:
+                                          cpu:
+                                            description: |-
+                                              Settings for scaling the component based on CPU utilization.
+                                              Settings for scaling the component based on CPU utilization.
+                                            items:
+                                              properties:
+                                                percent:
+                                                  description: |-
+                                                    The average target CPU utilization for the component.
+                                                    The average target CPU utilization for the component.
+                                                  type: number
+                                              type: object
+                                            type: array
+                                        type: object
+                                      type: array
+                                    minInstanceCount:
+                                      description: |-
+                                        The minimum amount of instances for this component. Must be less than max_instance_count.
+                                        The minimum amount of instances for this component. Must be less than max_instance_count.
+                                      type: number
                                   type: object
                                 type: array
                               buildCommand:
@@ -1177,8 +1377,8 @@ spec:
                               git:
                                 description: A Git repo to use as the component's
                                   source. The repository must be able to be cloned
-                                  without authentication.  Only one of git, github
-                                  or gitlab  may be set
+                                  without authentication. Only one of git, github
+                                  or gitlab may be set
                                 items:
                                   properties:
                                     branch:
@@ -1312,6 +1512,25 @@ spec:
                                         The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.
                                         The registry name. Must be left empty for the DOCR registry type.
                                       type: string
+                                    registryCredentialsSecretRef:
+                                      description: |-
+                                        The credentials required to access a private Docker Hub or GitHub registry, in the following syntax <username>:<token>.
+                                        Access credentials for third-party registries
+                                      properties:
+                                        key:
+                                          description: The key to select.
+                                          type: string
+                                        name:
+                                          description: Name of the secret.
+                                          type: string
+                                        namespace:
+                                          description: Namespace of the secret.
+                                          type: string
+                                      required:
+                                      - key
+                                      - name
+                                      - namespace
+                                      type: object
                                     registryType:
                                       description: |-
                                         The registry type. One of DOCR (DigitalOcean container registry) or DOCKER_HUB.
@@ -1388,6 +1607,60 @@ spec:
                                         The name of the app. Must be unique across all apps in the same account.
                                         Name of the log destination
                                       type: string
+                                    openSearch:
+                                      description: OpenSearch configuration.
+                                      items:
+                                        properties:
+                                          basicAuth:
+                                            description: |-
+                                              OpenSearch basic auth
+                                              Basic authentication details.
+                                            items:
+                                              properties:
+                                                passwordSecretRef:
+                                                  description: |-
+                                                    Password for user defined in User. Is required when endpoint is set. Cannot be set if using a DigitalOcean DBaaS OpenSearch cluster.
+                                                    Password for basic authentication.
+                                                  properties:
+                                                    key:
+                                                      description: The key to select.
+                                                      type: string
+                                                    name:
+                                                      description: Name of the secret.
+                                                      type: string
+                                                    namespace:
+                                                      description: Namespace of the
+                                                        secret.
+                                                      type: string
+                                                  required:
+                                                  - key
+                                                  - name
+                                                  - namespace
+                                                  type: object
+                                                user:
+                                                  description: |-
+                                                    Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.
+                                                    user for basic authentication.
+                                                  type: string
+                                              type: object
+                                            type: array
+                                          clusterName:
+                                            description: |-
+                                              The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
+                                              OpenSearch cluster name.
+                                            type: string
+                                          endpoint:
+                                            description: |-
+                                              Papertrail syslog endpoint.
+                                              OpenSearch endpoint.
+                                            type: string
+                                          indexName:
+                                            description: |-
+                                              The index name to use for the logs. If not set, the default index name is logs.
+                                              OpenSearch index name.
+                                            type: string
+                                        type: object
+                                      type: array
                                     papertrail:
                                       description: |-
                                         Papertrail configuration.
@@ -1572,8 +1845,8 @@ spec:
                               git:
                                 description: A Git repo to use as the component's
                                   source. The repository must be able to be cloned
-                                  without authentication.  Only one of git, github
-                                  or gitlab  may be set
+                                  without authentication. Only one of git, github
+                                  or gitlab may be set
                                 items:
                                   properties:
                                     branch:
@@ -1694,8 +1967,9 @@ spec:
                                       type: string
                                     rule:
                                       description: 'The type of the alert to configure.
-                                        Top-level app alert policies can be: DEPLOYMENT_FAILED,
-                                        DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                        Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
+                                        DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
+                                        DOMAIN_FAILED, or DOMAIN_LIVE.'
                                       type: string
                                     value:
                                       description: The value of the environment variable.
@@ -1766,8 +2040,8 @@ spec:
                               git:
                                 description: A Git repo to use as the component's
                                   source. The repository must be able to be cloned
-                                  without authentication.  Only one of git, github
-                                  or gitlab  may be set
+                                  without authentication. Only one of git, github
+                                  or gitlab may be set
                                 items:
                                   properties:
                                     branch:
@@ -1854,6 +2128,25 @@ spec:
                                         The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.
                                         The registry name. Must be left empty for the DOCR registry type.
                                       type: string
+                                    registryCredentialsSecretRef:
+                                      description: |-
+                                        The credentials required to access a private Docker Hub or GitHub registry, in the following syntax <username>:<token>.
+                                        Access credentials for third-party registries
+                                      properties:
+                                        key:
+                                          description: The key to select.
+                                          type: string
+                                        name:
+                                          description: Name of the secret.
+                                          type: string
+                                        namespace:
+                                          description: Namespace of the secret.
+                                          type: string
+                                      required:
+                                      - key
+                                      - name
+                                      - namespace
+                                      type: object
                                     registryType:
                                       description: |-
                                         The registry type. One of DOCR (DigitalOcean container registry) or DOCKER_HUB.
@@ -1923,6 +2216,60 @@ spec:
                                         The name of the app. Must be unique across all apps in the same account.
                                         Name of the log destination
                                       type: string
+                                    openSearch:
+                                      description: OpenSearch configuration.
+                                      items:
+                                        properties:
+                                          basicAuth:
+                                            description: |-
+                                              OpenSearch basic auth
+                                              Basic authentication details.
+                                            items:
+                                              properties:
+                                                passwordSecretRef:
+                                                  description: |-
+                                                    Password for user defined in User. Is required when endpoint is set. Cannot be set if using a DigitalOcean DBaaS OpenSearch cluster.
+                                                    Password for basic authentication.
+                                                  properties:
+                                                    key:
+                                                      description: The key to select.
+                                                      type: string
+                                                    name:
+                                                      description: Name of the secret.
+                                                      type: string
+                                                    namespace:
+                                                      description: Namespace of the
+                                                        secret.
+                                                      type: string
+                                                  required:
+                                                  - key
+                                                  - name
+                                                  - namespace
+                                                  type: object
+                                                user:
+                                                  description: |-
+                                                    Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.
+                                                    user for basic authentication.
+                                                  type: string
+                                              type: object
+                                            type: array
+                                          clusterName:
+                                            description: |-
+                                              The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
+                                              OpenSearch cluster name.
+                                            type: string
+                                          endpoint:
+                                            description: |-
+                                              Papertrail syslog endpoint.
+                                              OpenSearch endpoint.
+                                            type: string
+                                          indexName:
+                                            description: |-
+                                              The index name to use for the logs. If not set, the default index name is logs.
+                                              OpenSearch index name.
+                                            type: string
+                                        type: object
+                                      type: array
                                     papertrail:
                                       description: |-
                                         Papertrail configuration.
@@ -1971,6 +2318,25 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
+                  dedicatedIps:
+                    description: The dedicated egress IP addresses associated with
+                      the app.
+                    items:
+                      properties:
+                        id:
+                          description: |-
+                            The ID of the app.
+                            The ID of the dedicated egress IP.
+                          type: string
+                        ip:
+                          description: The IP address of the dedicated egress IP.
+                          type: string
+                        status:
+                          description: 'The status of the dedicated egress IP: ''UNKNOWN'',
+                            ''ASSIGNING'', ''ASSIGNED'', or ''REMOVED'''
+                          type: string
+                      type: object
+                    type: array
                   projectId:
                     description: The ID of the project that the app is assigned to.
                     type: string
@@ -2064,8 +2430,9 @@ spec:
                                 type: boolean
                               rule:
                                 description: 'The type of the alert to configure.
-                                  Top-level app alert policies can be: DEPLOYMENT_FAILED,
-                                  DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                  Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
+                                  DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
+                                  DOMAIN_FAILED, or DOMAIN_LIVE.'
                                 type: string
                             type: object
                           type: array
@@ -2074,7 +2441,7 @@ spec:
                             properties:
                               clusterName:
                                 description: |-
-                                  The name of the underlying DigitalOcean DBaaS cluster. This is required for production databases. For dev databases, if cluster_name is not set, a new cluster will be provisioned.
+                                  The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
                                   The name of the underlying DigitalOcean DBaaS cluster. This is required for production databases. For dev databases, if cluster_name is not set, a new cluster will be provisioned.
                                 type: string
                               dbName:
@@ -2089,7 +2456,7 @@ spec:
                                 type: string
                               engine:
                                 description: |-
-                                  The database engine to use (MYSQL, PG, REDIS, or MONGODB).
+                                  The database engine to use (MYSQL, PG, REDIS, MONGODB, KAFKA, or OPENSEARCH).
                                   The database engine to use.
                                 type: string
                               name:
@@ -2141,6 +2508,17 @@ spec:
                             type: string
                           type: array
                           x-kubernetes-list-type: set
+                        egress:
+                          description: Specification for app egress configurations.
+                          items:
+                            properties:
+                              type:
+                                description: |-
+                                  The domain type, which can be one of the following:
+                                  The app egress type.
+                                type: string
+                            type: object
+                          type: array
                         env:
                           description: Describes an app-wide environment variable
                             made available to all components.
@@ -2209,8 +2587,9 @@ spec:
                                       type: string
                                     rule:
                                       description: 'The type of the alert to configure.
-                                        Top-level app alert policies can be: DEPLOYMENT_FAILED,
-                                        DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                        Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
+                                        DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
+                                        DOMAIN_FAILED, or DOMAIN_LIVE.'
                                       type: string
                                     value:
                                       description: The value of the environment variable.
@@ -2329,8 +2708,8 @@ spec:
                               git:
                                 description: A Git repo to use as the component's
                                   source. The repository must be able to be cloned
-                                  without authentication.  Only one of git, github
-                                  or gitlab  may be set
+                                  without authentication. Only one of git, github
+                                  or gitlab may be set
                                 items:
                                   properties:
                                     branch:
@@ -2435,6 +2814,60 @@ spec:
                                         The name of the app. Must be unique across all apps in the same account.
                                         Name of the log destination
                                       type: string
+                                    openSearch:
+                                      description: OpenSearch configuration.
+                                      items:
+                                        properties:
+                                          basicAuth:
+                                            description: |-
+                                              OpenSearch basic auth
+                                              Basic authentication details.
+                                            items:
+                                              properties:
+                                                passwordSecretRef:
+                                                  description: |-
+                                                    Password for user defined in User. Is required when endpoint is set. Cannot be set if using a DigitalOcean DBaaS OpenSearch cluster.
+                                                    Password for basic authentication.
+                                                  properties:
+                                                    key:
+                                                      description: The key to select.
+                                                      type: string
+                                                    name:
+                                                      description: Name of the secret.
+                                                      type: string
+                                                    namespace:
+                                                      description: Namespace of the
+                                                        secret.
+                                                      type: string
+                                                  required:
+                                                  - key
+                                                  - name
+                                                  - namespace
+                                                  type: object
+                                                user:
+                                                  description: |-
+                                                    Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.
+                                                    user for basic authentication.
+                                                  type: string
+                                              type: object
+                                            type: array
+                                          clusterName:
+                                            description: |-
+                                              The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
+                                              OpenSearch cluster name.
+                                            type: string
+                                          endpoint:
+                                            description: |-
+                                              Papertrail syslog endpoint.
+                                              OpenSearch endpoint.
+                                            type: string
+                                          indexName:
+                                            description: |-
+                                              The index name to use for the logs. If not set, the default index name is logs.
+                                              OpenSearch index name.
+                                            type: string
+                                        type: object
+                                      type: array
                                     papertrail:
                                       description: |-
                                         Papertrail configuration.
@@ -2486,8 +2919,9 @@ spec:
                             properties:
                               rule:
                                 description: 'The type of the alert to configure.
-                                  Top-level app alert policies can be: DEPLOYMENT_FAILED,
-                                  DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                  Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
+                                  DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
+                                  DOMAIN_FAILED, or DOMAIN_LIVE.'
                                 items:
                                   properties:
                                     component:
@@ -2646,8 +3080,9 @@ spec:
                                       type: string
                                     rule:
                                       description: 'The type of the alert to configure.
-                                        Top-level app alert policies can be: DEPLOYMENT_FAILED,
-                                        DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                        Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
+                                        DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
+                                        DOMAIN_FAILED, or DOMAIN_LIVE.'
                                       type: string
                                     value:
                                       description: The value of the environment variable.
@@ -2718,8 +3153,8 @@ spec:
                               git:
                                 description: A Git repo to use as the component's
                                   source. The repository must be able to be cloned
-                                  without authentication.  Only one of git, github
-                                  or gitlab  may be set
+                                  without authentication. Only one of git, github
+                                  or gitlab may be set
                                 items:
                                   properties:
                                     branch:
@@ -2806,6 +3241,25 @@ spec:
                                         The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.
                                         The registry name. Must be left empty for the DOCR registry type.
                                       type: string
+                                    registryCredentialsSecretRef:
+                                      description: |-
+                                        The credentials required to access a private Docker Hub or GitHub registry, in the following syntax <username>:<token>.
+                                        Access credentials for third-party registries
+                                      properties:
+                                        key:
+                                          description: The key to select.
+                                          type: string
+                                        name:
+                                          description: Name of the secret.
+                                          type: string
+                                        namespace:
+                                          description: Namespace of the secret.
+                                          type: string
+                                      required:
+                                      - key
+                                      - name
+                                      - namespace
+                                      type: object
                                     registryType:
                                       description: |-
                                         The registry type. One of DOCR (DigitalOcean container registry) or DOCKER_HUB.
@@ -2880,6 +3334,60 @@ spec:
                                         The name of the app. Must be unique across all apps in the same account.
                                         Name of the log destination
                                       type: string
+                                    openSearch:
+                                      description: OpenSearch configuration.
+                                      items:
+                                        properties:
+                                          basicAuth:
+                                            description: |-
+                                              OpenSearch basic auth
+                                              Basic authentication details.
+                                            items:
+                                              properties:
+                                                passwordSecretRef:
+                                                  description: |-
+                                                    Password for user defined in User. Is required when endpoint is set. Cannot be set if using a DigitalOcean DBaaS OpenSearch cluster.
+                                                    Password for basic authentication.
+                                                  properties:
+                                                    key:
+                                                      description: The key to select.
+                                                      type: string
+                                                    name:
+                                                      description: Name of the secret.
+                                                      type: string
+                                                    namespace:
+                                                      description: Namespace of the
+                                                        secret.
+                                                      type: string
+                                                  required:
+                                                  - key
+                                                  - name
+                                                  - namespace
+                                                  type: object
+                                                user:
+                                                  description: |-
+                                                    Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.
+                                                    user for basic authentication.
+                                                  type: string
+                                              type: object
+                                            type: array
+                                          clusterName:
+                                            description: |-
+                                              The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
+                                              OpenSearch cluster name.
+                                            type: string
+                                          endpoint:
+                                            description: |-
+                                              Papertrail syslog endpoint.
+                                              OpenSearch endpoint.
+                                            type: string
+                                          indexName:
+                                            description: |-
+                                              The index name to use for the logs. If not set, the default index name is logs.
+                                              OpenSearch index name.
+                                            type: string
+                                        type: object
+                                      type: array
                                     papertrail:
                                       description: |-
                                         Papertrail configuration.
@@ -2941,8 +3449,9 @@ spec:
                                       type: string
                                     rule:
                                       description: 'The type of the alert to configure.
-                                        Top-level app alert policies can be: DEPLOYMENT_FAILED,
-                                        DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                        Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
+                                        DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
+                                        DOMAIN_FAILED, or DOMAIN_LIVE.'
                                       type: string
                                     value:
                                       description: The value of the environment variable.
@@ -2952,6 +3461,44 @@ spec:
                                         be triggered. This is may be one of: FIVE_MINUTES,
                                         TEN_MINUTES, THIRTY_MINUTES, ONE_HOUR.'
                                       type: string
+                                  type: object
+                                type: array
+                              autoscaling:
+                                description: Configuration for automatically scaling
+                                  this component based on metrics.
+                                items:
+                                  properties:
+                                    maxInstanceCount:
+                                      description: |-
+                                        The maximum amount of instances for this component. Must be more than min_instance_count.
+                                        The maximum amount of instances for this component. Must be more than min_instance_count.
+                                      type: number
+                                    metrics:
+                                      description: |-
+                                        The metrics that the component is scaled on.
+                                        The metrics that the component is scaled on.
+                                      items:
+                                        properties:
+                                          cpu:
+                                            description: |-
+                                              Settings for scaling the component based on CPU utilization.
+                                              Settings for scaling the component based on CPU utilization.
+                                            items:
+                                              properties:
+                                                percent:
+                                                  description: |-
+                                                    The average target CPU utilization for the component.
+                                                    The average target CPU utilization for the component.
+                                                  type: number
+                                              type: object
+                                            type: array
+                                        type: object
+                                      type: array
+                                    minInstanceCount:
+                                      description: |-
+                                        The minimum amount of instances for this component. Must be less than max_instance_count.
+                                        The minimum amount of instances for this component. Must be less than max_instance_count.
+                                      type: number
                                   type: object
                                 type: array
                               buildCommand:
@@ -3076,8 +3623,8 @@ spec:
                               git:
                                 description: A Git repo to use as the component's
                                   source. The repository must be able to be cloned
-                                  without authentication.  Only one of git, github
-                                  or gitlab  may be set
+                                  without authentication. Only one of git, github
+                                  or gitlab may be set
                                 items:
                                   properties:
                                     branch:
@@ -3211,6 +3758,25 @@ spec:
                                         The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.
                                         The registry name. Must be left empty for the DOCR registry type.
                                       type: string
+                                    registryCredentialsSecretRef:
+                                      description: |-
+                                        The credentials required to access a private Docker Hub or GitHub registry, in the following syntax <username>:<token>.
+                                        Access credentials for third-party registries
+                                      properties:
+                                        key:
+                                          description: The key to select.
+                                          type: string
+                                        name:
+                                          description: Name of the secret.
+                                          type: string
+                                        namespace:
+                                          description: Namespace of the secret.
+                                          type: string
+                                      required:
+                                      - key
+                                      - name
+                                      - namespace
+                                      type: object
                                     registryType:
                                       description: |-
                                         The registry type. One of DOCR (DigitalOcean container registry) or DOCKER_HUB.
@@ -3287,6 +3853,60 @@ spec:
                                         The name of the app. Must be unique across all apps in the same account.
                                         Name of the log destination
                                       type: string
+                                    openSearch:
+                                      description: OpenSearch configuration.
+                                      items:
+                                        properties:
+                                          basicAuth:
+                                            description: |-
+                                              OpenSearch basic auth
+                                              Basic authentication details.
+                                            items:
+                                              properties:
+                                                passwordSecretRef:
+                                                  description: |-
+                                                    Password for user defined in User. Is required when endpoint is set. Cannot be set if using a DigitalOcean DBaaS OpenSearch cluster.
+                                                    Password for basic authentication.
+                                                  properties:
+                                                    key:
+                                                      description: The key to select.
+                                                      type: string
+                                                    name:
+                                                      description: Name of the secret.
+                                                      type: string
+                                                    namespace:
+                                                      description: Namespace of the
+                                                        secret.
+                                                      type: string
+                                                  required:
+                                                  - key
+                                                  - name
+                                                  - namespace
+                                                  type: object
+                                                user:
+                                                  description: |-
+                                                    Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.
+                                                    user for basic authentication.
+                                                  type: string
+                                              type: object
+                                            type: array
+                                          clusterName:
+                                            description: |-
+                                              The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
+                                              OpenSearch cluster name.
+                                            type: string
+                                          endpoint:
+                                            description: |-
+                                              Papertrail syslog endpoint.
+                                              OpenSearch endpoint.
+                                            type: string
+                                          indexName:
+                                            description: |-
+                                              The index name to use for the logs. If not set, the default index name is logs.
+                                              OpenSearch index name.
+                                            type: string
+                                        type: object
+                                      type: array
                                     papertrail:
                                       description: |-
                                         Papertrail configuration.
@@ -3471,8 +4091,8 @@ spec:
                               git:
                                 description: A Git repo to use as the component's
                                   source. The repository must be able to be cloned
-                                  without authentication.  Only one of git, github
-                                  or gitlab  may be set
+                                  without authentication. Only one of git, github
+                                  or gitlab may be set
                                 items:
                                   properties:
                                     branch:
@@ -3593,8 +4213,9 @@ spec:
                                       type: string
                                     rule:
                                       description: 'The type of the alert to configure.
-                                        Top-level app alert policies can be: DEPLOYMENT_FAILED,
-                                        DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                        Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
+                                        DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
+                                        DOMAIN_FAILED, or DOMAIN_LIVE.'
                                       type: string
                                     value:
                                       description: The value of the environment variable.
@@ -3665,8 +4286,8 @@ spec:
                               git:
                                 description: A Git repo to use as the component's
                                   source. The repository must be able to be cloned
-                                  without authentication.  Only one of git, github
-                                  or gitlab  may be set
+                                  without authentication. Only one of git, github
+                                  or gitlab may be set
                                 items:
                                   properties:
                                     branch:
@@ -3753,6 +4374,25 @@ spec:
                                         The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.
                                         The registry name. Must be left empty for the DOCR registry type.
                                       type: string
+                                    registryCredentialsSecretRef:
+                                      description: |-
+                                        The credentials required to access a private Docker Hub or GitHub registry, in the following syntax <username>:<token>.
+                                        Access credentials for third-party registries
+                                      properties:
+                                        key:
+                                          description: The key to select.
+                                          type: string
+                                        name:
+                                          description: Name of the secret.
+                                          type: string
+                                        namespace:
+                                          description: Namespace of the secret.
+                                          type: string
+                                      required:
+                                      - key
+                                      - name
+                                      - namespace
+                                      type: object
                                     registryType:
                                       description: |-
                                         The registry type. One of DOCR (DigitalOcean container registry) or DOCKER_HUB.
@@ -3822,6 +4462,60 @@ spec:
                                         The name of the app. Must be unique across all apps in the same account.
                                         Name of the log destination
                                       type: string
+                                    openSearch:
+                                      description: OpenSearch configuration.
+                                      items:
+                                        properties:
+                                          basicAuth:
+                                            description: |-
+                                              OpenSearch basic auth
+                                              Basic authentication details.
+                                            items:
+                                              properties:
+                                                passwordSecretRef:
+                                                  description: |-
+                                                    Password for user defined in User. Is required when endpoint is set. Cannot be set if using a DigitalOcean DBaaS OpenSearch cluster.
+                                                    Password for basic authentication.
+                                                  properties:
+                                                    key:
+                                                      description: The key to select.
+                                                      type: string
+                                                    name:
+                                                      description: Name of the secret.
+                                                      type: string
+                                                    namespace:
+                                                      description: Namespace of the
+                                                        secret.
+                                                      type: string
+                                                  required:
+                                                  - key
+                                                  - name
+                                                  - namespace
+                                                  type: object
+                                                user:
+                                                  description: |-
+                                                    Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.
+                                                    user for basic authentication.
+                                                  type: string
+                                              type: object
+                                            type: array
+                                          clusterName:
+                                            description: |-
+                                              The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
+                                              OpenSearch cluster name.
+                                            type: string
+                                          endpoint:
+                                            description: |-
+                                              Papertrail syslog endpoint.
+                                              OpenSearch endpoint.
+                                            type: string
+                                          indexName:
+                                            description: |-
+                                              The index name to use for the logs. If not set, the default index name is logs.
+                                              OpenSearch index name.
+                                            type: string
+                                        type: object
+                                      type: array
                                     papertrail:
                                       description: |-
                                         Papertrail configuration.
@@ -4039,6 +4733,25 @@ spec:
                       The date and time of when the app was created.
                       The date and time of when the App was created
                     type: string
+                  dedicatedIps:
+                    description: The dedicated egress IP addresses associated with
+                      the app.
+                    items:
+                      properties:
+                        id:
+                          description: |-
+                            The ID of the app.
+                            The ID of the dedicated egress IP.
+                          type: string
+                        ip:
+                          description: The IP address of the dedicated egress IP.
+                          type: string
+                        status:
+                          description: 'The status of the dedicated egress IP: ''UNKNOWN'',
+                            ''ASSIGNING'', ''ASSIGNED'', or ''REMOVED'''
+                          type: string
+                      type: object
+                    type: array
                   defaultIngress:
                     description: |-
                       The default URL to access the app.
@@ -4046,6 +4759,9 @@ spec:
                     type: string
                   id:
                     description: The ID of the app.
+                    type: string
+                  liveDomain:
+                    description: The live domain of the app.
                     type: string
                   liveUrl:
                     description: The live URL of the app.
@@ -4069,8 +4785,9 @@ spec:
                                 type: boolean
                               rule:
                                 description: 'The type of the alert to configure.
-                                  Top-level app alert policies can be: DEPLOYMENT_FAILED,
-                                  DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                  Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
+                                  DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
+                                  DOMAIN_FAILED, or DOMAIN_LIVE.'
                                 type: string
                             type: object
                           type: array
@@ -4079,7 +4796,7 @@ spec:
                             properties:
                               clusterName:
                                 description: |-
-                                  The name of the underlying DigitalOcean DBaaS cluster. This is required for production databases. For dev databases, if cluster_name is not set, a new cluster will be provisioned.
+                                  The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
                                   The name of the underlying DigitalOcean DBaaS cluster. This is required for production databases. For dev databases, if cluster_name is not set, a new cluster will be provisioned.
                                 type: string
                               dbName:
@@ -4094,7 +4811,7 @@ spec:
                                 type: string
                               engine:
                                 description: |-
-                                  The database engine to use (MYSQL, PG, REDIS, or MONGODB).
+                                  The database engine to use (MYSQL, PG, REDIS, MONGODB, KAFKA, or OPENSEARCH).
                                   The database engine to use.
                                 type: string
                               name:
@@ -4146,6 +4863,17 @@ spec:
                             type: string
                           type: array
                           x-kubernetes-list-type: set
+                        egress:
+                          description: Specification for app egress configurations.
+                          items:
+                            properties:
+                              type:
+                                description: |-
+                                  The domain type, which can be one of the following:
+                                  The app egress type.
+                                type: string
+                            type: object
+                          type: array
                         env:
                           description: Describes an app-wide environment variable
                             made available to all components.
@@ -4195,8 +4923,9 @@ spec:
                                       type: string
                                     rule:
                                       description: 'The type of the alert to configure.
-                                        Top-level app alert policies can be: DEPLOYMENT_FAILED,
-                                        DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                        Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
+                                        DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
+                                        DOMAIN_FAILED, or DOMAIN_LIVE.'
                                       type: string
                                     value:
                                       description: The value of the environment variable.
@@ -4296,8 +5025,8 @@ spec:
                               git:
                                 description: A Git repo to use as the component's
                                   source. The repository must be able to be cloned
-                                  without authentication.  Only one of git, github
-                                  or gitlab  may be set
+                                  without authentication. Only one of git, github
+                                  or gitlab may be set
                                 items:
                                   properties:
                                     branch:
@@ -4402,6 +5131,40 @@ spec:
                                         The name of the app. Must be unique across all apps in the same account.
                                         Name of the log destination
                                       type: string
+                                    openSearch:
+                                      description: OpenSearch configuration.
+                                      items:
+                                        properties:
+                                          basicAuth:
+                                            description: |-
+                                              OpenSearch basic auth
+                                              Basic authentication details.
+                                            items:
+                                              properties:
+                                                user:
+                                                  description: |-
+                                                    Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.
+                                                    user for basic authentication.
+                                                  type: string
+                                              type: object
+                                            type: array
+                                          clusterName:
+                                            description: |-
+                                              The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
+                                              OpenSearch cluster name.
+                                            type: string
+                                          endpoint:
+                                            description: |-
+                                              Papertrail syslog endpoint.
+                                              OpenSearch endpoint.
+                                            type: string
+                                          indexName:
+                                            description: |-
+                                              The index name to use for the logs. If not set, the default index name is logs.
+                                              OpenSearch index name.
+                                            type: string
+                                        type: object
+                                      type: array
                                     papertrail:
                                       description: |-
                                         Papertrail configuration.
@@ -4453,8 +5216,9 @@ spec:
                             properties:
                               rule:
                                 description: 'The type of the alert to configure.
-                                  Top-level app alert policies can be: DEPLOYMENT_FAILED,
-                                  DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                  Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
+                                  DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
+                                  DOMAIN_FAILED, or DOMAIN_LIVE.'
                                 items:
                                   properties:
                                     component:
@@ -4613,8 +5377,9 @@ spec:
                                       type: string
                                     rule:
                                       description: 'The type of the alert to configure.
-                                        Top-level app alert policies can be: DEPLOYMENT_FAILED,
-                                        DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                        Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
+                                        DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
+                                        DOMAIN_FAILED, or DOMAIN_LIVE.'
                                       type: string
                                     value:
                                       description: The value of the environment variable.
@@ -4666,8 +5431,8 @@ spec:
                               git:
                                 description: A Git repo to use as the component's
                                   source. The repository must be able to be cloned
-                                  without authentication.  Only one of git, github
-                                  or gitlab  may be set
+                                  without authentication. Only one of git, github
+                                  or gitlab may be set
                                 items:
                                   properties:
                                     branch:
@@ -4828,6 +5593,40 @@ spec:
                                         The name of the app. Must be unique across all apps in the same account.
                                         Name of the log destination
                                       type: string
+                                    openSearch:
+                                      description: OpenSearch configuration.
+                                      items:
+                                        properties:
+                                          basicAuth:
+                                            description: |-
+                                              OpenSearch basic auth
+                                              Basic authentication details.
+                                            items:
+                                              properties:
+                                                user:
+                                                  description: |-
+                                                    Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.
+                                                    user for basic authentication.
+                                                  type: string
+                                              type: object
+                                            type: array
+                                          clusterName:
+                                            description: |-
+                                              The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
+                                              OpenSearch cluster name.
+                                            type: string
+                                          endpoint:
+                                            description: |-
+                                              Papertrail syslog endpoint.
+                                              OpenSearch endpoint.
+                                            type: string
+                                          indexName:
+                                            description: |-
+                                              The index name to use for the logs. If not set, the default index name is logs.
+                                              OpenSearch index name.
+                                            type: string
+                                        type: object
+                                      type: array
                                     papertrail:
                                       description: |-
                                         Papertrail configuration.
@@ -4889,8 +5688,9 @@ spec:
                                       type: string
                                     rule:
                                       description: 'The type of the alert to configure.
-                                        Top-level app alert policies can be: DEPLOYMENT_FAILED,
-                                        DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                        Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
+                                        DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
+                                        DOMAIN_FAILED, or DOMAIN_LIVE.'
                                       type: string
                                     value:
                                       description: The value of the environment variable.
@@ -4900,6 +5700,44 @@ spec:
                                         be triggered. This is may be one of: FIVE_MINUTES,
                                         TEN_MINUTES, THIRTY_MINUTES, ONE_HOUR.'
                                       type: string
+                                  type: object
+                                type: array
+                              autoscaling:
+                                description: Configuration for automatically scaling
+                                  this component based on metrics.
+                                items:
+                                  properties:
+                                    maxInstanceCount:
+                                      description: |-
+                                        The maximum amount of instances for this component. Must be more than min_instance_count.
+                                        The maximum amount of instances for this component. Must be more than min_instance_count.
+                                      type: number
+                                    metrics:
+                                      description: |-
+                                        The metrics that the component is scaled on.
+                                        The metrics that the component is scaled on.
+                                      items:
+                                        properties:
+                                          cpu:
+                                            description: |-
+                                              Settings for scaling the component based on CPU utilization.
+                                              Settings for scaling the component based on CPU utilization.
+                                            items:
+                                              properties:
+                                                percent:
+                                                  description: |-
+                                                    The average target CPU utilization for the component.
+                                                    The average target CPU utilization for the component.
+                                                  type: number
+                                              type: object
+                                            type: array
+                                        type: object
+                                      type: array
+                                    minInstanceCount:
+                                      description: |-
+                                        The minimum amount of instances for this component. Must be less than max_instance_count.
+                                        The minimum amount of instances for this component. Must be less than max_instance_count.
+                                      type: number
                                   type: object
                                 type: array
                               buildCommand:
@@ -5005,8 +5843,8 @@ spec:
                               git:
                                 description: A Git repo to use as the component's
                                   source. The repository must be able to be cloned
-                                  without authentication.  Only one of git, github
-                                  or gitlab  may be set
+                                  without authentication. Only one of git, github
+                                  or gitlab may be set
                                 items:
                                   properties:
                                     branch:
@@ -5216,6 +6054,40 @@ spec:
                                         The name of the app. Must be unique across all apps in the same account.
                                         Name of the log destination
                                       type: string
+                                    openSearch:
+                                      description: OpenSearch configuration.
+                                      items:
+                                        properties:
+                                          basicAuth:
+                                            description: |-
+                                              OpenSearch basic auth
+                                              Basic authentication details.
+                                            items:
+                                              properties:
+                                                user:
+                                                  description: |-
+                                                    Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.
+                                                    user for basic authentication.
+                                                  type: string
+                                              type: object
+                                            type: array
+                                          clusterName:
+                                            description: |-
+                                              The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
+                                              OpenSearch cluster name.
+                                            type: string
+                                          endpoint:
+                                            description: |-
+                                              Papertrail syslog endpoint.
+                                              OpenSearch endpoint.
+                                            type: string
+                                          indexName:
+                                            description: |-
+                                              The index name to use for the logs. If not set, the default index name is logs.
+                                              OpenSearch index name.
+                                            type: string
+                                        type: object
+                                      type: array
                                     papertrail:
                                       description: |-
                                         Papertrail configuration.
@@ -5381,8 +6253,8 @@ spec:
                               git:
                                 description: A Git repo to use as the component's
                                   source. The repository must be able to be cloned
-                                  without authentication.  Only one of git, github
-                                  or gitlab  may be set
+                                  without authentication. Only one of git, github
+                                  or gitlab may be set
                                 items:
                                   properties:
                                     branch:
@@ -5503,8 +6375,9 @@ spec:
                                       type: string
                                     rule:
                                       description: 'The type of the alert to configure.
-                                        Top-level app alert policies can be: DEPLOYMENT_FAILED,
-                                        DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                        Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
+                                        DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
+                                        DOMAIN_FAILED, or DOMAIN_LIVE.'
                                       type: string
                                     value:
                                       description: The value of the environment variable.
@@ -5556,8 +6429,8 @@ spec:
                               git:
                                 description: A Git repo to use as the component's
                                   source. The repository must be able to be cloned
-                                  without authentication.  Only one of git, github
-                                  or gitlab  may be set
+                                  without authentication. Only one of git, github
+                                  or gitlab may be set
                                 items:
                                   properties:
                                     branch:
@@ -5713,6 +6586,40 @@ spec:
                                         The name of the app. Must be unique across all apps in the same account.
                                         Name of the log destination
                                       type: string
+                                    openSearch:
+                                      description: OpenSearch configuration.
+                                      items:
+                                        properties:
+                                          basicAuth:
+                                            description: |-
+                                              OpenSearch basic auth
+                                              Basic authentication details.
+                                            items:
+                                              properties:
+                                                user:
+                                                  description: |-
+                                                    Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.
+                                                    user for basic authentication.
+                                                  type: string
+                                              type: object
+                                            type: array
+                                          clusterName:
+                                            description: |-
+                                              The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
+                                              OpenSearch cluster name.
+                                            type: string
+                                          endpoint:
+                                            description: |-
+                                              Papertrail syslog endpoint.
+                                              OpenSearch endpoint.
+                                            type: string
+                                          indexName:
+                                            description: |-
+                                              The index name to use for the logs. If not set, the default index name is logs.
+                                              OpenSearch index name.
+                                            type: string
+                                        type: object
+                                      type: array
                                     papertrail:
                                       description: |-
                                         Papertrail configuration.

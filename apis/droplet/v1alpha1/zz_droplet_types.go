@@ -91,7 +91,7 @@ type DropletInitParameters struct {
 	// +kubebuilder:validation:Optional
 	SSHKeysSelector *v1.Selector `json:"sshKeysSelector,omitempty" tf:"-"`
 
-	// The unique slug that indentifies the type of Droplet. You can find a list of available slugs on DigitalOcean API documentation.
+	// The unique slug that identifies the type of Droplet. You can find a list of available slugs on DigitalOcean API documentation.
 	Size *string `json:"size,omitempty" tf:"size,omitempty"`
 
 	// A list of the tags to be applied to this Droplet.
@@ -212,7 +212,7 @@ type DropletObservation struct {
 	// +listType=set
 	SSHKeys []*string `json:"sshKeys,omitempty" tf:"ssh_keys,omitempty"`
 
-	// The unique slug that indentifies the type of Droplet. You can find a list of available slugs on DigitalOcean API documentation.
+	// The unique slug that identifies the type of Droplet. You can find a list of available slugs on DigitalOcean API documentation.
 	Size *string `json:"size,omitempty" tf:"size,omitempty"`
 
 	// The status of the Droplet
@@ -329,7 +329,7 @@ type DropletParameters struct {
 	// +kubebuilder:validation:Optional
 	SSHKeysSelector *v1.Selector `json:"sshKeysSelector,omitempty" tf:"-"`
 
-	// The unique slug that indentifies the type of Droplet. You can find a list of available slugs on DigitalOcean API documentation.
+	// The unique slug that identifies the type of Droplet. You can find a list of available slugs on DigitalOcean API documentation.
 	// +kubebuilder:validation:Optional
 	Size *string `json:"size,omitempty" tf:"size,omitempty"`
 

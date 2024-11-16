@@ -103,8 +103,7 @@ spec:
                   snapshotId:
                     description: The ID of an existing volume snapshot from which
                       the new volume will be created. If supplied, the region and
-                      size will be limitied on creation to that of the referenced
-                      snapshot
+                      size will be limited on creation to that of the referenced snapshot
                     type: string
                   snapshotIdRef:
                     description: Reference to a Snapshot in volume to populate snapshotId.
@@ -231,8 +230,7 @@ spec:
                   snapshotId:
                     description: The ID of an existing volume snapshot from which
                       the new volume will be created. If supplied, the region and
-                      size will be limitied on creation to that of the referenced
-                      snapshot
+                      size will be limited on creation to that of the referenced snapshot
                     type: string
                   snapshotIdRef:
                     description: Reference to a Snapshot in volume to populate snapshotId.
@@ -543,8 +541,7 @@ spec:
                   snapshotId:
                     description: The ID of an existing volume snapshot from which
                       the new volume will be created. If supplied, the region and
-                      size will be limitied on creation to that of the referenced
-                      snapshot
+                      size will be limited on creation to that of the referenced snapshot
                     type: string
                   tags:
                     description: A list of the tags to be applied to this Volume.

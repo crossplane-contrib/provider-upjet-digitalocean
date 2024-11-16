@@ -48,6 +48,11 @@ func (in *ClusterInitParameters) DeepCopyInto(out *ClusterInitParameters) {
 		*out = new(bool)
 		**out = **in
 	}
+	if in.ClusterSubnet != nil {
+		in, out := &in.ClusterSubnet, &out.ClusterSubnet
+		*out = new(string)
+		**out = **in
+	}
 	if in.DestroyAllAssociatedResources != nil {
 		in, out := &in.DestroyAllAssociatedResources, &out.DestroyAllAssociatedResources
 		*out = new(bool)
@@ -85,6 +90,11 @@ func (in *ClusterInitParameters) DeepCopyInto(out *ClusterInitParameters) {
 	if in.RegistryIntegration != nil {
 		in, out := &in.RegistryIntegration, &out.RegistryIntegration
 		*out = new(bool)
+		**out = **in
+	}
+	if in.ServiceSubnet != nil {
+		in, out := &in.ServiceSubnet, &out.ServiceSubnet
+		*out = new(string)
 		**out = **in
 	}
 	if in.SurgeUpgrade != nil {
@@ -305,6 +315,11 @@ func (in *ClusterParameters) DeepCopyInto(out *ClusterParameters) {
 		*out = new(bool)
 		**out = **in
 	}
+	if in.ClusterSubnet != nil {
+		in, out := &in.ClusterSubnet, &out.ClusterSubnet
+		*out = new(string)
+		**out = **in
+	}
 	if in.DestroyAllAssociatedResources != nil {
 		in, out := &in.DestroyAllAssociatedResources, &out.DestroyAllAssociatedResources
 		*out = new(bool)
@@ -342,6 +357,11 @@ func (in *ClusterParameters) DeepCopyInto(out *ClusterParameters) {
 	if in.RegistryIntegration != nil {
 		in, out := &in.RegistryIntegration, &out.RegistryIntegration
 		*out = new(bool)
+		**out = **in
+	}
+	if in.ServiceSubnet != nil {
+		in, out := &in.ServiceSubnet, &out.ServiceSubnet
+		*out = new(string)
 		**out = **in
 	}
 	if in.SurgeUpgrade != nil {

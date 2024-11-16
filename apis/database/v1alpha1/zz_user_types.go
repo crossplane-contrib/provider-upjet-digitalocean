@@ -45,16 +45,46 @@ type ACLParameters struct {
 	Topic *string `json:"topic" tf:"topic,omitempty"`
 }
 
+type OpensearchACLInitParameters struct {
+	Index *string `json:"index,omitempty" tf:"index,omitempty"`
+
+	// The permission level applied to the ACL. This includes "admin", "consume", "produce", and "produceconsume". "admin" allows for producing and consuming as well as add/delete/update permission for topics. "consume" allows only for reading topic messages. "produce" allows only for writing topic messages. "produceconsume" allows for both reading and writing topic messages.
+	Permission *string `json:"permission,omitempty" tf:"permission,omitempty"`
+}
+
+type OpensearchACLObservation struct {
+	Index *string `json:"index,omitempty" tf:"index,omitempty"`
+
+	// The permission level applied to the ACL. This includes "admin", "consume", "produce", and "produceconsume". "admin" allows for producing and consuming as well as add/delete/update permission for topics. "consume" allows only for reading topic messages. "produce" allows only for writing topic messages. "produceconsume" allows for both reading and writing topic messages.
+	Permission *string `json:"permission,omitempty" tf:"permission,omitempty"`
+}
+
+type OpensearchACLParameters struct {
+
+	// +kubebuilder:validation:Optional
+	Index *string `json:"index" tf:"index,omitempty"`
+
+	// The permission level applied to the ACL. This includes "admin", "consume", "produce", and "produceconsume". "admin" allows for producing and consuming as well as add/delete/update permission for topics. "consume" allows only for reading topic messages. "produce" allows only for writing topic messages. "produceconsume" allows for both reading and writing topic messages.
+	// +kubebuilder:validation:Optional
+	Permission *string `json:"permission" tf:"permission,omitempty"`
+}
+
 type SettingsInitParameters struct {
 
 	// A set of ACLs (Access Control Lists) specifying permission on topics with a Kafka cluster. The properties of an individual ACL are described below:
 	ACL []ACLInitParameters `json:"acl,omitempty" tf:"acl,omitempty"`
+
+	// A set of ACLs (Access Control Lists) specifying permission on topics with a Kafka cluster. The properties of an individual ACL are described below:
+	OpensearchACL []OpensearchACLInitParameters `json:"opensearchAcl,omitempty" tf:"opensearch_acl,omitempty"`
 }
 
 type SettingsObservation struct {
 
 	// A set of ACLs (Access Control Lists) specifying permission on topics with a Kafka cluster. The properties of an individual ACL are described below:
 	ACL []ACLObservation `json:"acl,omitempty" tf:"acl,omitempty"`
+
+	// A set of ACLs (Access Control Lists) specifying permission on topics with a Kafka cluster. The properties of an individual ACL are described below:
+	OpensearchACL []OpensearchACLObservation `json:"opensearchAcl,omitempty" tf:"opensearch_acl,omitempty"`
 }
 
 type SettingsParameters struct {
@@ -62,6 +92,10 @@ type SettingsParameters struct {
 	// A set of ACLs (Access Control Lists) specifying permission on topics with a Kafka cluster. The properties of an individual ACL are described below:
 	// +kubebuilder:validation:Optional
 	ACL []ACLParameters `json:"acl,omitempty" tf:"acl,omitempty"`
+
+	// A set of ACLs (Access Control Lists) specifying permission on topics with a Kafka cluster. The properties of an individual ACL are described below:
+	// +kubebuilder:validation:Optional
+	OpensearchACL []OpensearchACLParameters `json:"opensearchAcl,omitempty" tf:"opensearch_acl,omitempty"`
 }
 
 type UserInitParameters struct {

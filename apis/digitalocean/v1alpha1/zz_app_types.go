@@ -18,7 +18,7 @@ type AlertInitParameters struct {
 	// Determines whether or not the alert is disabled (default: false).
 	Disabled *bool `json:"disabled,omitempty" tf:"disabled,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
 	Rule *string `json:"rule,omitempty" tf:"rule,omitempty"`
 }
 
@@ -27,7 +27,7 @@ type AlertObservation struct {
 	// Determines whether or not the alert is disabled (default: false).
 	Disabled *bool `json:"disabled,omitempty" tf:"disabled,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
 	Rule *string `json:"rule,omitempty" tf:"rule,omitempty"`
 }
 
@@ -37,7 +37,7 @@ type AlertParameters struct {
 	// +kubebuilder:validation:Optional
 	Disabled *bool `json:"disabled,omitempty" tf:"disabled,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
 	// +kubebuilder:validation:Optional
 	Rule *string `json:"rule" tf:"rule,omitempty"`
 }
@@ -92,6 +92,9 @@ type AllowOriginsParameters struct {
 
 type AppInitParameters struct {
 
+	// The dedicated egress IP addresses associated with the app.
+	DedicatedIps []DedicatedIpsInitParameters `json:"dedicatedIps,omitempty" tf:"dedicated_ips,omitempty"`
+
 	// The ID of the project that the app is assigned to.
 	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/project/v1alpha1.Project
 	ProjectID *string `json:"projectId,omitempty" tf:"project_id,omitempty"`
@@ -119,12 +122,18 @@ type AppObservation struct {
 	// The date and time of when the App was created
 	CreatedAt *string `json:"createdAt,omitempty" tf:"created_at,omitempty"`
 
+	// The dedicated egress IP addresses associated with the app.
+	DedicatedIps []DedicatedIpsObservation `json:"dedicatedIps,omitempty" tf:"dedicated_ips,omitempty"`
+
 	// The default URL to access the app.
 	// The default URL to access the App
 	DefaultIngress *string `json:"defaultIngress,omitempty" tf:"default_ingress,omitempty"`
 
 	// The ID of the app.
 	ID *string `json:"id,omitempty" tf:"id,omitempty"`
+
+	// The live domain of the app.
+	LiveDomain *string `json:"liveDomain,omitempty" tf:"live_domain,omitempty"`
 
 	// The live URL of the app.
 	LiveURL *string `json:"liveUrl,omitempty" tf:"live_url,omitempty"`
@@ -147,6 +156,10 @@ type AppObservation struct {
 
 type AppParameters struct {
 
+	// The dedicated egress IP addresses associated with the app.
+	// +kubebuilder:validation:Optional
+	DedicatedIps []DedicatedIpsParameters `json:"dedicatedIps,omitempty" tf:"dedicated_ips,omitempty"`
+
 	// The ID of the project that the app is assigned to.
 	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/project/v1alpha1.Project
 	// +kubebuilder:validation:Optional
@@ -164,6 +177,107 @@ type AppParameters struct {
 	// A DigitalOcean App Platform Spec
 	// +kubebuilder:validation:Optional
 	Spec []SpecParameters `json:"spec,omitempty" tf:"spec,omitempty"`
+}
+
+type AutoscalingInitParameters struct {
+
+	// The maximum amount of instances for this component. Must be more than min_instance_count.
+	// The maximum amount of instances for this component. Must be more than min_instance_count.
+	MaxInstanceCount *float64 `json:"maxInstanceCount,omitempty" tf:"max_instance_count,omitempty"`
+
+	// The metrics that the component is scaled on.
+	// The metrics that the component is scaled on.
+	Metrics []MetricsInitParameters `json:"metrics,omitempty" tf:"metrics,omitempty"`
+
+	// The minimum amount of instances for this component. Must be less than max_instance_count.
+	// The minimum amount of instances for this component. Must be less than max_instance_count.
+	MinInstanceCount *float64 `json:"minInstanceCount,omitempty" tf:"min_instance_count,omitempty"`
+}
+
+type AutoscalingObservation struct {
+
+	// The maximum amount of instances for this component. Must be more than min_instance_count.
+	// The maximum amount of instances for this component. Must be more than min_instance_count.
+	MaxInstanceCount *float64 `json:"maxInstanceCount,omitempty" tf:"max_instance_count,omitempty"`
+
+	// The metrics that the component is scaled on.
+	// The metrics that the component is scaled on.
+	Metrics []MetricsObservation `json:"metrics,omitempty" tf:"metrics,omitempty"`
+
+	// The minimum amount of instances for this component. Must be less than max_instance_count.
+	// The minimum amount of instances for this component. Must be less than max_instance_count.
+	MinInstanceCount *float64 `json:"minInstanceCount,omitempty" tf:"min_instance_count,omitempty"`
+}
+
+type AutoscalingParameters struct {
+
+	// The maximum amount of instances for this component. Must be more than min_instance_count.
+	// The maximum amount of instances for this component. Must be more than min_instance_count.
+	// +kubebuilder:validation:Optional
+	MaxInstanceCount *float64 `json:"maxInstanceCount" tf:"max_instance_count,omitempty"`
+
+	// The metrics that the component is scaled on.
+	// The metrics that the component is scaled on.
+	// +kubebuilder:validation:Optional
+	Metrics []MetricsParameters `json:"metrics" tf:"metrics,omitempty"`
+
+	// The minimum amount of instances for this component. Must be less than max_instance_count.
+	// The minimum amount of instances for this component. Must be less than max_instance_count.
+	// +kubebuilder:validation:Optional
+	MinInstanceCount *float64 `json:"minInstanceCount" tf:"min_instance_count,omitempty"`
+}
+
+type BasicAuthInitParameters struct {
+
+	// Password for user defined in User. Is required when endpoint is set. Cannot be set if using a DigitalOcean DBaaS OpenSearch cluster.
+	// Password for basic authentication.
+	PasswordSecretRef *v1.SecretKeySelector `json:"passwordSecretRef,omitempty" tf:"-"`
+
+	// Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.
+	// user for basic authentication.
+	User *string `json:"user,omitempty" tf:"user,omitempty"`
+}
+
+type BasicAuthObservation struct {
+
+	// Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.
+	// user for basic authentication.
+	User *string `json:"user,omitempty" tf:"user,omitempty"`
+}
+
+type BasicAuthParameters struct {
+
+	// Password for user defined in User. Is required when endpoint is set. Cannot be set if using a DigitalOcean DBaaS OpenSearch cluster.
+	// Password for basic authentication.
+	// +kubebuilder:validation:Optional
+	PasswordSecretRef *v1.SecretKeySelector `json:"passwordSecretRef,omitempty" tf:"-"`
+
+	// Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.
+	// user for basic authentication.
+	// +kubebuilder:validation:Optional
+	User *string `json:"user,omitempty" tf:"user,omitempty"`
+}
+
+type CPUInitParameters struct {
+
+	// The average target CPU utilization for the component.
+	// The average target CPU utilization for the component.
+	Percent *float64 `json:"percent,omitempty" tf:"percent,omitempty"`
+}
+
+type CPUObservation struct {
+
+	// The average target CPU utilization for the component.
+	// The average target CPU utilization for the component.
+	Percent *float64 `json:"percent,omitempty" tf:"percent,omitempty"`
+}
+
+type CPUParameters struct {
+
+	// The average target CPU utilization for the component.
+	// The average target CPU utilization for the component.
+	// +kubebuilder:validation:Optional
+	Percent *float64 `json:"percent" tf:"percent,omitempty"`
 }
 
 type ComponentInitParameters struct {
@@ -351,7 +465,7 @@ type CorsParameters struct {
 
 type DatabaseInitParameters struct {
 
-	// The name of the underlying DigitalOcean DBaaS cluster. This is required for production databases. For dev databases, if cluster_name is not set, a new cluster will be provisioned.
+	// The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
 	// The name of the underlying DigitalOcean DBaaS cluster. This is required for production databases. For dev databases, if cluster_name is not set, a new cluster will be provisioned.
 	ClusterName *string `json:"clusterName,omitempty" tf:"cluster_name,omitempty"`
 
@@ -363,7 +477,7 @@ type DatabaseInitParameters struct {
 	// The name of the MySQL or PostgreSQL user to configure.
 	DBUser *string `json:"dbUser,omitempty" tf:"db_user,omitempty"`
 
-	// The database engine to use (MYSQL, PG, REDIS, or MONGODB).
+	// The database engine to use (MYSQL, PG, REDIS, MONGODB, KAFKA, or OPENSEARCH).
 	// The database engine to use.
 	Engine *string `json:"engine,omitempty" tf:"engine,omitempty"`
 
@@ -382,7 +496,7 @@ type DatabaseInitParameters struct {
 
 type DatabaseObservation struct {
 
-	// The name of the underlying DigitalOcean DBaaS cluster. This is required for production databases. For dev databases, if cluster_name is not set, a new cluster will be provisioned.
+	// The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
 	// The name of the underlying DigitalOcean DBaaS cluster. This is required for production databases. For dev databases, if cluster_name is not set, a new cluster will be provisioned.
 	ClusterName *string `json:"clusterName,omitempty" tf:"cluster_name,omitempty"`
 
@@ -394,7 +508,7 @@ type DatabaseObservation struct {
 	// The name of the MySQL or PostgreSQL user to configure.
 	DBUser *string `json:"dbUser,omitempty" tf:"db_user,omitempty"`
 
-	// The database engine to use (MYSQL, PG, REDIS, or MONGODB).
+	// The database engine to use (MYSQL, PG, REDIS, MONGODB, KAFKA, or OPENSEARCH).
 	// The database engine to use.
 	Engine *string `json:"engine,omitempty" tf:"engine,omitempty"`
 
@@ -413,7 +527,7 @@ type DatabaseObservation struct {
 
 type DatabaseParameters struct {
 
-	// The name of the underlying DigitalOcean DBaaS cluster. This is required for production databases. For dev databases, if cluster_name is not set, a new cluster will be provisioned.
+	// The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
 	// The name of the underlying DigitalOcean DBaaS cluster. This is required for production databases. For dev databases, if cluster_name is not set, a new cluster will be provisioned.
 	// +kubebuilder:validation:Optional
 	ClusterName *string `json:"clusterName,omitempty" tf:"cluster_name,omitempty"`
@@ -428,7 +542,7 @@ type DatabaseParameters struct {
 	// +kubebuilder:validation:Optional
 	DBUser *string `json:"dbUser,omitempty" tf:"db_user,omitempty"`
 
-	// The database engine to use (MYSQL, PG, REDIS, or MONGODB).
+	// The database engine to use (MYSQL, PG, REDIS, MONGODB, KAFKA, or OPENSEARCH).
 	// The database engine to use.
 	// +kubebuilder:validation:Optional
 	Engine *string `json:"engine,omitempty" tf:"engine,omitempty"`
@@ -482,6 +596,48 @@ type DatadogParameters struct {
 	// Datadog HTTP log intake endpoint.
 	// +kubebuilder:validation:Optional
 	Endpoint *string `json:"endpoint,omitempty" tf:"endpoint,omitempty"`
+}
+
+type DedicatedIpsInitParameters struct {
+
+	// The ID of the app.
+	// The ID of the dedicated egress IP.
+	ID *string `json:"id,omitempty" tf:"id,omitempty"`
+
+	// The IP address of the dedicated egress IP.
+	IP *string `json:"ip,omitempty" tf:"ip,omitempty"`
+
+	// The status of the dedicated egress IP: 'UNKNOWN', 'ASSIGNING', 'ASSIGNED', or 'REMOVED'
+	Status *string `json:"status,omitempty" tf:"status,omitempty"`
+}
+
+type DedicatedIpsObservation struct {
+
+	// The ID of the app.
+	// The ID of the dedicated egress IP.
+	ID *string `json:"id,omitempty" tf:"id,omitempty"`
+
+	// The IP address of the dedicated egress IP.
+	IP *string `json:"ip,omitempty" tf:"ip,omitempty"`
+
+	// The status of the dedicated egress IP: 'UNKNOWN', 'ASSIGNING', 'ASSIGNED', or 'REMOVED'
+	Status *string `json:"status,omitempty" tf:"status,omitempty"`
+}
+
+type DedicatedIpsParameters struct {
+
+	// The ID of the app.
+	// The ID of the dedicated egress IP.
+	// +kubebuilder:validation:Optional
+	ID *string `json:"id,omitempty" tf:"id,omitempty"`
+
+	// The IP address of the dedicated egress IP.
+	// +kubebuilder:validation:Optional
+	IP *string `json:"ip,omitempty" tf:"ip,omitempty"`
+
+	// The status of the dedicated egress IP: 'UNKNOWN', 'ASSIGNING', 'ASSIGNED', or 'REMOVED'
+	// +kubebuilder:validation:Optional
+	Status *string `json:"status,omitempty" tf:"status,omitempty"`
 }
 
 type DeployOnPushInitParameters struct {
@@ -567,6 +723,28 @@ type DomainParameters struct {
 	Zone *string `json:"zone,omitempty" tf:"zone,omitempty"`
 }
 
+type EgressInitParameters struct {
+
+	// The domain type, which can be one of the following:
+	// The app egress type.
+	Type *string `json:"type,omitempty" tf:"type,omitempty"`
+}
+
+type EgressObservation struct {
+
+	// The domain type, which can be one of the following:
+	// The app egress type.
+	Type *string `json:"type,omitempty" tf:"type,omitempty"`
+}
+
+type EgressParameters struct {
+
+	// The domain type, which can be one of the following:
+	// The app egress type.
+	// +kubebuilder:validation:Optional
+	Type *string `json:"type,omitempty" tf:"type,omitempty"`
+}
+
 type EnvInitParameters struct {
 
 	// The name of the environment variable.
@@ -632,7 +810,7 @@ type FunctionAlertInitParameters struct {
 	// The operator to use. This is either of GREATER_THAN or LESS_THAN.
 	Operator *string `json:"operator,omitempty" tf:"operator,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
 	Rule *string `json:"rule,omitempty" tf:"rule,omitempty"`
 
 	// The value of the environment variable.
@@ -650,7 +828,7 @@ type FunctionAlertObservation struct {
 	// The operator to use. This is either of GREATER_THAN or LESS_THAN.
 	Operator *string `json:"operator,omitempty" tf:"operator,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
 	Rule *string `json:"rule,omitempty" tf:"rule,omitempty"`
 
 	// The value of the environment variable.
@@ -670,7 +848,7 @@ type FunctionAlertParameters struct {
 	// +kubebuilder:validation:Optional
 	Operator *string `json:"operator" tf:"operator,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
 	// +kubebuilder:validation:Optional
 	Rule *string `json:"rule" tf:"rule,omitempty"`
 
@@ -752,7 +930,7 @@ type FunctionInitParameters struct {
 	// Describes an app-wide environment variable made available to all components.
 	Env []FunctionEnvInitParameters `json:"env,omitempty" tf:"env,omitempty"`
 
-	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication.  Only one of git, github or gitlab  may be set
+	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication. Only one of git, github or gitlab may be set
 	Git []GitInitParameters `json:"git,omitempty" tf:"git,omitempty"`
 
 	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, gitlab, or image may be set.
@@ -789,7 +967,7 @@ type FunctionObservation struct {
 	// Describes an app-wide environment variable made available to all components.
 	Env []FunctionEnvObservation `json:"env,omitempty" tf:"env,omitempty"`
 
-	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication.  Only one of git, github or gitlab  may be set
+	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication. Only one of git, github or gitlab may be set
 	Git []GitObservation `json:"git,omitempty" tf:"git,omitempty"`
 
 	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, gitlab, or image may be set.
@@ -829,7 +1007,7 @@ type FunctionParameters struct {
 	// +kubebuilder:validation:Optional
 	Env []FunctionEnvParameters `json:"env,omitempty" tf:"env,omitempty"`
 
-	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication.  Only one of git, github or gitlab  may be set
+	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication. Only one of git, github or gitlab may be set
 	// +kubebuilder:validation:Optional
 	Git []GitParameters `json:"git,omitempty" tf:"git,omitempty"`
 
@@ -1124,6 +1302,10 @@ type ImageInitParameters struct {
 	// The registry name. Must be left empty for the DOCR registry type.
 	Registry *string `json:"registry,omitempty" tf:"registry,omitempty"`
 
+	// The credentials required to access a private Docker Hub or GitHub registry, in the following syntax <username>:<token>.
+	// Access credentials for third-party registries
+	RegistryCredentialsSecretRef *v1.SecretKeySelector `json:"registryCredentialsSecretRef,omitempty" tf:"-"`
+
 	// The registry type. One of DOCR (DigitalOcean container registry) or DOCKER_HUB.
 	// The registry type.
 	RegistryType *string `json:"registryType,omitempty" tf:"registry_type,omitempty"`
@@ -1172,6 +1354,11 @@ type ImageParameters struct {
 	// +kubebuilder:validation:Optional
 	Registry *string `json:"registry,omitempty" tf:"registry,omitempty"`
 
+	// The credentials required to access a private Docker Hub or GitHub registry, in the following syntax <username>:<token>.
+	// Access credentials for third-party registries
+	// +kubebuilder:validation:Optional
+	RegistryCredentialsSecretRef *v1.SecretKeySelector `json:"registryCredentialsSecretRef,omitempty" tf:"-"`
+
 	// The registry type. One of DOCR (DigitalOcean container registry) or DOCKER_HUB.
 	// The registry type.
 	// +kubebuilder:validation:Optional
@@ -1190,19 +1377,19 @@ type ImageParameters struct {
 
 type IngressInitParameters struct {
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
 	Rule []RuleInitParameters `json:"rule,omitempty" tf:"rule,omitempty"`
 }
 
 type IngressObservation struct {
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
 	Rule []RuleObservation `json:"rule,omitempty" tf:"rule,omitempty"`
 }
 
 type IngressParameters struct {
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
 	// +kubebuilder:validation:Optional
 	Rule []RuleParameters `json:"rule,omitempty" tf:"rule,omitempty"`
 }
@@ -1215,7 +1402,7 @@ type JobAlertInitParameters struct {
 	// The operator to use. This is either of GREATER_THAN or LESS_THAN.
 	Operator *string `json:"operator,omitempty" tf:"operator,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
 	Rule *string `json:"rule,omitempty" tf:"rule,omitempty"`
 
 	// The value of the environment variable.
@@ -1233,7 +1420,7 @@ type JobAlertObservation struct {
 	// The operator to use. This is either of GREATER_THAN or LESS_THAN.
 	Operator *string `json:"operator,omitempty" tf:"operator,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
 	Rule *string `json:"rule,omitempty" tf:"rule,omitempty"`
 
 	// The value of the environment variable.
@@ -1253,7 +1440,7 @@ type JobAlertParameters struct {
 	// +kubebuilder:validation:Optional
 	Operator *string `json:"operator" tf:"operator,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
 	// +kubebuilder:validation:Optional
 	Rule *string `json:"rule" tf:"rule,omitempty"`
 
@@ -1475,7 +1662,7 @@ type JobInitParameters struct {
 	// An environment slug describing the type of this app.
 	EnvironmentSlug *string `json:"environmentSlug,omitempty" tf:"environment_slug,omitempty"`
 
-	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication.  Only one of git, github or gitlab  may be set
+	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication. Only one of git, github or gitlab may be set
 	Git []JobGitInitParameters `json:"git,omitempty" tf:"git,omitempty"`
 
 	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, gitlab, or image may be set.
@@ -1530,6 +1717,9 @@ type JobLogDestinationInitParameters struct {
 	// Name of the log destination
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
 
+	// OpenSearch configuration.
+	OpenSearch []LogDestinationOpenSearchInitParameters `json:"openSearch,omitempty" tf:"open_search,omitempty"`
+
 	// Papertrail configuration.
 	// Papertrail configuration.
 	Papertrail []LogDestinationPapertrailInitParameters `json:"papertrail,omitempty" tf:"papertrail,omitempty"`
@@ -1548,6 +1738,9 @@ type JobLogDestinationObservation struct {
 	// The name of the app. Must be unique across all apps in the same account.
 	// Name of the log destination
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
+
+	// OpenSearch configuration.
+	OpenSearch []LogDestinationOpenSearchObservation `json:"openSearch,omitempty" tf:"open_search,omitempty"`
 
 	// Papertrail configuration.
 	// Papertrail configuration.
@@ -1570,6 +1763,10 @@ type JobLogDestinationParameters struct {
 	// Name of the log destination
 	// +kubebuilder:validation:Optional
 	Name *string `json:"name" tf:"name,omitempty"`
+
+	// OpenSearch configuration.
+	// +kubebuilder:validation:Optional
+	OpenSearch []LogDestinationOpenSearchParameters `json:"openSearch,omitempty" tf:"open_search,omitempty"`
 
 	// Papertrail configuration.
 	// Papertrail configuration.
@@ -1598,7 +1795,7 @@ type JobObservation struct {
 	// An environment slug describing the type of this app.
 	EnvironmentSlug *string `json:"environmentSlug,omitempty" tf:"environment_slug,omitempty"`
 
-	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication.  Only one of git, github or gitlab  may be set
+	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication. Only one of git, github or gitlab may be set
 	Git []JobGitObservation `json:"git,omitempty" tf:"git,omitempty"`
 
 	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, gitlab, or image may be set.
@@ -1665,7 +1862,7 @@ type JobParameters struct {
 	// +kubebuilder:validation:Optional
 	EnvironmentSlug *string `json:"environmentSlug,omitempty" tf:"environment_slug,omitempty"`
 
-	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication.  Only one of git, github or gitlab  may be set
+	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication. Only one of git, github or gitlab may be set
 	// +kubebuilder:validation:Optional
 	Git []JobGitParameters `json:"git,omitempty" tf:"git,omitempty"`
 
@@ -1766,6 +1963,9 @@ type LogDestinationInitParameters struct {
 	// Name of the log destination
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
 
+	// OpenSearch configuration.
+	OpenSearch []OpenSearchInitParameters `json:"openSearch,omitempty" tf:"open_search,omitempty"`
+
 	// Papertrail configuration.
 	// Papertrail configuration.
 	Papertrail []PapertrailInitParameters `json:"papertrail,omitempty" tf:"papertrail,omitempty"`
@@ -1807,9 +2007,104 @@ type LogDestinationObservation struct {
 	// Name of the log destination
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
 
+	// OpenSearch configuration.
+	OpenSearch []OpenSearchObservation `json:"openSearch,omitempty" tf:"open_search,omitempty"`
+
 	// Papertrail configuration.
 	// Papertrail configuration.
 	Papertrail []PapertrailObservation `json:"papertrail,omitempty" tf:"papertrail,omitempty"`
+}
+
+type LogDestinationOpenSearchBasicAuthInitParameters struct {
+
+	// Password for user defined in User. Is required when endpoint is set. Cannot be set if using a DigitalOcean DBaaS OpenSearch cluster.
+	// Password for basic authentication.
+	PasswordSecretRef *v1.SecretKeySelector `json:"passwordSecretRef,omitempty" tf:"-"`
+
+	// Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.
+	// user for basic authentication.
+	User *string `json:"user,omitempty" tf:"user,omitempty"`
+}
+
+type LogDestinationOpenSearchBasicAuthObservation struct {
+
+	// Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.
+	// user for basic authentication.
+	User *string `json:"user,omitempty" tf:"user,omitempty"`
+}
+
+type LogDestinationOpenSearchBasicAuthParameters struct {
+
+	// Password for user defined in User. Is required when endpoint is set. Cannot be set if using a DigitalOcean DBaaS OpenSearch cluster.
+	// Password for basic authentication.
+	// +kubebuilder:validation:Optional
+	PasswordSecretRef *v1.SecretKeySelector `json:"passwordSecretRef,omitempty" tf:"-"`
+
+	// Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.
+	// user for basic authentication.
+	// +kubebuilder:validation:Optional
+	User *string `json:"user,omitempty" tf:"user,omitempty"`
+}
+
+type LogDestinationOpenSearchInitParameters struct {
+
+	// OpenSearch basic auth
+	// Basic authentication details.
+	BasicAuth []OpenSearchBasicAuthInitParameters `json:"basicAuth,omitempty" tf:"basic_auth,omitempty"`
+
+	// The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
+	// OpenSearch cluster name.
+	ClusterName *string `json:"clusterName,omitempty" tf:"cluster_name,omitempty"`
+
+	// Papertrail syslog endpoint.
+	// OpenSearch endpoint.
+	Endpoint *string `json:"endpoint,omitempty" tf:"endpoint,omitempty"`
+
+	// The index name to use for the logs. If not set, the default index name is logs.
+	// OpenSearch index name.
+	IndexName *string `json:"indexName,omitempty" tf:"index_name,omitempty"`
+}
+
+type LogDestinationOpenSearchObservation struct {
+
+	// OpenSearch basic auth
+	// Basic authentication details.
+	BasicAuth []OpenSearchBasicAuthObservation `json:"basicAuth,omitempty" tf:"basic_auth,omitempty"`
+
+	// The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
+	// OpenSearch cluster name.
+	ClusterName *string `json:"clusterName,omitempty" tf:"cluster_name,omitempty"`
+
+	// Papertrail syslog endpoint.
+	// OpenSearch endpoint.
+	Endpoint *string `json:"endpoint,omitempty" tf:"endpoint,omitempty"`
+
+	// The index name to use for the logs. If not set, the default index name is logs.
+	// OpenSearch index name.
+	IndexName *string `json:"indexName,omitempty" tf:"index_name,omitempty"`
+}
+
+type LogDestinationOpenSearchParameters struct {
+
+	// OpenSearch basic auth
+	// Basic authentication details.
+	// +kubebuilder:validation:Optional
+	BasicAuth []OpenSearchBasicAuthParameters `json:"basicAuth" tf:"basic_auth,omitempty"`
+
+	// The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
+	// OpenSearch cluster name.
+	// +kubebuilder:validation:Optional
+	ClusterName *string `json:"clusterName,omitempty" tf:"cluster_name,omitempty"`
+
+	// Papertrail syslog endpoint.
+	// OpenSearch endpoint.
+	// +kubebuilder:validation:Optional
+	Endpoint *string `json:"endpoint,omitempty" tf:"endpoint,omitempty"`
+
+	// The index name to use for the logs. If not set, the default index name is logs.
+	// OpenSearch index name.
+	// +kubebuilder:validation:Optional
+	IndexName *string `json:"indexName,omitempty" tf:"index_name,omitempty"`
 }
 
 type LogDestinationPapertrailInitParameters struct {
@@ -1850,6 +2145,10 @@ type LogDestinationParameters struct {
 	// Name of the log destination
 	// +kubebuilder:validation:Optional
 	Name *string `json:"name" tf:"name,omitempty"`
+
+	// OpenSearch configuration.
+	// +kubebuilder:validation:Optional
+	OpenSearch []OpenSearchParameters `json:"openSearch,omitempty" tf:"open_search,omitempty"`
 
 	// Papertrail configuration.
 	// Papertrail configuration.
@@ -1896,6 +2195,120 @@ type MatchParameters struct {
 	// The path to match on.
 	// +kubebuilder:validation:Optional
 	Path []PathParameters `json:"path,omitempty" tf:"path,omitempty"`
+}
+
+type MetricsInitParameters struct {
+
+	// Settings for scaling the component based on CPU utilization.
+	// Settings for scaling the component based on CPU utilization.
+	CPU []CPUInitParameters `json:"cpu,omitempty" tf:"cpu,omitempty"`
+}
+
+type MetricsObservation struct {
+
+	// Settings for scaling the component based on CPU utilization.
+	// Settings for scaling the component based on CPU utilization.
+	CPU []CPUObservation `json:"cpu,omitempty" tf:"cpu,omitempty"`
+}
+
+type MetricsParameters struct {
+
+	// Settings for scaling the component based on CPU utilization.
+	// Settings for scaling the component based on CPU utilization.
+	// +kubebuilder:validation:Optional
+	CPU []CPUParameters `json:"cpu,omitempty" tf:"cpu,omitempty"`
+}
+
+type OpenSearchBasicAuthInitParameters struct {
+
+	// Password for user defined in User. Is required when endpoint is set. Cannot be set if using a DigitalOcean DBaaS OpenSearch cluster.
+	// Password for basic authentication.
+	PasswordSecretRef *v1.SecretKeySelector `json:"passwordSecretRef,omitempty" tf:"-"`
+
+	// Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.
+	// user for basic authentication.
+	User *string `json:"user,omitempty" tf:"user,omitempty"`
+}
+
+type OpenSearchBasicAuthObservation struct {
+
+	// Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.
+	// user for basic authentication.
+	User *string `json:"user,omitempty" tf:"user,omitempty"`
+}
+
+type OpenSearchBasicAuthParameters struct {
+
+	// Password for user defined in User. Is required when endpoint is set. Cannot be set if using a DigitalOcean DBaaS OpenSearch cluster.
+	// Password for basic authentication.
+	// +kubebuilder:validation:Optional
+	PasswordSecretRef *v1.SecretKeySelector `json:"passwordSecretRef,omitempty" tf:"-"`
+
+	// Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.
+	// user for basic authentication.
+	// +kubebuilder:validation:Optional
+	User *string `json:"user,omitempty" tf:"user,omitempty"`
+}
+
+type OpenSearchInitParameters struct {
+
+	// OpenSearch basic auth
+	// Basic authentication details.
+	BasicAuth []BasicAuthInitParameters `json:"basicAuth,omitempty" tf:"basic_auth,omitempty"`
+
+	// The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
+	// OpenSearch cluster name.
+	ClusterName *string `json:"clusterName,omitempty" tf:"cluster_name,omitempty"`
+
+	// Papertrail syslog endpoint.
+	// OpenSearch endpoint.
+	Endpoint *string `json:"endpoint,omitempty" tf:"endpoint,omitempty"`
+
+	// The index name to use for the logs. If not set, the default index name is logs.
+	// OpenSearch index name.
+	IndexName *string `json:"indexName,omitempty" tf:"index_name,omitempty"`
+}
+
+type OpenSearchObservation struct {
+
+	// OpenSearch basic auth
+	// Basic authentication details.
+	BasicAuth []BasicAuthObservation `json:"basicAuth,omitempty" tf:"basic_auth,omitempty"`
+
+	// The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
+	// OpenSearch cluster name.
+	ClusterName *string `json:"clusterName,omitempty" tf:"cluster_name,omitempty"`
+
+	// Papertrail syslog endpoint.
+	// OpenSearch endpoint.
+	Endpoint *string `json:"endpoint,omitempty" tf:"endpoint,omitempty"`
+
+	// The index name to use for the logs. If not set, the default index name is logs.
+	// OpenSearch index name.
+	IndexName *string `json:"indexName,omitempty" tf:"index_name,omitempty"`
+}
+
+type OpenSearchParameters struct {
+
+	// OpenSearch basic auth
+	// Basic authentication details.
+	// +kubebuilder:validation:Optional
+	BasicAuth []BasicAuthParameters `json:"basicAuth" tf:"basic_auth,omitempty"`
+
+	// The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
+	// OpenSearch cluster name.
+	// +kubebuilder:validation:Optional
+	ClusterName *string `json:"clusterName,omitempty" tf:"cluster_name,omitempty"`
+
+	// Papertrail syslog endpoint.
+	// OpenSearch endpoint.
+	// +kubebuilder:validation:Optional
+	Endpoint *string `json:"endpoint,omitempty" tf:"endpoint,omitempty"`
+
+	// The index name to use for the logs. If not set, the default index name is logs.
+	// OpenSearch index name.
+	// +kubebuilder:validation:Optional
+	IndexName *string `json:"indexName,omitempty" tf:"index_name,omitempty"`
 }
 
 type PapertrailInitParameters struct {
@@ -2186,7 +2599,7 @@ type ServiceAlertInitParameters struct {
 	// The operator to use. This is either of GREATER_THAN or LESS_THAN.
 	Operator *string `json:"operator,omitempty" tf:"operator,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
 	Rule *string `json:"rule,omitempty" tf:"rule,omitempty"`
 
 	// The value of the environment variable.
@@ -2204,7 +2617,7 @@ type ServiceAlertObservation struct {
 	// The operator to use. This is either of GREATER_THAN or LESS_THAN.
 	Operator *string `json:"operator,omitempty" tf:"operator,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
 	Rule *string `json:"rule,omitempty" tf:"rule,omitempty"`
 
 	// The value of the environment variable.
@@ -2224,7 +2637,7 @@ type ServiceAlertParameters struct {
 	// +kubebuilder:validation:Optional
 	Operator *string `json:"operator" tf:"operator,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
 	// +kubebuilder:validation:Optional
 	Rule *string `json:"rule" tf:"rule,omitempty"`
 
@@ -2579,6 +2992,10 @@ type ServiceImageInitParameters struct {
 	// The registry name. Must be left empty for the DOCR registry type.
 	Registry *string `json:"registry,omitempty" tf:"registry,omitempty"`
 
+	// The credentials required to access a private Docker Hub or GitHub registry, in the following syntax <username>:<token>.
+	// Access credentials for third-party registries
+	RegistryCredentialsSecretRef *v1.SecretKeySelector `json:"registryCredentialsSecretRef,omitempty" tf:"-"`
+
 	// The registry type. One of DOCR (DigitalOcean container registry) or DOCKER_HUB.
 	// The registry type.
 	RegistryType *string `json:"registryType,omitempty" tf:"registry_type,omitempty"`
@@ -2627,6 +3044,11 @@ type ServiceImageParameters struct {
 	// +kubebuilder:validation:Optional
 	Registry *string `json:"registry,omitempty" tf:"registry,omitempty"`
 
+	// The credentials required to access a private Docker Hub or GitHub registry, in the following syntax <username>:<token>.
+	// Access credentials for third-party registries
+	// +kubebuilder:validation:Optional
+	RegistryCredentialsSecretRef *v1.SecretKeySelector `json:"registryCredentialsSecretRef,omitempty" tf:"-"`
+
 	// The registry type. One of DOCR (DigitalOcean container registry) or DOCKER_HUB.
 	// The registry type.
 	// +kubebuilder:validation:Optional
@@ -2649,6 +3071,9 @@ type ServiceInitParameters struct {
 	// Alert policies for the app component
 	Alert []ServiceAlertInitParameters `json:"alert,omitempty" tf:"alert,omitempty"`
 
+	// Configuration for automatically scaling this component based on metrics.
+	Autoscaling []AutoscalingInitParameters `json:"autoscaling,omitempty" tf:"autoscaling,omitempty"`
+
 	// An optional build command to run while building this component from source.
 	// An optional build command to run while building this component from source.
 	BuildCommand *string `json:"buildCommand,omitempty" tf:"build_command,omitempty"`
@@ -2667,7 +3092,7 @@ type ServiceInitParameters struct {
 	// An environment slug describing the type of this app.
 	EnvironmentSlug *string `json:"environmentSlug,omitempty" tf:"environment_slug,omitempty"`
 
-	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication.  Only one of git, github or gitlab  may be set
+	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication. Only one of git, github or gitlab may be set
 	Git []ServiceGitInitParameters `json:"git,omitempty" tf:"git,omitempty"`
 
 	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, gitlab, or image may be set.
@@ -2767,6 +3192,9 @@ type ServiceLogDestinationInitParameters struct {
 	// Name of the log destination
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
 
+	// OpenSearch configuration.
+	OpenSearch []ServiceLogDestinationOpenSearchInitParameters `json:"openSearch,omitempty" tf:"open_search,omitempty"`
+
 	// Papertrail configuration.
 	// Papertrail configuration.
 	Papertrail []ServiceLogDestinationPapertrailInitParameters `json:"papertrail,omitempty" tf:"papertrail,omitempty"`
@@ -2808,9 +3236,73 @@ type ServiceLogDestinationObservation struct {
 	// Name of the log destination
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
 
+	// OpenSearch configuration.
+	OpenSearch []ServiceLogDestinationOpenSearchObservation `json:"openSearch,omitempty" tf:"open_search,omitempty"`
+
 	// Papertrail configuration.
 	// Papertrail configuration.
 	Papertrail []ServiceLogDestinationPapertrailObservation `json:"papertrail,omitempty" tf:"papertrail,omitempty"`
+}
+
+type ServiceLogDestinationOpenSearchInitParameters struct {
+
+	// OpenSearch basic auth
+	// Basic authentication details.
+	BasicAuth []LogDestinationOpenSearchBasicAuthInitParameters `json:"basicAuth,omitempty" tf:"basic_auth,omitempty"`
+
+	// The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
+	// OpenSearch cluster name.
+	ClusterName *string `json:"clusterName,omitempty" tf:"cluster_name,omitempty"`
+
+	// Papertrail syslog endpoint.
+	// OpenSearch endpoint.
+	Endpoint *string `json:"endpoint,omitempty" tf:"endpoint,omitempty"`
+
+	// The index name to use for the logs. If not set, the default index name is logs.
+	// OpenSearch index name.
+	IndexName *string `json:"indexName,omitempty" tf:"index_name,omitempty"`
+}
+
+type ServiceLogDestinationOpenSearchObservation struct {
+
+	// OpenSearch basic auth
+	// Basic authentication details.
+	BasicAuth []LogDestinationOpenSearchBasicAuthObservation `json:"basicAuth,omitempty" tf:"basic_auth,omitempty"`
+
+	// The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
+	// OpenSearch cluster name.
+	ClusterName *string `json:"clusterName,omitempty" tf:"cluster_name,omitempty"`
+
+	// Papertrail syslog endpoint.
+	// OpenSearch endpoint.
+	Endpoint *string `json:"endpoint,omitempty" tf:"endpoint,omitempty"`
+
+	// The index name to use for the logs. If not set, the default index name is logs.
+	// OpenSearch index name.
+	IndexName *string `json:"indexName,omitempty" tf:"index_name,omitempty"`
+}
+
+type ServiceLogDestinationOpenSearchParameters struct {
+
+	// OpenSearch basic auth
+	// Basic authentication details.
+	// +kubebuilder:validation:Optional
+	BasicAuth []LogDestinationOpenSearchBasicAuthParameters `json:"basicAuth" tf:"basic_auth,omitempty"`
+
+	// The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
+	// OpenSearch cluster name.
+	// +kubebuilder:validation:Optional
+	ClusterName *string `json:"clusterName,omitempty" tf:"cluster_name,omitempty"`
+
+	// Papertrail syslog endpoint.
+	// OpenSearch endpoint.
+	// +kubebuilder:validation:Optional
+	Endpoint *string `json:"endpoint,omitempty" tf:"endpoint,omitempty"`
+
+	// The index name to use for the logs. If not set, the default index name is logs.
+	// OpenSearch index name.
+	// +kubebuilder:validation:Optional
+	IndexName *string `json:"indexName,omitempty" tf:"index_name,omitempty"`
 }
 
 type ServiceLogDestinationPapertrailInitParameters struct {
@@ -2852,6 +3344,10 @@ type ServiceLogDestinationParameters struct {
 	// +kubebuilder:validation:Optional
 	Name *string `json:"name" tf:"name,omitempty"`
 
+	// OpenSearch configuration.
+	// +kubebuilder:validation:Optional
+	OpenSearch []ServiceLogDestinationOpenSearchParameters `json:"openSearch,omitempty" tf:"open_search,omitempty"`
+
 	// Papertrail configuration.
 	// Papertrail configuration.
 	// +kubebuilder:validation:Optional
@@ -2863,6 +3359,9 @@ type ServiceObservation struct {
 	// Describes an alert policy for the app.
 	// Alert policies for the app component
 	Alert []ServiceAlertObservation `json:"alert,omitempty" tf:"alert,omitempty"`
+
+	// Configuration for automatically scaling this component based on metrics.
+	Autoscaling []AutoscalingObservation `json:"autoscaling,omitempty" tf:"autoscaling,omitempty"`
 
 	// An optional build command to run while building this component from source.
 	// An optional build command to run while building this component from source.
@@ -2882,7 +3381,7 @@ type ServiceObservation struct {
 	// An environment slug describing the type of this app.
 	EnvironmentSlug *string `json:"environmentSlug,omitempty" tf:"environment_slug,omitempty"`
 
-	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication.  Only one of git, github or gitlab  may be set
+	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication. Only one of git, github or gitlab may be set
 	Git []ServiceGitObservation `json:"git,omitempty" tf:"git,omitempty"`
 
 	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, gitlab, or image may be set.
@@ -2940,6 +3439,10 @@ type ServiceParameters struct {
 	// +kubebuilder:validation:Optional
 	Alert []ServiceAlertParameters `json:"alert,omitempty" tf:"alert,omitempty"`
 
+	// Configuration for automatically scaling this component based on metrics.
+	// +kubebuilder:validation:Optional
+	Autoscaling []AutoscalingParameters `json:"autoscaling,omitempty" tf:"autoscaling,omitempty"`
+
 	// An optional build command to run while building this component from source.
 	// An optional build command to run while building this component from source.
 	// +kubebuilder:validation:Optional
@@ -2963,7 +3466,7 @@ type ServiceParameters struct {
 	// +kubebuilder:validation:Optional
 	EnvironmentSlug *string `json:"environmentSlug,omitempty" tf:"environment_slug,omitempty"`
 
-	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication.  Only one of git, github or gitlab  may be set
+	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication. Only one of git, github or gitlab may be set
 	// +kubebuilder:validation:Optional
 	Git []ServiceGitParameters `json:"git,omitempty" tf:"git,omitempty"`
 
@@ -3076,6 +3579,9 @@ type SpecInitParameters struct {
 	// +listType=set
 	Domains []*string `json:"domains,omitempty" tf:"domains,omitempty"`
 
+	// Specification for app egress configurations.
+	Egress []EgressInitParameters `json:"egress,omitempty" tf:"egress,omitempty"`
+
 	// Describes an app-wide environment variable made available to all components.
 	Env []EnvInitParameters `json:"env,omitempty" tf:"env,omitempty"`
 
@@ -3118,6 +3624,9 @@ type SpecObservation struct {
 
 	// +listType=set
 	Domains []*string `json:"domains,omitempty" tf:"domains,omitempty"`
+
+	// Specification for app egress configurations.
+	Egress []EgressObservation `json:"egress,omitempty" tf:"egress,omitempty"`
 
 	// Describes an app-wide environment variable made available to all components.
 	Env []EnvObservation `json:"env,omitempty" tf:"env,omitempty"`
@@ -3165,6 +3674,10 @@ type SpecParameters struct {
 	// +kubebuilder:validation:Optional
 	// +listType=set
 	Domains []*string `json:"domains,omitempty" tf:"domains,omitempty"`
+
+	// Specification for app egress configurations.
+	// +kubebuilder:validation:Optional
+	Egress []EgressParameters `json:"egress,omitempty" tf:"egress,omitempty"`
 
 	// Describes an app-wide environment variable made available to all components.
 	// +kubebuilder:validation:Optional
@@ -3566,7 +4079,7 @@ type StaticSiteInitParameters struct {
 	// The name of the error document to use when serving this static site.
 	ErrorDocument *string `json:"errorDocument,omitempty" tf:"error_document,omitempty"`
 
-	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication.  Only one of git, github or gitlab  may be set
+	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication. Only one of git, github or gitlab may be set
 	Git []StaticSiteGitInitParameters `json:"git,omitempty" tf:"git,omitempty"`
 
 	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, gitlab, or image may be set.
@@ -3623,7 +4136,7 @@ type StaticSiteObservation struct {
 	// The name of the error document to use when serving this static site.
 	ErrorDocument *string `json:"errorDocument,omitempty" tf:"error_document,omitempty"`
 
-	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication.  Only one of git, github or gitlab  may be set
+	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication. Only one of git, github or gitlab may be set
 	Git []StaticSiteGitObservation `json:"git,omitempty" tf:"git,omitempty"`
 
 	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, gitlab, or image may be set.
@@ -3687,7 +4200,7 @@ type StaticSiteParameters struct {
 	// +kubebuilder:validation:Optional
 	ErrorDocument *string `json:"errorDocument,omitempty" tf:"error_document,omitempty"`
 
-	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication.  Only one of git, github or gitlab  may be set
+	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication. Only one of git, github or gitlab may be set
 	// +kubebuilder:validation:Optional
 	Git []StaticSiteGitParameters `json:"git,omitempty" tf:"git,omitempty"`
 
@@ -3767,7 +4280,7 @@ type WorkerAlertInitParameters struct {
 	// The operator to use. This is either of GREATER_THAN or LESS_THAN.
 	Operator *string `json:"operator,omitempty" tf:"operator,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
 	Rule *string `json:"rule,omitempty" tf:"rule,omitempty"`
 
 	// The value of the environment variable.
@@ -3785,7 +4298,7 @@ type WorkerAlertObservation struct {
 	// The operator to use. This is either of GREATER_THAN or LESS_THAN.
 	Operator *string `json:"operator,omitempty" tf:"operator,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
 	Rule *string `json:"rule,omitempty" tf:"rule,omitempty"`
 
 	// The value of the environment variable.
@@ -3805,7 +4318,7 @@ type WorkerAlertParameters struct {
 	// +kubebuilder:validation:Optional
 	Operator *string `json:"operator" tf:"operator,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
 	// +kubebuilder:validation:Optional
 	Rule *string `json:"rule" tf:"rule,omitempty"`
 
@@ -4038,6 +4551,10 @@ type WorkerImageInitParameters struct {
 	// The registry name. Must be left empty for the DOCR registry type.
 	Registry *string `json:"registry,omitempty" tf:"registry,omitempty"`
 
+	// The credentials required to access a private Docker Hub or GitHub registry, in the following syntax <username>:<token>.
+	// Access credentials for third-party registries
+	RegistryCredentialsSecretRef *v1.SecretKeySelector `json:"registryCredentialsSecretRef,omitempty" tf:"-"`
+
 	// The registry type. One of DOCR (DigitalOcean container registry) or DOCKER_HUB.
 	// The registry type.
 	RegistryType *string `json:"registryType,omitempty" tf:"registry_type,omitempty"`
@@ -4086,6 +4603,11 @@ type WorkerImageParameters struct {
 	// +kubebuilder:validation:Optional
 	Registry *string `json:"registry,omitempty" tf:"registry,omitempty"`
 
+	// The credentials required to access a private Docker Hub or GitHub registry, in the following syntax <username>:<token>.
+	// Access credentials for third-party registries
+	// +kubebuilder:validation:Optional
+	RegistryCredentialsSecretRef *v1.SecretKeySelector `json:"registryCredentialsSecretRef,omitempty" tf:"-"`
+
 	// The registry type. One of DOCR (DigitalOcean container registry) or DOCKER_HUB.
 	// The registry type.
 	// +kubebuilder:validation:Optional
@@ -4123,7 +4645,7 @@ type WorkerInitParameters struct {
 	// An environment slug describing the type of this app.
 	EnvironmentSlug *string `json:"environmentSlug,omitempty" tf:"environment_slug,omitempty"`
 
-	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication.  Only one of git, github or gitlab  may be set
+	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication. Only one of git, github or gitlab may be set
 	Git []WorkerGitInitParameters `json:"git,omitempty" tf:"git,omitempty"`
 
 	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, gitlab, or image may be set.
@@ -4209,6 +4731,9 @@ type WorkerLogDestinationInitParameters struct {
 	// Name of the log destination
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
 
+	// OpenSearch configuration.
+	OpenSearch []WorkerLogDestinationOpenSearchInitParameters `json:"openSearch,omitempty" tf:"open_search,omitempty"`
+
 	// Papertrail configuration.
 	// Papertrail configuration.
 	Papertrail []WorkerLogDestinationPapertrailInitParameters `json:"papertrail,omitempty" tf:"papertrail,omitempty"`
@@ -4250,9 +4775,104 @@ type WorkerLogDestinationObservation struct {
 	// Name of the log destination
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
 
+	// OpenSearch configuration.
+	OpenSearch []WorkerLogDestinationOpenSearchObservation `json:"openSearch,omitempty" tf:"open_search,omitempty"`
+
 	// Papertrail configuration.
 	// Papertrail configuration.
 	Papertrail []WorkerLogDestinationPapertrailObservation `json:"papertrail,omitempty" tf:"papertrail,omitempty"`
+}
+
+type WorkerLogDestinationOpenSearchBasicAuthInitParameters struct {
+
+	// Password for user defined in User. Is required when endpoint is set. Cannot be set if using a DigitalOcean DBaaS OpenSearch cluster.
+	// Password for basic authentication.
+	PasswordSecretRef *v1.SecretKeySelector `json:"passwordSecretRef,omitempty" tf:"-"`
+
+	// Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.
+	// user for basic authentication.
+	User *string `json:"user,omitempty" tf:"user,omitempty"`
+}
+
+type WorkerLogDestinationOpenSearchBasicAuthObservation struct {
+
+	// Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.
+	// user for basic authentication.
+	User *string `json:"user,omitempty" tf:"user,omitempty"`
+}
+
+type WorkerLogDestinationOpenSearchBasicAuthParameters struct {
+
+	// Password for user defined in User. Is required when endpoint is set. Cannot be set if using a DigitalOcean DBaaS OpenSearch cluster.
+	// Password for basic authentication.
+	// +kubebuilder:validation:Optional
+	PasswordSecretRef *v1.SecretKeySelector `json:"passwordSecretRef,omitempty" tf:"-"`
+
+	// Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.
+	// user for basic authentication.
+	// +kubebuilder:validation:Optional
+	User *string `json:"user,omitempty" tf:"user,omitempty"`
+}
+
+type WorkerLogDestinationOpenSearchInitParameters struct {
+
+	// OpenSearch basic auth
+	// Basic authentication details.
+	BasicAuth []WorkerLogDestinationOpenSearchBasicAuthInitParameters `json:"basicAuth,omitempty" tf:"basic_auth,omitempty"`
+
+	// The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
+	// OpenSearch cluster name.
+	ClusterName *string `json:"clusterName,omitempty" tf:"cluster_name,omitempty"`
+
+	// Papertrail syslog endpoint.
+	// OpenSearch endpoint.
+	Endpoint *string `json:"endpoint,omitempty" tf:"endpoint,omitempty"`
+
+	// The index name to use for the logs. If not set, the default index name is logs.
+	// OpenSearch index name.
+	IndexName *string `json:"indexName,omitempty" tf:"index_name,omitempty"`
+}
+
+type WorkerLogDestinationOpenSearchObservation struct {
+
+	// OpenSearch basic auth
+	// Basic authentication details.
+	BasicAuth []WorkerLogDestinationOpenSearchBasicAuthObservation `json:"basicAuth,omitempty" tf:"basic_auth,omitempty"`
+
+	// The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
+	// OpenSearch cluster name.
+	ClusterName *string `json:"clusterName,omitempty" tf:"cluster_name,omitempty"`
+
+	// Papertrail syslog endpoint.
+	// OpenSearch endpoint.
+	Endpoint *string `json:"endpoint,omitempty" tf:"endpoint,omitempty"`
+
+	// The index name to use for the logs. If not set, the default index name is logs.
+	// OpenSearch index name.
+	IndexName *string `json:"indexName,omitempty" tf:"index_name,omitempty"`
+}
+
+type WorkerLogDestinationOpenSearchParameters struct {
+
+	// OpenSearch basic auth
+	// Basic authentication details.
+	// +kubebuilder:validation:Optional
+	BasicAuth []WorkerLogDestinationOpenSearchBasicAuthParameters `json:"basicAuth" tf:"basic_auth,omitempty"`
+
+	// The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.
+	// OpenSearch cluster name.
+	// +kubebuilder:validation:Optional
+	ClusterName *string `json:"clusterName,omitempty" tf:"cluster_name,omitempty"`
+
+	// Papertrail syslog endpoint.
+	// OpenSearch endpoint.
+	// +kubebuilder:validation:Optional
+	Endpoint *string `json:"endpoint,omitempty" tf:"endpoint,omitempty"`
+
+	// The index name to use for the logs. If not set, the default index name is logs.
+	// OpenSearch index name.
+	// +kubebuilder:validation:Optional
+	IndexName *string `json:"indexName,omitempty" tf:"index_name,omitempty"`
 }
 
 type WorkerLogDestinationPapertrailInitParameters struct {
@@ -4294,6 +4914,10 @@ type WorkerLogDestinationParameters struct {
 	// +kubebuilder:validation:Optional
 	Name *string `json:"name" tf:"name,omitempty"`
 
+	// OpenSearch configuration.
+	// +kubebuilder:validation:Optional
+	OpenSearch []WorkerLogDestinationOpenSearchParameters `json:"openSearch,omitempty" tf:"open_search,omitempty"`
+
 	// Papertrail configuration.
 	// Papertrail configuration.
 	// +kubebuilder:validation:Optional
@@ -4321,7 +4945,7 @@ type WorkerObservation struct {
 	// An environment slug describing the type of this app.
 	EnvironmentSlug *string `json:"environmentSlug,omitempty" tf:"environment_slug,omitempty"`
 
-	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication.  Only one of git, github or gitlab  may be set
+	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication. Only one of git, github or gitlab may be set
 	Git []WorkerGitObservation `json:"git,omitempty" tf:"git,omitempty"`
 
 	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, gitlab, or image may be set.
@@ -4384,7 +5008,7 @@ type WorkerParameters struct {
 	// +kubebuilder:validation:Optional
 	EnvironmentSlug *string `json:"environmentSlug,omitempty" tf:"environment_slug,omitempty"`
 
-	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication.  Only one of git, github or gitlab  may be set
+	// A Git repo to use as the component's source. The repository must be able to be cloned without authentication. Only one of git, github or gitlab may be set
 	// +kubebuilder:validation:Optional
 	Git []WorkerGitParameters `json:"git,omitempty" tf:"git,omitempty"`
 

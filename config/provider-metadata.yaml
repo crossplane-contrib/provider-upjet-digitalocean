@@ -14,7 +14,6 @@ resources:
                       "region": "ams",
                       "service": [
                         {
-                          "environment_slug": "go",
                           "git": [
                             {
                               "branch": "main",
@@ -22,7 +21,7 @@ resources:
                             }
                           ],
                           "instance_count": 1,
-                          "instance_size_slug": "professional-xs",
+                          "instance_size_slug": "apps-s-1vcpu-1gb",
                           "name": "go-service"
                         }
                       ]
@@ -124,7 +123,6 @@ resources:
                               "window": "TEN_MINUTES"
                             }
                           ],
-                          "environment_slug": "go",
                           "github": [
                             {
                               "branch": "main",
@@ -134,7 +132,7 @@ resources:
                           ],
                           "http_port": 3000,
                           "instance_count": 2,
-                          "instance_size_slug": "professional-xs",
+                          "instance_size_slug": "apps-s-1vcpu-1gb",
                           "log_destination": [
                             {
                               "name": "MyLogs",
@@ -145,7 +143,7 @@ resources:
                               ]
                             }
                           ],
-                          "name": "api",
+                          "name": "go-api",
                           "run_command": "bin/api",
                           "source_dir": "api/"
                         }
@@ -161,6 +159,45 @@ resources:
                             }
                           ],
                           "name": "web"
+                        }
+                      ]
+                    }
+                  ]
+                }
+            - name: golang-sample
+              manifest: |-
+                {
+                  "spec": [
+                    {
+                      "name": "golang-sample",
+                      "region": "ams",
+                      "service": [
+                        {
+                          "git": [
+                            {
+                              "branch": "main",
+                              "repo_clone_url": "https://github.com/digitalocean/sample-golang.git"
+                            }
+                          ],
+                          "instance_count": 1,
+                          "instance_size_slug": "apps-s-1vcpu-1gb",
+                          "log_destination": [
+                            {
+                              "name": "MyLogs",
+                              "open_search": [
+                                {
+                                  "basic_auth": [
+                                    {
+                                      "password": "hi",
+                                      "user": "user"
+                                    }
+                                  ],
+                                  "endpoint": "https://something:1234"
+                                }
+                              ]
+                            }
+                          ],
+                          "name": "go-service"
                         }
                       ]
                     }
@@ -182,12 +219,15 @@ resources:
             allow_origins: '- The Access-Control-Allow-Origin can be'
             api_key: '- Datadog API key.'
             authority: '- The authority/host to redirect to. This can be a hostname or IP address.'
+            autoscaling: '- Configuration for automatically scaling this component based on metrics.'
+            basic_auth: '- OpenSearch basic auth'
             branch: '- The name of the branch to use.'
             build_command: '- An optional build command to run while building this component from source.'
             catchall_document: '- The name of the document to use as the fallback for any requests to documents that are not found when serving this static site.'
-            cluster_name: '- The name of the underlying DigitalOcean DBaaS cluster. This is required for production databases. For dev databases, if cluster_name is not set, a new cluster will be provisioned.'
+            cluster_name: '- The name of a DigitalOcean DBaaS OpenSearch cluster to use as a log forwarding destination. Cannot be specified if endpoint is also specified.'
             component: '- The component to route to. Only one of component or redirect may be set.'
             cors: '- The CORS policies of the app.'
+            cpu: '- Settings for scaling the component based on CPU utilization.'
             created_at: '- The date and time of when the app was created.'
             datadog: '- Datadog configuration.'
             db_name: '- The name of the MySQL or PostgreSQL database to configure.'
@@ -197,9 +237,10 @@ resources:
             disabled: '- Determines whether or not the alert is disabled (default: false).'
             dockerfile_path: '- The path to a Dockerfile relative to the root of the repo. If set, overrides usage of buildpacks.'
             domain: '- Describes a domain where the application will be made available.'
+            egress: '- Specification for app egress configurations.'
             enabled: '- Whether to automatically deploy images pushed to DOCR.'
             endpoint: '- Papertrail syslog endpoint.'
-            engine: '- The database engine to use (MYSQL, PG, REDIS, or MONGODB).'
+            engine: '- The database engine to use (MYSQL, PG, REDIS, MONGODB, KAFKA, or OPENSEARCH).'
             env: '- Describes an app-wide environment variable made available to all components.'
             environment_slug: '- An environment slug describing the type of this app.'
             error_document: '- The name of the error document to use when serving this static site.'
@@ -207,7 +248,7 @@ resources:
             expose_headers: '- The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.'
             failure_threshold: '- The number of failed health checks before considered unhealthy.'
             features: '- A list of the features applied to the app. The default buildpack can be overridden here. List of available buildpacks can be found using the doctl CLI'
-            git: '- A Git repo to use as the component''s source. The repository must be able to be cloned without authentication.  Only one of git, github or gitlab  may be set'
+            git: '- A Git repo to use as the component''s source. The repository must be able to be cloned without authentication. Only one of git, github or gitlab may be set'
             github: '- A GitHub repo to use as the component''s source. DigitalOcean App Platform must have access to the repository. Only one of git, github, gitlab, or image may be set.'
             gitlab: '- A Gitlab repo to use as the component''s source. DigitalOcean App Platform must have access to the repository. Only one of git, github, gitlab, or image may be set.'
             health_check: '- A health check to determine the availability of this component.'
@@ -216,6 +257,7 @@ resources:
             id: '- The ID of the app.'
             image: '- An image to use as the component''s source. Only one of git, github, gitlab, or image may be set.'
             index_document: '- The name of the index document to use when serving this static site.'
+            index_name: '- The index name to use for the logs. If not set, the default index name is logs.'
             ingress: '- Specification for component routing, rewrites, and redirects.'
             initial_delay_seconds: '- The number of seconds to wait before beginning health checks.'
             instance_count: '- The amount of instances that this component should be scaled to.'
@@ -223,16 +265,23 @@ resources:
             internal_ports: '- A list of ports on which this service will listen for internal traffic.'
             key: '- The name of the environment variable.'
             kind: '- The type of job and when it will be run during the deployment process. It may be one of:'
+            live_domain: '- The live domain of the app.'
             live_url: '- The live URL of the app.'
             log_destination: '- Describes a log forwarding destination.'
             logtail: '- Logtail configuration.'
             match: '- The match configuration for the rule'
             max_age: '- An optional duration specifying how long browsers can cache the results of a preflight request. This configures the Access-Control-Max-Age header. Example: 5h30m.'
+            max_instance_count: '- The maximum amount of instances for this component. Must be more than min_instance_count.'
+            metrics: '- The metrics that the component is scaled on.'
+            min_instance_count: '- The minimum amount of instances for this component. Must be less than max_instance_count.'
             name: '- (Required) The name of the app. Must be unique across all apps in the same account.'
+            opensearch: '- OpenSearch configuration'
             operator: '- The operator to use. This is either of GREATER_THAN or LESS_THAN.'
             output_dir: '- An optional path to where the built assets will be located, relative to the build context. If not set, App Platform will automatically scan for these directory names: _static, dist, public.'
             papertrail: '- Papertrail configuration.'
+            password: '- Password for user defined in User. Is required when endpoint is set. Cannot be set if using a DigitalOcean DBaaS OpenSearch cluster.'
             path: '- The path to match on.'
+            percent: '- The average target CPU utilization for the component.'
             period_seconds: '- The number of seconds to wait between health checks.'
             port: '- The port to redirect to.'
             prefix: '- Prefix-based match.'
@@ -244,13 +293,14 @@ resources:
             regex: '- The Access-Control-Allow-Origin header will be set to the client''s origin if the client’s origin matches the regex you provide, in RE2 style syntax.'
             region: '- The slug for the DigitalOcean data center region hosting the app.'
             registry: '- The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.'
+            registry_credentials: '- The credentials required to access a private Docker Hub or GitHub registry, in the following syntax <username>:<token>.'
             registry_type: '- The registry type. One of DOCR (DigitalOcean container registry) or DOCKER_HUB.'
             repo: '- The name of the repo in the format owner/repo.'
             repo_clone_url: '- The clone URL of the repo.'
             repository: '- The repository name.'
             rewrite: '- An optional field that will rewrite the path of the component to be what is specified here. This is mutually exclusive with preserve_path_prefix.'
             routes: '- (Deprecated - use ingress) An HTTP paths that should be routed to this component.'
-            rule: '- The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DOMAIN_FAILED, or DOMAIN_LIVE.'
+            rule: '- The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.'
             run_command: '- An optional run command to override the component''s default.'
             scheme: '- The scheme to redirect to. Supported values are http or https'
             scope: '- The visibility scope of the environment variable. One of RUN_TIME, BUILD_TIME, or RUN_AND_BUILD_TIME (default).'
@@ -264,6 +314,7 @@ resources:
             updated_at: '- The date and time of when the app was last updated.'
             uri: '- An optional URI path to redirect to.'
             urn: '- The uniform resource identifier for the app.'
+            user: '- Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.'
             value: '- The value of the environment variable.'
             version: '- The version of the database engine.'
             wildcard: '- A boolean indicating whether the domain includes all sub-domains, in addition to the given domain.'
@@ -554,6 +605,16 @@ resources:
                   "size": "db-s-1vcpu-1gb",
                   "version": "6"
                 }
+            - name: opensearch-example
+              manifest: |-
+                {
+                  "engine": "opensearch",
+                  "name": "example-opensearch-cluster",
+                  "node_count": 1,
+                  "region": "nyc3",
+                  "size": "db-s-1vcpu-2gb",
+                  "version": "2"
+                }
             - name: doby
               manifest: |-
                 {
@@ -565,7 +626,7 @@ resources:
                   "tags": [
                     "production"
                   ],
-                  "version": "11"
+                  "version": "15"
                 }
             - name: doby_backup
               manifest: |-
@@ -586,7 +647,7 @@ resources:
                   "tags": [
                     "production"
                   ],
-                  "version": "11"
+                  "version": "15"
                 }
         argumentDocs:
             backup_created_at: '- (Optional) The timestamp of an existing database cluster backup in ISO8601 combined date and time format. The most recent backup will be used if excluded.'
@@ -613,6 +674,12 @@ resources:
             sql_mode: '- (Optional) A comma separated string specifying the  SQL modes for a MySQL cluster.'
             storage_size_mib: '- (Optional) Defines the disk size, in MiB, allocated to the cluster. This can be adjusted on MySQL and PostreSQL clusters based on predefined ranges for each slug/droplet size.'
             tags: '- (Optional) A list of tag names to be applied to the database cluster.'
+            ui_database: '- Name of the OpenSearch dashboard db.'
+            ui_host: '- Hostname for the OpenSearch dashboard.'
+            ui_password: '- Password for the OpenSearch dashboard''s default user.'
+            ui_port: '- Network port that the OpenSearch dashboard is listening on.'
+            ui_uri: '- The full URI for connecting to the OpenSearch dashboard.'
+            ui_user: '- Username for OpenSearch dashboard''s default user.'
             uri: '- The full URI for connecting to the database cluster.'
             urn: '- The uniform resource name of the database cluster.'
             user: '- Username for the cluster''s default user.'
@@ -645,7 +712,7 @@ resources:
                       "node_count": 1,
                       "region": "nyc1",
                       "size": "db-s-1vcpu-1gb",
-                      "version": "11"
+                      "version": "15"
                     }
         argumentDocs:
             cluster_id: '- (Required) The ID of the source database cluster. Note: This must be a PostgreSQL cluster.'
@@ -683,7 +750,7 @@ resources:
                       "node_count": 1,
                       "region": "nyc1",
                       "size": "db-s-1vcpu-1gb",
-                      "version": "11"
+                      "version": "15"
                     }
         argumentDocs:
             cluster_id: '- (Required) The ID of the original source database cluster.'
@@ -719,7 +786,7 @@ resources:
                       "node_count": 1,
                       "region": "nyc1",
                       "size": "db-s-1vcpu-1gb",
-                      "version": "11"
+                      "version": "15"
                     }
             - name: example-fw
               manifest: |-
@@ -743,7 +810,7 @@ resources:
                       "node_count": 1,
                       "region": "nyc1",
                       "size": "db-s-1vcpu-1gb",
-                      "version": "11"
+                      "version": "15"
                     }
                 digitalocean_droplet.web: |-
                     {
@@ -773,7 +840,7 @@ resources:
                       "node_count": 1,
                       "region": "nyc1",
                       "size": "db-s-1vcpu-1gb",
-                      "version": "11"
+                      "version": "15"
                     }
                 digitalocean_database_replica.replica-example: |-
                     {
@@ -789,6 +856,65 @@ resources:
             type: '- (Required) The type of resource that the firewall rule allows to access the database cluster. The possible values are: droplet, k8s, ip_addr, tag, or app.'
             uuid: '- A unique identifier for the firewall rule.'
             value: '- (Required) The ID of the specific resource, the name of a tag applied to a group of resources, or the IP address that the firewall rule allows to access the database cluster.'
+        importStatements: []
+    digitalocean_database_kafka_config:
+        subCategory: ""
+        name: digitalocean_database_kafka_config
+        title: digitalocean_database_kafka_config
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "auto_create_topics_enable": true,
+                  "cluster_id": "${digitalocean_database_cluster.example.id}",
+                  "group_initial_rebalance_delay_ms": 3000,
+                  "group_max_session_timeout_ms": 1800000,
+                  "group_min_session_timeout_ms": 6000,
+                  "log_cleaner_delete_retention_ms": 86400000,
+                  "log_cleaner_min_compaction_lag_ms": 0,
+                  "log_flush_interval_ms": 9223372036854775807,
+                  "log_index_interval_bytes": 4096,
+                  "log_message_downconversion_enable": true,
+                  "log_message_timestamp_difference_max_ms": 9223372036854775807,
+                  "log_preallocate": false,
+                  "log_retention_bytes": -1,
+                  "log_retention_hours": 168,
+                  "log_retention_ms": 604800000,
+                  "log_roll_jitter_ms": 0,
+                  "log_segment_delete_delay_ms": 60000,
+                  "message_max_bytes": 1048588
+                }
+              references:
+                cluster_id: digitalocean_database_cluster.example.id
+              dependencies:
+                digitalocean_database_cluster.example: |-
+                    {
+                      "engine": "kafka",
+                      "name": "example-kafka-cluster",
+                      "node_count": 3,
+                      "region": "nyc3",
+                      "size": "db-s-1vcpu-1gb",
+                      "version": "3.7"
+                    }
+        argumentDocs:
+            auto_create_topics_enable: '- (Optional) Enable auto creation of topics.'
+            cluster_id: '- (Required)  The ID of the target Kafka cluster.'
+            group_initial_rebalance_delay_ms: '- (Optional) The amount of time, in milliseconds, the group coordinator will wait for more consumers to join a new group before performing the first rebalance. A longer delay means potentially fewer rebalances, but increases the time until processing begins. The default value for this is 3 seconds. During development and testing it might be desirable to set this to 0 in order to not delay test execution time.'
+            group_max_session_timeout_ms: '- (Optional) The maximum allowed session timeout for registered consumers. Longer timeouts give consumers more time to process messages in between heartbeats at the cost of a longer time to detect failures.'
+            group_min_session_timeout_ms: '- (Optional) The minimum allowed session timeout for registered consumers. Longer timeouts give consumers more time to process messages in between heartbeats at the cost of a longer time to detect failures.'
+            log_cleaner_delete_retention_ms: '- (Optional) How long are delete records retained?'
+            log_cleaner_min_compaction_lag_ms: '- (Optional) The minimum time a message will remain uncompacted in the log. Only applicable for logs that are being compacted.'
+            log_flush_interval_ms: '- (Optional) The maximum time in ms that a message in any topic is kept in memory before flushed to disk. If not set, the value in log.flush.scheduler.interval.ms is used.'
+            log_index_interval_bytes: '- (Optional) The interval with which Kafka adds an entry to the offset index.'
+            log_message_downconversion_enable: '- (Optional) This configuration controls whether down-conversion of message formats is enabled to satisfy consume requests.'
+            log_message_timestamp_difference_max_ms: '- (Optional) The maximum difference allowed between the timestamp when a broker receives a message and the timestamp specified in the message.'
+            log_preallocate: '- (Optional) Controls whether to preallocate a file when creating a new segment.'
+            log_retention_bytes: '- (Optional) The maximum size of the log before deleting messages.'
+            log_retention_hours: '- (Optional) The number of hours to keep a log file before deleting it.'
+            log_retention_ms: '- (Optional) The number of milliseconds to keep a log file before deleting it (in milliseconds), If not set, the value in log.retention.minutes is used. If set to -1, no time limit is applied.'
+            log_roll_jitter_ms: '- (Optional) The maximum jitter to subtract from logRollTimeMillis (in milliseconds). If not set, the value in log.roll.jitter.hours is used.'
+            log_segment_delete_delay_ms: '- (Optional) The amount of time to wait before deleting a file from the filesystem.'
+            message_max_bytes: '- (Optional) The maximum size of message that the server can receive.'
         importStatements: []
     digitalocean_database_kafka_topic:
         subCategory: ""
@@ -847,7 +973,7 @@ resources:
                     }
         argumentDocs:
             cleanup_policy: |-
-                - (Optional) The topic cleanup policy that decribes whether messages should be deleted, compacted, or both when retention policies are violated.
+                - (Optional) The topic cleanup policy that describes whether messages should be deleted, compacted, or both when retention policies are violated.
                 This may be one of "delete", "compact", or "compact_delete".
             cluster_id: '- (Required) The ID of the source database cluster. Note: This must be a Kafka cluster.'
             compression_type: |-
@@ -880,6 +1006,41 @@ resources:
             segment_jitter_ms: '- (Optional) The maximum time, in ms, subtracted from the scheduled segment disk flush time to avoid the thundering herd problem for segment flushing.'
             segment_ms: '- (Optional) The maximum time, in ms, before the topic log will flush to disk.'
             state: '- The current status of the topic. Possible values are ''active'', ''configuring'', and ''deleting''.'
+        importStatements: []
+    digitalocean_database_mongodb_config:
+        subCategory: ""
+        name: digitalocean_database_mongodb_config
+        title: digitalocean_database_mongodb_config
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "cluster_id": "${digitalocean_database_cluster.example.id}",
+                  "default_read_concern": "majority",
+                  "default_write_concern": "majority",
+                  "slow_op_threshold_ms": 100,
+                  "transaction_lifetime_limit_seconds": 100,
+                  "verbosity": 3
+                }
+              references:
+                cluster_id: digitalocean_database_cluster.example.id
+              dependencies:
+                digitalocean_database_cluster.example: |-
+                    {
+                      "engine": "mongodb",
+                      "name": "example-mongodb-cluster",
+                      "node_count": 1,
+                      "region": "nyc3",
+                      "size": "db-s-1vcpu-1gb",
+                      "version": "7"
+                    }
+        argumentDocs:
+            cluster_id: '- (Required)  The ID of the target MongoDB cluster.'
+            default_read_concern: '- (Optional) Specifies the default consistency behavior of reads from the database. Data that is returned from the query with may or may not have been acknowledged by all nodes in the replicaset depending on this value. Learn more here.'
+            default_write_concern: '- (Optional) Describes the level of acknowledgment requested from MongoDB for write operations clusters. This field can set to either majority or a number0...n which will describe the number of nodes that must acknowledge the write operation before it is fully accepted. Setting to 0 will request no acknowledgement of the write operation. Learn more here.'
+            slow_op_threshold_ms: '- (Optional) Operations that run for longer than this threshold are considered slow which are then recorded to the diagnostic logs. Higher log levels (verbosity) will record all operations regardless of this threshold on the primary node. Changing this parameter will lead to a restart of the MongoDB service. Learn more here.'
+            transaction_lifetime_limit_seconds: '- (Optional) Specifies the lifetime of multi-document transactions. Transactions that exceed this limit are considered expired and will be aborted by a periodic cleanup process. The cleanup process runs every transactionLifetimeLimitSeconds/2 seconds or at least once every 60 seconds. Changing this parameter will lead to a restart of the MongoDB service. Learn more here.'
+            verbosity: '- (Optional) The log message verbosity level. The verbosity level determines the amount of Informational and Debug messages MongoDB outputs. 0 includes informational messages while 1...5 increases the level to include debug messages. Changing this parameter will lead to a restart of the MongoDB service. Learn more here.'
         importStatements: []
     digitalocean_database_mysql_config:
         subCategory: ""
@@ -934,6 +1095,187 @@ resources:
             sql_require_primary_key: '- (Optional) Require primary key to be defined for new tables or old tables modified with ALTER TABLE and fail if missing. It is recommended to always have primary keys because various functionality may break if any large table is missing them.'
             tmp_table_size: '- (Optional) The maximum size, in bytes, of internal in-memory tables. Also set max_heap_table_size. Default is 16777216 (16M).'
             wait_timeout: '- (Optional) The number of seconds the server waits for activity on a noninteractive connection before closing it.'
+        importStatements: []
+    digitalocean_database_opensearch_config:
+        subCategory: ""
+        name: digitalocean_database_opensearch_config
+        title: digitalocean_database_opensearch_config
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "action_auto_create_index_enabled": true,
+                  "action_destructive_requires_name": false,
+                  "cluster_id": "${digitalocean_database_cluster.example.id}",
+                  "cluster_max_shards_per_node": 100,
+                  "cluster_routing_allocation_node_concurrent_recoveries": 2,
+                  "enable_security_audit": false,
+                  "http_max_content_length_bytes": 100000000,
+                  "http_max_header_size_bytes": 8192,
+                  "http_max_initial_line_length_bytes": 4096,
+                  "indices_fielddata_cache_size_percentage": 3,
+                  "indices_memory_index_buffer_size_percentage": 10,
+                  "indices_memory_max_index_buffer_size_mb": 3,
+                  "indices_memory_min_index_buffer_size_mb": 48,
+                  "indices_queries_cache_size_percentage": 10,
+                  "indices_query_bool_max_clause_count": 1024,
+                  "indices_recovery_max_concurrent_file_chunks": 2,
+                  "indices_recovery_max_mb_per_sec": 40,
+                  "ism_enabled": true,
+                  "ism_history_enabled": true,
+                  "ism_history_max_age_hours": 24,
+                  "ism_history_max_docs": 2500000,
+                  "ism_history_rollover_check_period_hours": 8,
+                  "ism_history_rollover_retention_period_days": 30,
+                  "override_main_response_version": false,
+                  "plugins_alerting_filter_by_backend_roles_enabled": false,
+                  "reindex_remote_whitelist": [
+                    "cloud.digitalocean.com:8080"
+                  ],
+                  "script_max_compilations_rate": "use-context",
+                  "search_max_buckets": 10000,
+                  "thread_pool_analyze_queue_size": 10,
+                  "thread_pool_analyze_size": 1,
+                  "thread_pool_force_merge_size": 1,
+                  "thread_pool_get_queue_size": 10,
+                  "thread_pool_get_size": 1,
+                  "thread_pool_search_queue_size": 10,
+                  "thread_pool_search_size": 1,
+                  "thread_pool_search_throttled_queue_size": 10,
+                  "thread_pool_search_throttled_size": 1,
+                  "thread_pool_write_queue_size": 10,
+                  "thread_pool_write_size": 1
+                }
+              references:
+                cluster_id: digitalocean_database_cluster.example.id
+              dependencies:
+                digitalocean_database_cluster.example: |-
+                    {
+                      "engine": "opensearch",
+                      "name": "example-opensearch-cluster",
+                      "node_count": 1,
+                      "region": "nyc3",
+                      "size": "db-s-1vcpu-2gb",
+                      "version": "2"
+                    }
+        argumentDocs:
+            action_auto_create_index_enabled: '- (Optional) Specifies whether ISM is enabled or not. Default: true'
+            action_destructive_requires_name: '- (Optional) Specifies whether to require explicit index names when deleting indices.'
+            cluster_id: '- (Required) The ID of the target Opensearch cluster.'
+            cluster_max_shards_per_node: '- (Optional) Maximum number of shards allowed per data node.'
+            cluster_routing_allocation_node_concurrent_recoveries: '- (Optional) Maximum concurrent incoming/outgoing shard recoveries (normally replicas) are allowed to happen per node. Default: 2'
+            enable_security_audit: '- (Optional) Specifies whether to allow security audit logging. Default: false'
+            http_max_content_length_bytes: '- (Optional) Maximum content length for HTTP requests to the OpenSearch HTTP API, in bytes. Default: 100000000'
+            http_max_header_size_bytes: '- (Optional) Maximum size of allowed headers, in bytes. Default: 8192'
+            http_max_initial_line_length_bytes: '- (Optional) Maximum length of an HTTP URL, in bytes. Default: 4096'
+            indices_fielddata_cache_size_percentage: '- (Optional) Maximum amount of heap memory used for field data cache, expressed as a percentage. Decreasing the value too much will increase overhead of loading field data. Increasing the value too much will decrease amount of heap available for other operations.'
+            indices_memory_index_buffer_size_percentage: '- (Optional) Total amount of heap used for indexing buffer before writing segments to disk, expressed as a percentage. Too low value will slow down indexing; too high value will increase indexing performance but causes performance issues for query performance. Default: 10'
+            indices_memory_max_index_buffer_size_mb: '- (Optional) Maximum amount of heap used for indexing buffer before writing segments to disk, in mb. Works in conjunction with indices_memory_index_buffer_size_percentage, each being enforced. The default is unbounded.'
+            indices_memory_min_index_buffer_size_mb: '- (Optional) Minimum amount of heap used for indexing buffer before writing segments to disk, in mb. Works in conjunction with indices_memory_index_buffer_size_percentage, each being enforced. Default: 48'
+            indices_queries_cache_size_percentage: '- (Optional) Maximum amount of heap used for query cache. Too low value will decrease query performance and increase performance for other operations; too high value will cause issues with other functionality. Default: 10'
+            indices_query_bool_max_clause_count: '- (Optional) Maximum number of clauses Lucene BooleanQuery can have. Only increase it if necessary, as it may cause performance issues. Default: 1024'
+            indices_recovery_max_concurrent_file_chunks: '- (Optional) Maximum number of file chunks sent in parallel for each recovery. Default: 2'
+            indices_recovery_max_mb_per_sec: '- (Optional) Limits total inbound and outbound recovery traffic for each node, expressed in mb per second. Applies to both peer recoveries as well as snapshot recoveries (i.e., restores from a snapshot). Default: 40'
+            ism_enabled: '- (Optional) Specifies whether ISM is enabled or not. Default: true'
+            ism_history_enabled: '- (Optional) Specifies whether audit history is enabled or not. The logs from ISM are automatically indexed to a logs document. Default: true'
+            ism_history_max_age_hours: '- (Optional) Maximum age before rolling over the audit history index, in hours. Default: 24'
+            ism_history_max_docs: '- (Optional) Maximum number of documents before rolling over the audit history index. Default: 2500000'
+            ism_history_rollover_check_period_hours: '- (Optional) The time between rollover checks for the audit history index, in hours. Default: 8'
+            ism_history_rollover_retention_period_days: '- (Optional) Length of time long audit history indices are kept, in days. Default: 30'
+            override_main_response_version: '- (Optional) Compatibility mode sets OpenSearch to report its version as 7.10 so clients continue to work. Default: false'
+            plugins_alerting_filter_by_backend_roles_enabled: '- (Optional) Enable or disable filtering of alerting by backend roles. Default: false'
+            reindex_remote_whitelist: '- (Optional) Allowlist of remote IP addresses for reindexing. Changing this value will cause all OpenSearch instances to restart.'
+            script_max_compilations_rate: '- (Optional) Limits the number of inline script compilations within a period of time. Default is use-context'
+            search_max_buckets: '- (Optional) Maximum number of aggregation buckets allowed in a single response. Default: 10000'
+            thread_pool_analyze_queue_size: '- (Optional) Size of queue for operations in the analyze thread pool.'
+            thread_pool_analyze_size: '- (Optional) Number of workers in the analyze operation thread pool. Do note this may have maximum value depending on CPU count - value is automatically lowered if set to higher than maximum value.'
+            thread_pool_force_merge_size: '- (Optional) Number of workers in the force merge operation thread pool. This pool is used for forcing a merge between shards of one or more indices. Do note this may have maximum value depending on CPU count - value is automatically lowered if set to higher than maximum value.'
+            thread_pool_get_queue_size: '- (Optional) Size of queue for operations in the get thread pool.'
+            thread_pool_get_size: '- (Optional) Number of workers in the get operation thread pool. Do note this may have maximum value depending on CPU count - value is automatically lowered if set to higher than maximum value.'
+            thread_pool_search_queue_size: '- (Optional) Size of queue for operations in the search thread pool.'
+            thread_pool_search_size: '- (Optional) Number of workers in the search operation thread pool. Do note this may have maximum value depending on CPU count - value is automatically lowered if set to higher than maximum value.'
+            thread_pool_search_throttled_queue_size: '- (Optional) Size of queue for operations in the search throttled thread pool.'
+            thread_pool_search_throttled_size: '- (Optional) Number of workers in the search throttled operation thread pool. This pool is used for searching frozen indices. Do note this may have maximum value depending on CPU count - value is automatically lowered if set to higher than maximum value.'
+            thread_pool_write_queue_size: '- (Optional) Size of queue for operations in the write thread pool.'
+            thread_pool_write_size: '- (Optional) Number of workers in the write operation thread pool. Do note this may have maximum value depending on CPU count - value is automatically lowered if set to higher than maximum value.'
+        importStatements: []
+    digitalocean_database_postgresql_config:
+        subCategory: ""
+        name: digitalocean_database_postgresql_config
+        title: digitalocean_database_postgresql_config
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "cluster_id": "${digitalocean_database_cluster.example.id}",
+                  "timezone": "UTC",
+                  "work_mem": 16
+                }
+              references:
+                cluster_id: digitalocean_database_cluster.example.id
+              dependencies:
+                digitalocean_database_cluster.example: |-
+                    {
+                      "engine": "pg",
+                      "name": "example-postgresql-cluster",
+                      "node_count": 1,
+                      "region": "nyc1",
+                      "size": "db-s-1vcpu-1gb",
+                      "version": "15"
+                    }
+        argumentDocs:
+            autovacuum_analyze_scale_factor: '- (Optional)  Specifies a fraction, in a decimal value, of the table size to add to autovacuum_analyze_threshold when deciding whether to trigger an ANALYZE. The default is 0.2 (20% of table size).'
+            autovacuum_analyze_threshold: '- (Optional)  Specifies the minimum number of inserted, updated, or deleted tuples needed to trigger an ANALYZE in any one table. The default is 50 tuples.'
+            autovacuum_freeze_max_age: '- (Optional)  Specifies the maximum age (in transactions) that a table''s pg_class.relfrozenxid field can attain before a VACUUM operation is forced to prevent transaction ID wraparound within the table. Note that the system will launch autovacuum processes to prevent wraparound even when autovacuum is otherwise disabled. This parameter will cause the server to be restarted.'
+            autovacuum_max_workers: '- (Optional)  Specifies the maximum number of autovacuum processes (other than the autovacuum launcher) that may be running at any one time. The default is three. This parameter can only be set at server start.'
+            autovacuum_naptime: '- (Optional)  Specifies the minimum delay, in seconds, between autovacuum runs on any given database. The default is one minute.'
+            autovacuum_vacuum_cost_delay: '- (Optional)  Specifies the cost delay value, in milliseconds, that will be used in automatic VACUUM operations. If -1, uses the regular vacuum_cost_delay value, which is 20 milliseconds.'
+            autovacuum_vacuum_cost_limit: '- (Optional)  Specifies the cost limit value that will be used in automatic VACUUM operations. If -1 is specified (which is the default), the regular vacuum_cost_limit value will be used.'
+            autovacuum_vacuum_scale_factor: '- (Optional)  Specifies a fraction, in a decimal value, of the table size to add to autovacuum_vacuum_threshold when deciding whether to trigger a VACUUM. The default is 0.2 (20% of table size).'
+            autovacuum_vacuum_threshold: '- (Optional)  Specifies the minimum number of updated or deleted tuples needed to trigger a VACUUM in any one table. The default is 50 tuples.'
+            backup_hour: '- (Optional)  The hour of day (in UTC) when backup for the service starts. New backup only starts if previous backup has already completed.'
+            backup_minute: '- (Optional)  The minute of the backup hour when backup for the service starts. New backup is only started if previous backup has already completed.'
+            bgwriter_delay: '- (Optional)  Specifies the delay, in milliseconds, between activity rounds for the background writer. Default is 200 ms.'
+            bgwriter_flush_after: '- (Optional)  The amount of kilobytes that need to be written by the background writer before attempting to force the OS to issue these writes to underlying storage. Specified in kilobytes, default is 512. Setting of 0 disables forced writeback.'
+            bgwriter_lru_maxpages: '- (Optional)  The maximum number of buffers that the background writer can write. Setting this to zero disables background writing. Default is 100.'
+            bgwriter_lru_multiplier: '- (Optional)  The average recent need for new buffers is multiplied by bgwriter_lru_multiplier to arrive at an estimate of the number that will be needed during the next round, (up to bgwriter_lru_maxpages). 1.0 represents a “just in time” policy of writing exactly the number of buffers predicted to be needed. Larger values provide some cushion against spikes in demand, while smaller values intentionally leave writes to be done by server processes. The default is 2.0.'
+            cluster_id: '- (Required)  The ID of the target PostgreSQL cluster.'
+            deadlock_timeout: '- (Optional)  The amount of time, in milliseconds, to wait on a lock before checking to see if there is a deadlock condition.'
+            default_toast_compression: '- (Optional)  Specifies the default TOAST compression method for values of compressible columns (the default is lz4). Supported values are: lz4, pglz.'
+            idle_in_transaction_session_timeout: '- (Optional)  Time out sessions with open transactions after this number of milliseconds'
+            jit: '- (Optional)  Activates, in a boolean, the system-wide use of Just-in-Time Compilation (JIT).'
+            log_autovacuum_min_duration: '- (Optional)  Causes each action executed by autovacuum to be logged if it ran for at least the specified number of milliseconds. Setting this to zero logs all autovacuum actions. Minus-one (the default) disables logging autovacuum actions.'
+            log_error_verbosity: '- (Optional)  Controls the amount of detail written in the server log for each message that is logged. Supported values are: TERSE, DEFAULT, VERBOSE.'
+            log_line_prefix: '- (Optional)  Selects one of the available log-formats. These can support popular log analyzers like pgbadger, pganalyze, etc. Supported values are: pid=%p,user=%u,db=%d,app=%a,client=%h, %m [%p] %q[user=%u,db=%d,app=%a], %t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h.'
+            log_min_duration_statement: '- (Optional)  Log statements that take more than this number of milliseconds to run. If -1, disables.'
+            max_files_per_process: '- (Optional)  PostgreSQL maximum number of files that can be open per process.'
+            max_locks_per_transaction: '- (Optional)  PostgreSQL maximum locks per transaction. Once increased, this parameter cannot be lowered from its set value.'
+            max_logical_replication_workers: '- (Optional)  PostgreSQL maximum logical replication workers (taken from the pool of max_parallel_workers).'
+            max_parallel_workers: '- (Optional)  Sets the maximum number of workers that the system can support for parallel queries.'
+            max_parallel_workers_per_gather: '- (Optional)  Sets the maximum number of workers that can be started by a single Gather or Gather Merge node.'
+            max_pred_locks_per_transaction: '- (Optional)  PostgreSQL maximum predicate locks per transaction.'
+            max_prepared_transactions: '- (Optional)  PostgreSQL maximum prepared transactions. Once increased, this parameter cannot be lowered from its set value.'
+            max_replication_slots: '- (Optional)  PostgreSQL maximum replication slots.'
+            max_stack_depth: '- (Optional)  Maximum depth of the stack in bytes.'
+            max_standby_archive_delay: '- (Optional)  Max standby archive delay in milliseconds.'
+            max_standby_streaming_delay: '- (Optional)  Max standby streaming delay in milliseconds.'
+            max_wal_senders: '- (Optional)  PostgreSQL maximum WAL senders. Once increased, this parameter cannot be lowered from its set value.'
+            max_worker_processes: '- (Optional)  Sets the maximum number of background processes that the system can support. Once increased, this parameter cannot be lowered from its set value.'
+            pg_partman_bgw_interval: '- (Optional)  Sets the time interval to run pg_partman''s scheduled tasks.'
+            pg_partman_bgw_role: '- (Optional)  Controls which role to use for pg_partman''s scheduled background tasks. Must consist of alpha-numeric characters, dots, underscores, or dashes. May not start with dash or dot. Maximum of 64 characters.'
+            pg_stat_statements_track: '- (Optional)  Controls which statements are counted. Specify ''top'' to track top-level statements (those issued directly by clients), ''all'' to also track nested statements (such as statements invoked within functions), or ''none'' to disable statement statistics collection. The default value is top. Supported values are: all, top, none.'
+            pgbouncer: '- (Optional)  PGBouncer connection pooling settings'
+            shared_buffers_percentage: '- (Optional)  Percentage of total RAM that the database server uses for shared memory buffers. Valid range is 20-60 (float), which corresponds to 20% - 60%. This setting adjusts the shared_buffers configuration value.'
+            temp_file_limit: '- (Optional)  PostgreSQL temporary file limit in KiB. If -1, sets to unlimited.'
+            timescaledb: '- (Optional)  TimescaleDB extension configuration values'
+            timezone: '- (Optional)  PostgreSQL service timezone'
+            track_activity_query_size: '- (Optional)  Specifies the number of bytes reserved to track the currently executing command for each active session.'
+            track_commit_timestamp: '- (Optional)  Record commit time of transactions. The default value is top. Supported values are: off, on.'
+            track_functions: '- (Optional)  Enables tracking of function call counts and time used. The default value is top. Supported values are: all, pl, none.'
+            track_io_timing: '- (Optional)  Enables timing of database I/O calls. This parameter is off by default, because it will repeatedly query the operating system for the current time, which may cause significant overhead on some platforms. The default value is top. Supported values are: off, on.'
+            wal_sender_timeout: '- (Optional)  Terminate replication connections that are inactive for longer than this amount of time, in milliseconds. Setting this value to zero disables the timeout. Must be either 0 or between 5000 and 10800000.'
+            wal_writer_delay: '- (Optional)  WAL flush interval in milliseconds. Note that setting this value to lower than the default 200ms may negatively impact performance'
+            work_mem: '- (Optional)  The maximum amount of memory, in MB, used by a query operation (such as a sort or hash table) before writing to temporary disk files. Default is 1MB + 0.075% of total RAM (up to 32MB).'
         importStatements: []
     digitalocean_database_redis_config:
         subCategory: ""
@@ -997,7 +1339,7 @@ resources:
                       "node_count": 1,
                       "region": "nyc1",
                       "size": "db-s-1vcpu-1gb",
-                      "version": "11"
+                      "version": "15"
                     }
                 digitalocean_database_firewall.example-fw: |-
                     {
@@ -1048,7 +1390,7 @@ resources:
                       "node_count": 1,
                       "region": "nyc1",
                       "size": "db-s-1vcpu-1gb",
-                      "version": "11"
+                      "version": "15"
                     }
             - name: user-example
               manifest: |-
@@ -1066,7 +1408,7 @@ resources:
                       "node_count": 1,
                       "region": "nyc1",
                       "size": "db-s-1vcpu-1gb",
-                      "version": "11"
+                      "version": "15"
                     }
                 digitalocean_database_replica.replica-example: |-
                     {
@@ -1209,7 +1551,7 @@ resources:
                 size when resizing a Droplet. It defaults to true. When set to false,
                 only the Droplet's RAM and CPU will be resized. Increasing a Droplet's disk
                 size is a permanent change. Increasing only RAM and CPU is reversible.
-            size: '- (Required) The unique slug that indentifies the type of Droplet. You can find a list of available slugs on DigitalOcean API documentation.'
+            size: '- (Required) The unique slug that identifies the type of Droplet. You can find a list of available slugs on DigitalOcean API documentation.'
             ssh_keys: |-
                 - (Optional) A list of SSH key IDs or fingerprints to enable in
                 the format [12345, 123456]. To retrieve this info, use the
@@ -1542,7 +1884,7 @@ resources:
             client_certificate: '- The base64 encoded public certificate used by clients to access the cluster. Only available if token authentication is not supported on your cluster.'
             client_key: '- The base64 encoded private key used by clients to access the cluster. Only available if token authentication is not supported on your cluster.'
             cluster_ca_certificate: '- The base64 encoded public certificate for the cluster''s certificate authority.'
-            cluster_subnet: '- The range of IP addresses in the overlay network of the Kubernetes cluster.'
+            cluster_subnet: '- (Optional) The range of IP addresses in the overlay network of the Kubernetes cluster. For more information, see here.'
             created_at: '- The date and time when the Kubernetes cluster was created.'
             day: '- (Required) The day of the maintenance window policy. May be one of "monday" through "sunday", or "any" to indicate an arbitrary week day.'
             destroy_all_associated_resources: '- (Optional) Use with caution. When set to true, all associated DigitalOcean resources created via the Kubernetes API (load balancers, volumes, and volume snapshots) will be destroyed along with the cluster when it is destroyed.'
@@ -1568,11 +1910,11 @@ resources:
             raw_config: '- The full contents of the Kubernetes cluster''s kubeconfig file.'
             region: '- (Required) The slug identifier for the region where the Kubernetes cluster will be created.'
             registry_integration: '- (optional) Enables or disables the DigitalOcean container registry integration for the cluster. This requires that a container registry has first been created for the account. Default: false'
-            service_subnet: '- The range of assignable IP addresses for services running in the Kubernetes cluster.'
+            service_subnet: '- (Optional) The range of assignable IP addresses for services running in the Kubernetes cluster. For more information, see here.'
             size: '- (Required) The slug identifier for the type of Droplet to be used as workers in the node pool.'
             start_time: (Required) The start time in UTC of the maintenance window policy in 24-hour clock format / HH:MM notation (e.g., 15:00).
             status: '-  A string indicating the current status of the cluster. Potential values include running, provisioning, and errored.'
-            surge_upgrade: '- (Optional) Enable/disable surge upgrades for a cluster. Default: false'
+            surge_upgrade: '- (Optional) Enable/disable surge upgrades for a cluster. Default: true'
             tags: '- (Optional) A list of tag names applied to the node pool.'
             taint: '- A block representing a taint applied to all nodes in the pool. Each taint exports the following attributes (taints must be unique by key and effect pair):'
             token: '- The DigitalOcean API access token used by clients to access the cluster.'
@@ -1742,10 +2084,10 @@ resources:
                     }
         argumentDocs:
             algorithm: |-
-                - (Optional) The load balancing algorithm used to determine
-                which backend Droplet will be selected by a client. It must be either round_robin
+                - (Optional) Deprecated This field has been deprecated. You can no longer specify an algorithm for load balancers.
                 or least_connections. The default value is round_robin.
             allow: '- (Optional) A list of strings describing allow rules. Must be colon delimited strings of the form {type}:{source}'
+            cdn: '- (Optional) CDN configuration supporting the following:'
             certificate_id: '- (Optional) Deprecated The ID of the TLS certificate to be used for SSL termination.'
             certificate_name: '- (Optional) The unique name of the TLS certificate to be used for SSL termination.'
             check_interval_seconds: '- (Optional) The number of seconds between two consecutive health checks. If not specified, the default value is 10.'
@@ -1754,6 +2096,9 @@ resources:
             deny: '- (Optional) A list of strings describing deny rules. Must be colon delimited strings of the form {type}:{source}'
             deny = ["cidr:1.2.0.0/16", "ip:2.3.4.5"]: or allow = ["ip:1.2.3.4", "cidr:2.3.4.0/24"]
             disable_lets_encrypt_dns_records: '- (Optional) A boolean value indicating whether to disable automatic DNS record creation for Let''s Encrypt certificates that are added to the load balancer. Default value is false.'
+            domains: |-
+                (Optional) - A list of domains required to ingress traffic to a Global Load Balancer. The domains block is documented below.
+                NOTE: this is a closed beta feature and not available for public use.
             droplet_ids: (Optional) - A list of the IDs of each droplet to be attached to the Load Balancer.
             droplet_tag: (Optional) - The name of a Droplet tag corresponding to Droplets to be assigned to the Load Balancer.
             enable_backend_keepalive: '- (Optional) A boolean value indicating whether HTTP keepalive connections are maintained to target Droplets. Default value is false.'
@@ -1767,6 +2112,9 @@ resources:
             forwarding_rule: |-
                 - (Required) A list of forwarding_rule to be assigned to the
                 Load Balancer. The forwarding_rule block is documented below.
+            glb_settings: |-
+                (Optional) - A block containing glb_settings required to define target rules for a Global Load Balancer. The glb_settings block is documented below.
+                NOTE: this is a closed beta feature and not available for public use.
             healthcheck: |-
                 - (Optional) A healthcheck block to be assigned to the
                 Load Balancer. The healthcheck block is documented below. Only 1 healthcheck is allowed.
@@ -1774,7 +2122,12 @@ resources:
             http_idle_timeout_seconds: '- (Optional) Specifies the idle timeout for HTTPS connections on the load balancer in seconds.'
             id: '- The ID of the Load Balancer'
             ip: '- The ip of the Load Balancer'
+            is_enabled: '- (Optional) Control flag to specify if caching is enabled.'
+            is_managed: '- (Optional) Control flag to specify whether the domain is managed by DigitalOcean.'
             name: '- (Required) The Load Balancer name'
+            network: |-
+                - (Optional) The type of network the Load Balancer is accessible from. It must be either of INTERNAL or EXTERNAL. Defaults to EXTERNAL.
+                NOTE: non-EXTERNAL type may be part of closed beta feature and not available for public use.
             path: '- (Optional) The path on the backend Droplets to which the Load Balancer instance will send a request.'
             port: '- (Optional) An integer representing the port on the backend Droplets on which the health check will attempt a connection.'
             project_id: '- (Optional) The ID of the project that the load balancer is associated with. If no ID is provided at creation, the load balancer associates with the user''s default project.'
@@ -1790,10 +2143,15 @@ resources:
             sticky_sessions: |-
                 - (Optional) A sticky_sessions block to be assigned to the
                 Load Balancer. The sticky_sessions block is documented below. Only 1 sticky_sessions block is allowed.
+            target_load_balancer_ids: |-
+                (Optional) - A list of Load Balancer IDs to be attached behind a Global Load Balancer.
+                NOTE: this is a closed beta feature and not available for public use.
             target_port: '- (Required) An integer representing the port on the backend Droplets to which the Load Balancer will send traffic.'
             target_protocol: '- (Required) The protocol used for traffic from the Load Balancer to the backend Droplets. The possible values are: http, https, http2, tcp, or udp.'
             tls_passthrough: '- (Optional) A boolean value indicating whether SSL encrypted traffic will be passed through to the backend Droplets. The default value is false.'
-            type: '- (Required) An attribute indicating how and if requests from a client will be persistently served by the same backend Droplet. The possible values are cookies or none. If not specified, the default value is none.'
+            type: |-
+                - (Optional) The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
+                NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
             unhealthy_threshold: '- (Optional) The number of times a health check must fail for a backend Droplet to be marked "unhealthy" and be removed from the pool. If not specified, the default value is 3.'
             urn: '- The uniform resource name for the Load Balancer'
             vpc_uuid: '- (Optional) The ID of the VPC where the load balancer will be located.'
@@ -2104,7 +2462,7 @@ resources:
             abort_incomplete_multipart_upload_days: |-
                 (Optional) Specifies the number of days after initiating a multipart
                 upload when the multipart upload must be completed or else Spaces will abort the upload.
-            acl: '- Canned ACL applied on bucket creation (private or public-read)'
+            acl: '- Canned ACL applied on bucket creation: private or public-read (Defaults to private)'
             allowed_headers: '- (Optional) A list of headers that will be included in the CORS preflight request''s Access-Control-Request-Headers. A header may contain one wildcard (e.g. x-amz-*).'
             allowed_methods: '- (Required) A list of HTTP methods (e.g. GET) which are allowed from the specified origin.'
             allowed_origins: '- (Required) A list of hosts from which requests using the specified methods are allowed. A host may contain one wildcard (e.g. http://*.example.com).'
@@ -2436,7 +2794,7 @@ resources:
             name: '- (Required) A name for the block storage volume. Must be lowercase and be composed only of numbers, letters and "-", up to a limit of 64 characters. The name must begin with a letter.'
             region: '- (Required) The region that the block storage volume will be created in.'
             size: '- (Required) The size of the block storage volume in GiB. If updated, can only be expanded.'
-            snapshot_id: '- (Optional) The ID of an existing volume snapshot from which the new volume will be created. If supplied, the region and size will be limitied on creation to that of the referenced snapshot'
+            snapshot_id: '- (Optional) The ID of an existing volume snapshot from which the new volume will be created. If supplied, the region and size will be limited on creation to that of the referenced snapshot'
             tags: '- (Optional) A list of the tags to be applied to this Volume.'
             urn: '- The uniform resource name for the volume.'
         importStatements: []
@@ -2542,4 +2900,61 @@ resources:
             name: '- (Required) A name for the VPC. Must be unique and contain alphanumeric characters, dashes, and periods only.'
             region: '- (Required) The DigitalOcean region slug for the VPC''s location.'
             urn: '- The uniform resource name (URN) for the VPC.'
+        importStatements: []
+    digitalocean_vpc_peering:
+        subCategory: ""
+        name: digitalocean_vpc_peering
+        title: digitalocean_vpc_peering
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "name": "example-peering",
+                  "vpc_ids": [
+                    "${digitalocean_vpc.vpc1.id}",
+                    "${digitalocean_vpc.vpc2.id}"
+                  ]
+                }
+            - name: example
+              manifest: |-
+                {
+                  "name": "example-peering",
+                  "vpc_ids": [
+                    "${digitalocean_vpc.vpc1.id}",
+                    "${digitalocean_vpc.vpc2.id}"
+                  ]
+                }
+              dependencies:
+                digitalocean_droplet.example1: |-
+                    {
+                      "image": "ubuntu-18-04-x64",
+                      "name": "example1",
+                      "region": "nyc3",
+                      "size": "s-1vcpu-1gb",
+                      "vpc_uuid": "${digitalocean_vpc.vpc1.id}"
+                    }
+                digitalocean_droplet.example2: |-
+                    {
+                      "image": "ubuntu-18-04-x64",
+                      "name": "example2",
+                      "region": "nyc3",
+                      "size": "s-1vcpu-1gb",
+                      "vpc_uuid": "${digitalocean_vpc.vpc2.id}"
+                    }
+                digitalocean_vpc.vpc1: |-
+                    {
+                      "name": "vpc1",
+                      "region": "nyc3"
+                    }
+                digitalocean_vpc.vpc2: |-
+                    {
+                      "name": "vpc2",
+                      "region": "nyc3"
+                    }
+        argumentDocs:
+            created_at: '- The date and time of when the VPC Peering was created.'
+            id: '- The unique identifier for the VPC Peering.'
+            name: '- (Required) A name for the VPC Peering. Must be unique and contain alphanumeric characters, dashes, and periods only.'
+            status: '- The status of the VPC Peering.'
+            vpc_ids: '- (Required) A set of two VPC IDs to be peered.'
         importStatements: []

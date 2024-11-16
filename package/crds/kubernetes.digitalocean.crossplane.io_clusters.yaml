@@ -77,6 +77,10 @@ spec:
                       be automatically upgraded to new patch releases during its maintenance
                       window.
                     type: boolean
+                  clusterSubnet:
+                    description: The range of IP addresses in the overlay network
+                      of the Kubernetes cluster. For more information, see here.
+                    type: string
                   destroyAllAssociatedResources:
                     description: Use with caution. When set to true, all associated
                       DigitalOcean resources created via the Kubernetes API (load
@@ -191,9 +195,14 @@ spec:
                       integration for the cluster. This requires that a container
                       registry has first been created for the account. Default: false'
                     type: boolean
+                  serviceSubnet:
+                    description: The range of assignable IP addresses for services
+                      running in the Kubernetes cluster. For more information, see
+                      here.
+                    type: string
                   surgeUpgrade:
                     description: 'Enable/disable surge upgrades for a cluster. Default:
-                      false'
+                      true'
                     type: boolean
                   tags:
                     description: A list of tag names applied to the node pool.
@@ -305,6 +314,10 @@ spec:
                       be automatically upgraded to new patch releases during its maintenance
                       window.
                     type: boolean
+                  clusterSubnet:
+                    description: The range of IP addresses in the overlay network
+                      of the Kubernetes cluster. For more information, see here.
+                    type: string
                   destroyAllAssociatedResources:
                     description: Use with caution. When set to true, all associated
                       DigitalOcean resources created via the Kubernetes API (load
@@ -419,9 +432,14 @@ spec:
                       integration for the cluster. This requires that a container
                       registry has first been created for the account. Default: false'
                     type: boolean
+                  serviceSubnet:
+                    description: The range of assignable IP addresses for services
+                      running in the Kubernetes cluster. For more information, see
+                      here.
+                    type: string
                   surgeUpgrade:
                     description: 'Enable/disable surge upgrades for a cluster. Default:
-                      false'
+                      true'
                     type: boolean
                   tags:
                     description: A list of tag names applied to the node pool.
@@ -711,7 +729,7 @@ spec:
                     type: boolean
                   clusterSubnet:
                     description: The range of IP addresses in the overlay network
-                      of the Kubernetes cluster.
+                      of the Kubernetes cluster. For more information, see here.
                     type: string
                   createdAt:
                     description: The date and time when the Kubernetes cluster was
@@ -889,7 +907,8 @@ spec:
                     type: boolean
                   serviceSubnet:
                     description: The range of assignable IP addresses for services
-                      running in the Kubernetes cluster.
+                      running in the Kubernetes cluster. For more information, see
+                      here.
                     type: string
                   status:
                     description: A string indicating the current status of the cluster.
@@ -897,7 +916,7 @@ spec:
                     type: string
                   surgeUpgrade:
                     description: 'Enable/disable surge upgrades for a cluster. Default:
-                      false'
+                      true'
                     type: boolean
                   tags:
                     description: A list of tag names applied to the node pool.

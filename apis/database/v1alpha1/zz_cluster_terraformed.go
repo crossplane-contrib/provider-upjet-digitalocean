@@ -21,7 +21,7 @@ func (mg *Cluster) GetTerraformResourceType() string {
 
 // GetConnectionDetailsMapping for this Cluster
 func (tr *Cluster) GetConnectionDetailsMapping() map[string]string {
-	return map[string]string{"password": "status.atProvider.password", "private_uri": "status.atProvider.privateUri", "uri": "status.atProvider.uri"}
+	return map[string]string{"password": "status.atProvider.password", "private_uri": "status.atProvider.privateUri", "ui_password": "status.atProvider.uiPassword", "ui_uri": "status.atProvider.uiUri", "uri": "status.atProvider.uri"}
 }
 
 // GetObservation of this Cluster

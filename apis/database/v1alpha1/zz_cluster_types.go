@@ -164,6 +164,18 @@ type ClusterObservation struct {
 	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
+	// Name of the OpenSearch dashboard db.
+	UIDatabase *string `json:"uiDatabase,omitempty" tf:"ui_database,omitempty"`
+
+	// Hostname for the OpenSearch dashboard.
+	UIHost *string `json:"uiHost,omitempty" tf:"ui_host,omitempty"`
+
+	// Network port that the OpenSearch dashboard is listening on.
+	UIPort *float64 `json:"uiPort,omitempty" tf:"ui_port,omitempty"`
+
+	// Username for OpenSearch dashboard's default user.
+	UIUser *string `json:"uiUser,omitempty" tf:"ui_user,omitempty"`
+
 	// The uniform resource name of the database cluster.
 	Urn *string `json:"urn,omitempty" tf:"urn,omitempty"`
 

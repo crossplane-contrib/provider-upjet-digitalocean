@@ -843,6 +843,19 @@ spec:
                       type: string
                     type: array
                     x-kubernetes-list-type: set
+                  uiDatabase:
+                    description: Name of the OpenSearch dashboard db.
+                    type: string
+                  uiHost:
+                    description: Hostname for the OpenSearch dashboard.
+                    type: string
+                  uiPort:
+                    description: Network port that the OpenSearch dashboard is listening
+                      on.
+                    type: number
+                  uiUser:
+                    description: Username for OpenSearch dashboard's default user.
+                    type: string
                   urn:
                     description: The uniform resource name of the database cluster.
                     type: string
