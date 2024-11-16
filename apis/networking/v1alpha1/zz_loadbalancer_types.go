@@ -13,6 +13,82 @@ import (
 	v1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 )
 
+type CdnInitParameters struct {
+
+	// Control flag to specify if caching is enabled.
+	// cache enable flag
+	IsEnabled *bool `json:"isEnabled,omitempty" tf:"is_enabled,omitempty"`
+}
+
+type CdnObservation struct {
+
+	// Control flag to specify if caching is enabled.
+	// cache enable flag
+	IsEnabled *bool `json:"isEnabled,omitempty" tf:"is_enabled,omitempty"`
+}
+
+type CdnParameters struct {
+
+	// Control flag to specify if caching is enabled.
+	// cache enable flag
+	// +kubebuilder:validation:Optional
+	IsEnabled *bool `json:"isEnabled,omitempty" tf:"is_enabled,omitempty"`
+}
+
+type DomainsInitParameters struct {
+
+	// The unique name of the TLS certificate to be used for SSL termination.
+	// name of certificate required for TLS handshaking
+	CertificateName *string `json:"certificateName,omitempty" tf:"certificate_name,omitempty"`
+
+	// Control flag to specify whether the domain is managed by DigitalOcean.
+	// flag indicating if domain is managed by DigitalOcean
+	IsManaged *bool `json:"isManaged,omitempty" tf:"is_managed,omitempty"`
+
+	// The Load Balancer name
+	// domain name
+	Name *string `json:"name,omitempty" tf:"name,omitempty"`
+}
+
+type DomainsObservation struct {
+
+	// The unique name of the TLS certificate to be used for SSL termination.
+	// name of certificate required for TLS handshaking
+	CertificateName *string `json:"certificateName,omitempty" tf:"certificate_name,omitempty"`
+
+	// Control flag to specify whether the domain is managed by DigitalOcean.
+	// flag indicating if domain is managed by DigitalOcean
+	IsManaged *bool `json:"isManaged,omitempty" tf:"is_managed,omitempty"`
+
+	// The Load Balancer name
+	// domain name
+	Name *string `json:"name,omitempty" tf:"name,omitempty"`
+
+	// list of domain SSL validation errors
+	SSLValidationErrorReasons []*string `json:"sslValidationErrorReasons,omitempty" tf:"ssl_validation_error_reasons,omitempty"`
+
+	// list of domain verification errors
+	VerificationErrorReasons []*string `json:"verificationErrorReasons,omitempty" tf:"verification_error_reasons,omitempty"`
+}
+
+type DomainsParameters struct {
+
+	// The unique name of the TLS certificate to be used for SSL termination.
+	// name of certificate required for TLS handshaking
+	// +kubebuilder:validation:Optional
+	CertificateName *string `json:"certificateName,omitempty" tf:"certificate_name,omitempty"`
+
+	// Control flag to specify whether the domain is managed by DigitalOcean.
+	// flag indicating if domain is managed by DigitalOcean
+	// +kubebuilder:validation:Optional
+	IsManaged *bool `json:"isManaged,omitempty" tf:"is_managed,omitempty"`
+
+	// The Load Balancer name
+	// domain name
+	// +kubebuilder:validation:Optional
+	Name *string `json:"name" tf:"name,omitempty"`
+}
+
 type ForwardingRuleInitParameters struct {
 
 	// Deprecated The ID of the TLS certificate to be used for SSL termination.
@@ -106,6 +182,77 @@ type ForwardingRuleParameters struct {
 	TargetPort *float64 `json:"targetPort" tf:"target_port,omitempty"`
 
 	// The protocol used for traffic from the Load Balancer to the backend Droplets. The possible values are: http, https, http2, tcp, or udp.
+	// +kubebuilder:validation:Optional
+	TargetProtocol *string `json:"targetProtocol" tf:"target_protocol,omitempty"`
+}
+
+type GlbSettingsInitParameters struct {
+
+	// CDN configuration supporting the following:
+	// CDN specific configurations
+	Cdn []CdnInitParameters `json:"cdn,omitempty" tf:"cdn,omitempty"`
+
+	// fail-over threshold
+	FailoverThreshold *float64 `json:"failoverThreshold,omitempty" tf:"failover_threshold,omitempty"`
+
+	// region priority map
+	// +mapType=granular
+	RegionPriorities map[string]*float64 `json:"regionPriorities,omitempty" tf:"region_priorities,omitempty"`
+
+	// An integer representing the port on the backend Droplets to which the Load Balancer will send traffic.
+	// target port rules
+	TargetPort *float64 `json:"targetPort,omitempty" tf:"target_port,omitempty"`
+
+	// The protocol used for traffic from the Load Balancer to the backend Droplets. The possible values are: http, https, http2, tcp, or udp.
+	// target protocol rules
+	TargetProtocol *string `json:"targetProtocol,omitempty" tf:"target_protocol,omitempty"`
+}
+
+type GlbSettingsObservation struct {
+
+	// CDN configuration supporting the following:
+	// CDN specific configurations
+	Cdn []CdnObservation `json:"cdn,omitempty" tf:"cdn,omitempty"`
+
+	// fail-over threshold
+	FailoverThreshold *float64 `json:"failoverThreshold,omitempty" tf:"failover_threshold,omitempty"`
+
+	// region priority map
+	// +mapType=granular
+	RegionPriorities map[string]*float64 `json:"regionPriorities,omitempty" tf:"region_priorities,omitempty"`
+
+	// An integer representing the port on the backend Droplets to which the Load Balancer will send traffic.
+	// target port rules
+	TargetPort *float64 `json:"targetPort,omitempty" tf:"target_port,omitempty"`
+
+	// The protocol used for traffic from the Load Balancer to the backend Droplets. The possible values are: http, https, http2, tcp, or udp.
+	// target protocol rules
+	TargetProtocol *string `json:"targetProtocol,omitempty" tf:"target_protocol,omitempty"`
+}
+
+type GlbSettingsParameters struct {
+
+	// CDN configuration supporting the following:
+	// CDN specific configurations
+	// +kubebuilder:validation:Optional
+	Cdn []CdnParameters `json:"cdn,omitempty" tf:"cdn,omitempty"`
+
+	// fail-over threshold
+	// +kubebuilder:validation:Optional
+	FailoverThreshold *float64 `json:"failoverThreshold,omitempty" tf:"failover_threshold,omitempty"`
+
+	// region priority map
+	// +kubebuilder:validation:Optional
+	// +mapType=granular
+	RegionPriorities map[string]*float64 `json:"regionPriorities,omitempty" tf:"region_priorities,omitempty"`
+
+	// An integer representing the port on the backend Droplets to which the Load Balancer will send traffic.
+	// target port rules
+	// +kubebuilder:validation:Optional
+	TargetPort *float64 `json:"targetPort" tf:"target_port,omitempty"`
+
+	// The protocol used for traffic from the Load Balancer to the backend Droplets. The possible values are: http, https, http2, tcp, or udp.
+	// target protocol rules
 	// +kubebuilder:validation:Optional
 	TargetProtocol *string `json:"targetProtocol" tf:"target_protocol,omitempty"`
 }
@@ -226,13 +373,17 @@ type LoadbalancerFirewallParameters struct {
 
 type LoadbalancerInitParameters struct {
 
-	// The load balancing algorithm used to determine
-	// which backend Droplet will be selected by a client. It must be either round_robin
+	// Deprecated This field has been deprecated. You can no longer specify an algorithm for load balancers.
 	// or least_connections. The default value is round_robin.
 	Algorithm *string `json:"algorithm,omitempty" tf:"algorithm,omitempty"`
 
 	// A boolean value indicating whether to disable automatic DNS record creation for Let's Encrypt certificates that are added to the load balancer. Default value is false.
 	DisableLetsEncryptDNSRecords *bool `json:"disableLetsEncryptDnsRecords,omitempty" tf:"disable_lets_encrypt_dns_records,omitempty"`
+
+	// A list of domains required to ingress traffic to a Global Load Balancer. The domains block is documented below.
+	// NOTE: this is a closed beta feature and not available for public use.
+	// the list of domains required to ingress traffic to global load balancer
+	Domains []DomainsInitParameters `json:"domains,omitempty" tf:"domains,omitempty"`
 
 	// A list of the IDs of each droplet to be attached to the Load Balancer.
 	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/droplet/v1alpha1.Droplet
@@ -265,6 +416,11 @@ type LoadbalancerInitParameters struct {
 	// Load Balancer. The forwarding_rule block is documented below.
 	ForwardingRule []ForwardingRuleInitParameters `json:"forwardingRule,omitempty" tf:"forwarding_rule,omitempty"`
 
+	// A block containing glb_settings required to define target rules for a Global Load Balancer. The glb_settings block is documented below.
+	// NOTE: this is a closed beta feature and not available for public use.
+	// configuration options for global load balancer
+	GlbSettings []GlbSettingsInitParameters `json:"glbSettings,omitempty" tf:"glb_settings,omitempty"`
+
 	// Specifies the idle timeout for HTTPS connections on the load balancer in seconds.
 	HTTPIdleTimeoutSeconds *float64 `json:"httpIdleTimeoutSeconds,omitempty" tf:"http_idle_timeout_seconds,omitempty"`
 
@@ -274,6 +430,11 @@ type LoadbalancerInitParameters struct {
 
 	// The Load Balancer name
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
+
+	// The type of network the Load Balancer is accessible from. It must be either of INTERNAL or EXTERNAL. Defaults to EXTERNAL.
+	// NOTE: non-EXTERNAL type may be part of closed beta feature and not available for public use.
+	// the type of network the load balancer is accessible from (EXTERNAL or INTERNAL)
+	Network *string `json:"network,omitempty" tf:"network,omitempty"`
 
 	// The ID of the project that the load balancer is associated with. If no ID is provided at creation, the load balancer associates with the user's default project.
 	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/project/v1alpha1.Project
@@ -305,7 +466,14 @@ type LoadbalancerInitParameters struct {
 	// Load Balancer. The sticky_sessions block is documented below. Only 1 sticky_sessions block is allowed.
 	StickySessions []StickySessionsInitParameters `json:"stickySessions,omitempty" tf:"sticky_sessions,omitempty"`
 
-	// An attribute indicating how and if requests from a client will be persistently served by the same backend Droplet. The possible values are cookies or none. If not specified, the default value is none.
+	// A list of Load Balancer IDs to be attached behind a Global Load Balancer.
+	// NOTE: this is a closed beta feature and not available for public use.
+	// list of load balancer IDs to put behind a global load balancer
+	// +listType=set
+	TargetLoadBalancerIds []*string `json:"targetLoadBalancerIds,omitempty" tf:"target_load_balancer_ids,omitempty"`
+
+	// The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
+	// NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
 	// the type of the load balancer (GLOBAL or REGIONAL)
 	Type *string `json:"type,omitempty" tf:"type,omitempty"`
 
@@ -324,13 +492,17 @@ type LoadbalancerInitParameters struct {
 
 type LoadbalancerObservation struct {
 
-	// The load balancing algorithm used to determine
-	// which backend Droplet will be selected by a client. It must be either round_robin
+	// Deprecated This field has been deprecated. You can no longer specify an algorithm for load balancers.
 	// or least_connections. The default value is round_robin.
 	Algorithm *string `json:"algorithm,omitempty" tf:"algorithm,omitempty"`
 
 	// A boolean value indicating whether to disable automatic DNS record creation for Let's Encrypt certificates that are added to the load balancer. Default value is false.
 	DisableLetsEncryptDNSRecords *bool `json:"disableLetsEncryptDnsRecords,omitempty" tf:"disable_lets_encrypt_dns_records,omitempty"`
+
+	// A list of domains required to ingress traffic to a Global Load Balancer. The domains block is documented below.
+	// NOTE: this is a closed beta feature and not available for public use.
+	// the list of domains required to ingress traffic to global load balancer
+	Domains []DomainsObservation `json:"domains,omitempty" tf:"domains,omitempty"`
 
 	// A list of the IDs of each droplet to be attached to the Load Balancer.
 	// +listType=set
@@ -354,6 +526,11 @@ type LoadbalancerObservation struct {
 	// Load Balancer. The forwarding_rule block is documented below.
 	ForwardingRule []ForwardingRuleObservation `json:"forwardingRule,omitempty" tf:"forwarding_rule,omitempty"`
 
+	// A block containing glb_settings required to define target rules for a Global Load Balancer. The glb_settings block is documented below.
+	// NOTE: this is a closed beta feature and not available for public use.
+	// configuration options for global load balancer
+	GlbSettings []GlbSettingsObservation `json:"glbSettings,omitempty" tf:"glb_settings,omitempty"`
+
 	// Specifies the idle timeout for HTTPS connections on the load balancer in seconds.
 	HTTPIdleTimeoutSeconds *float64 `json:"httpIdleTimeoutSeconds,omitempty" tf:"http_idle_timeout_seconds,omitempty"`
 
@@ -369,6 +546,11 @@ type LoadbalancerObservation struct {
 
 	// The Load Balancer name
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
+
+	// The type of network the Load Balancer is accessible from. It must be either of INTERNAL or EXTERNAL. Defaults to EXTERNAL.
+	// NOTE: non-EXTERNAL type may be part of closed beta feature and not available for public use.
+	// the type of network the load balancer is accessible from (EXTERNAL or INTERNAL)
+	Network *string `json:"network,omitempty" tf:"network,omitempty"`
 
 	// The ID of the project that the load balancer is associated with. If no ID is provided at creation, the load balancer associates with the user's default project.
 	ProjectID *string `json:"projectId,omitempty" tf:"project_id,omitempty"`
@@ -393,7 +575,14 @@ type LoadbalancerObservation struct {
 	// Load Balancer. The sticky_sessions block is documented below. Only 1 sticky_sessions block is allowed.
 	StickySessions []StickySessionsObservation `json:"stickySessions,omitempty" tf:"sticky_sessions,omitempty"`
 
-	// An attribute indicating how and if requests from a client will be persistently served by the same backend Droplet. The possible values are cookies or none. If not specified, the default value is none.
+	// A list of Load Balancer IDs to be attached behind a Global Load Balancer.
+	// NOTE: this is a closed beta feature and not available for public use.
+	// list of load balancer IDs to put behind a global load balancer
+	// +listType=set
+	TargetLoadBalancerIds []*string `json:"targetLoadBalancerIds,omitempty" tf:"target_load_balancer_ids,omitempty"`
+
+	// The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
+	// NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
 	// the type of the load balancer (GLOBAL or REGIONAL)
 	Type *string `json:"type,omitempty" tf:"type,omitempty"`
 
@@ -407,8 +596,7 @@ type LoadbalancerObservation struct {
 
 type LoadbalancerParameters struct {
 
-	// The load balancing algorithm used to determine
-	// which backend Droplet will be selected by a client. It must be either round_robin
+	// Deprecated This field has been deprecated. You can no longer specify an algorithm for load balancers.
 	// or least_connections. The default value is round_robin.
 	// +kubebuilder:validation:Optional
 	Algorithm *string `json:"algorithm,omitempty" tf:"algorithm,omitempty"`
@@ -416,6 +604,12 @@ type LoadbalancerParameters struct {
 	// A boolean value indicating whether to disable automatic DNS record creation for Let's Encrypt certificates that are added to the load balancer. Default value is false.
 	// +kubebuilder:validation:Optional
 	DisableLetsEncryptDNSRecords *bool `json:"disableLetsEncryptDnsRecords,omitempty" tf:"disable_lets_encrypt_dns_records,omitempty"`
+
+	// A list of domains required to ingress traffic to a Global Load Balancer. The domains block is documented below.
+	// NOTE: this is a closed beta feature and not available for public use.
+	// the list of domains required to ingress traffic to global load balancer
+	// +kubebuilder:validation:Optional
+	Domains []DomainsParameters `json:"domains,omitempty" tf:"domains,omitempty"`
 
 	// A list of the IDs of each droplet to be attached to the Load Balancer.
 	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/droplet/v1alpha1.Droplet
@@ -454,6 +648,12 @@ type LoadbalancerParameters struct {
 	// +kubebuilder:validation:Optional
 	ForwardingRule []ForwardingRuleParameters `json:"forwardingRule,omitempty" tf:"forwarding_rule,omitempty"`
 
+	// A block containing glb_settings required to define target rules for a Global Load Balancer. The glb_settings block is documented below.
+	// NOTE: this is a closed beta feature and not available for public use.
+	// configuration options for global load balancer
+	// +kubebuilder:validation:Optional
+	GlbSettings []GlbSettingsParameters `json:"glbSettings,omitempty" tf:"glb_settings,omitempty"`
+
 	// Specifies the idle timeout for HTTPS connections on the load balancer in seconds.
 	// +kubebuilder:validation:Optional
 	HTTPIdleTimeoutSeconds *float64 `json:"httpIdleTimeoutSeconds,omitempty" tf:"http_idle_timeout_seconds,omitempty"`
@@ -466,6 +666,12 @@ type LoadbalancerParameters struct {
 	// The Load Balancer name
 	// +kubebuilder:validation:Optional
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
+
+	// The type of network the Load Balancer is accessible from. It must be either of INTERNAL or EXTERNAL. Defaults to EXTERNAL.
+	// NOTE: non-EXTERNAL type may be part of closed beta feature and not available for public use.
+	// the type of network the load balancer is accessible from (EXTERNAL or INTERNAL)
+	// +kubebuilder:validation:Optional
+	Network *string `json:"network,omitempty" tf:"network,omitempty"`
 
 	// The ID of the project that the load balancer is associated with. If no ID is provided at creation, the load balancer associates with the user's default project.
 	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/project/v1alpha1.Project
@@ -503,7 +709,15 @@ type LoadbalancerParameters struct {
 	// +kubebuilder:validation:Optional
 	StickySessions []StickySessionsParameters `json:"stickySessions,omitempty" tf:"sticky_sessions,omitempty"`
 
-	// An attribute indicating how and if requests from a client will be persistently served by the same backend Droplet. The possible values are cookies or none. If not specified, the default value is none.
+	// A list of Load Balancer IDs to be attached behind a Global Load Balancer.
+	// NOTE: this is a closed beta feature and not available for public use.
+	// list of load balancer IDs to put behind a global load balancer
+	// +kubebuilder:validation:Optional
+	// +listType=set
+	TargetLoadBalancerIds []*string `json:"targetLoadBalancerIds,omitempty" tf:"target_load_balancer_ids,omitempty"`
+
+	// The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
+	// NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
 	// the type of the load balancer (GLOBAL or REGIONAL)
 	// +kubebuilder:validation:Optional
 	Type *string `json:"type,omitempty" tf:"type,omitempty"`
@@ -530,7 +744,8 @@ type StickySessionsInitParameters struct {
 	// The number of seconds until the cookie set by the Load Balancer expires. This attribute is required when using cookies for the sticky sessions type.
 	CookieTTLSeconds *float64 `json:"cookieTtlSeconds,omitempty" tf:"cookie_ttl_seconds,omitempty"`
 
-	// An attribute indicating how and if requests from a client will be persistently served by the same backend Droplet. The possible values are cookies or none. If not specified, the default value is none.
+	// The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
+	// NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
 	Type *string `json:"type,omitempty" tf:"type,omitempty"`
 }
 
@@ -542,7 +757,8 @@ type StickySessionsObservation struct {
 	// The number of seconds until the cookie set by the Load Balancer expires. This attribute is required when using cookies for the sticky sessions type.
 	CookieTTLSeconds *float64 `json:"cookieTtlSeconds,omitempty" tf:"cookie_ttl_seconds,omitempty"`
 
-	// An attribute indicating how and if requests from a client will be persistently served by the same backend Droplet. The possible values are cookies or none. If not specified, the default value is none.
+	// The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
+	// NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
 	Type *string `json:"type,omitempty" tf:"type,omitempty"`
 }
 
@@ -556,7 +772,8 @@ type StickySessionsParameters struct {
 	// +kubebuilder:validation:Optional
 	CookieTTLSeconds *float64 `json:"cookieTtlSeconds,omitempty" tf:"cookie_ttl_seconds,omitempty"`
 
-	// An attribute indicating how and if requests from a client will be persistently served by the same backend Droplet. The possible values are cookies or none. If not specified, the default value is none.
+	// The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
+	// NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
 	// +kubebuilder:validation:Optional
 	Type *string `json:"type,omitempty" tf:"type,omitempty"`
 }
@@ -597,7 +814,6 @@ type LoadbalancerStatus struct {
 type Loadbalancer struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
-	// +kubebuilder:validation:XValidation:rule="!('*' in self.managementPolicies || 'Create' in self.managementPolicies || 'Update' in self.managementPolicies) || has(self.forProvider.forwardingRule) || (has(self.initProvider) && has(self.initProvider.forwardingRule))",message="spec.forProvider.forwardingRule is a required parameter"
 	// +kubebuilder:validation:XValidation:rule="!('*' in self.managementPolicies || 'Create' in self.managementPolicies || 'Update' in self.managementPolicies) || has(self.forProvider.name) || (has(self.initProvider) && has(self.initProvider.name))",message="spec.forProvider.name is a required parameter"
 	Spec   LoadbalancerSpec   `json:"spec"`
 	Status LoadbalancerStatus `json:"status,omitempty"`

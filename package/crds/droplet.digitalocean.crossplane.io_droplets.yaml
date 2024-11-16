@@ -204,7 +204,7 @@ spec:
                       size is a permanent change. Increasing only RAM and CPU is reversible.
                     type: boolean
                   size:
-                    description: The unique slug that indentifies the type of Droplet.
+                    description: The unique slug that identifies the type of Droplet.
                       You can find a list of available slugs on DigitalOcean API documentation.
                     type: string
                   sshKeys:
@@ -613,7 +613,7 @@ spec:
                       size is a permanent change. Increasing only RAM and CPU is reversible.
                     type: boolean
                   size:
-                    description: The unique slug that indentifies the type of Droplet.
+                    description: The unique slug that identifies the type of Droplet.
                       You can find a list of available slugs on DigitalOcean API documentation.
                     type: string
                   sshKeys:
@@ -1141,7 +1141,7 @@ spec:
                       size is a permanent change. Increasing only RAM and CPU is reversible.
                     type: boolean
                   size:
-                    description: The unique slug that indentifies the type of Droplet.
+                    description: The unique slug that identifies the type of Droplet.
                       You can find a list of available slugs on DigitalOcean API documentation.
                     type: string
                   sshKeys:

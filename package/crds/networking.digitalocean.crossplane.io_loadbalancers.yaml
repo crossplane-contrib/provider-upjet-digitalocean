@@ -74,8 +74,7 @@ spec:
                 properties:
                   algorithm:
                     description: |-
-                      The load balancing algorithm used to determine
-                      which backend Droplet will be selected by a client. It must be either round_robin
+                      Deprecated This field has been deprecated. You can no longer specify an algorithm for load balancers.
                       or least_connections. The default value is round_robin.
                     type: string
                   disableLetsEncryptDnsRecords:
@@ -83,6 +82,30 @@ spec:
                       DNS record creation for Let's Encrypt certificates that are
                       added to the load balancer. Default value is false.
                     type: boolean
+                  domains:
+                    description: |-
+                      A list of domains required to ingress traffic to a Global Load Balancer. The domains block is documented below.
+                      NOTE: this is a closed beta feature and not available for public use.
+                      the list of domains required to ingress traffic to global load balancer
+                    items:
+                      properties:
+                        certificateName:
+                          description: |-
+                            The unique name of the TLS certificate to be used for SSL termination.
+                            name of certificate required for TLS handshaking
+                          type: string
+                        isManaged:
+                          description: |-
+                            Control flag to specify whether the domain is managed by DigitalOcean.
+                            flag indicating if domain is managed by DigitalOcean
+                          type: boolean
+                        name:
+                          description: |-
+                            The Load Balancer name
+                            domain name
+                          type: string
+                      type: object
+                    type: array
                   dropletIds:
                     description: A list of the IDs of each droplet to be attached
                       to the Load Balancer.
@@ -320,6 +343,47 @@ spec:
                           type: boolean
                       type: object
                     type: array
+                  glbSettings:
+                    description: |-
+                      A block containing glb_settings required to define target rules for a Global Load Balancer. The glb_settings block is documented below.
+                      NOTE: this is a closed beta feature and not available for public use.
+                      configuration options for global load balancer
+                    items:
+                      properties:
+                        cdn:
+                          description: |-
+                            CDN configuration supporting the following:
+                            CDN specific configurations
+                          items:
+                            properties:
+                              isEnabled:
+                                description: |-
+                                  Control flag to specify if caching is enabled.
+                                  cache enable flag
+                                type: boolean
+                            type: object
+                          type: array
+                        failoverThreshold:
+                          description: fail-over threshold
+                          type: number
+                        regionPriorities:
+                          additionalProperties:
+                            type: number
+                          description: region priority map
+                          type: object
+                          x-kubernetes-map-type: granular
+                        targetPort:
+                          description: |-
+                            An integer representing the port on the backend Droplets to which the Load Balancer will send traffic.
+                            target port rules
+                          type: number
+                        targetProtocol:
+                          description: |-
+                            The protocol used for traffic from the Load Balancer to the backend Droplets. The possible values are: http, https, http2, tcp, or udp.
+                            target protocol rules
+                          type: string
+                      type: object
+                    type: array
                   healthcheck:
                     description: |-
                       A healthcheck block to be assigned to the
@@ -368,6 +432,12 @@ spec:
                     type: number
                   name:
                     description: The Load Balancer name
+                    type: string
+                  network:
+                    description: |-
+                      The type of network the Load Balancer is accessible from. It must be either of INTERNAL or EXTERNAL. Defaults to EXTERNAL.
+                      NOTE: non-EXTERNAL type may be part of closed beta feature and not available for public use.
+                      the type of network the load balancer is accessible from (EXTERNAL or INTERNAL)
                     type: string
                   projectId:
                     description: The ID of the project that the load balancer is associated
@@ -484,16 +554,25 @@ spec:
                             when using cookies for the sticky sessions type.
                           type: number
                         type:
-                          description: An attribute indicating how and if requests
-                            from a client will be persistently served by the same
-                            backend Droplet. The possible values are cookies or none.
-                            If not specified, the default value is none.
+                          description: |-
+                            The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
+                            NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
                           type: string
                       type: object
                     type: array
+                  targetLoadBalancerIds:
+                    description: |-
+                      A list of Load Balancer IDs to be attached behind a Global Load Balancer.
+                      NOTE: this is a closed beta feature and not available for public use.
+                      list of load balancer IDs to put behind a global load balancer
+                    items:
+                      type: string
+                    type: array
+                    x-kubernetes-list-type: set
                   type:
                     description: |-
-                      An attribute indicating how and if requests from a client will be persistently served by the same backend Droplet. The possible values are cookies or none. If not specified, the default value is none.
+                      The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
+                      NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
                       the type of the load balancer (GLOBAL or REGIONAL)
                     type: string
                   vpcUuid:
@@ -590,8 +669,7 @@ spec:
                 properties:
                   algorithm:
                     description: |-
-                      The load balancing algorithm used to determine
-                      which backend Droplet will be selected by a client. It must be either round_robin
+                      Deprecated This field has been deprecated. You can no longer specify an algorithm for load balancers.
                       or least_connections. The default value is round_robin.
                     type: string
                   disableLetsEncryptDnsRecords:
@@ -599,6 +677,30 @@ spec:
                       DNS record creation for Let's Encrypt certificates that are
                       added to the load balancer. Default value is false.
                     type: boolean
+                  domains:
+                    description: |-
+                      A list of domains required to ingress traffic to a Global Load Balancer. The domains block is documented below.
+                      NOTE: this is a closed beta feature and not available for public use.
+                      the list of domains required to ingress traffic to global load balancer
+                    items:
+                      properties:
+                        certificateName:
+                          description: |-
+                            The unique name of the TLS certificate to be used for SSL termination.
+                            name of certificate required for TLS handshaking
+                          type: string
+                        isManaged:
+                          description: |-
+                            Control flag to specify whether the domain is managed by DigitalOcean.
+                            flag indicating if domain is managed by DigitalOcean
+                          type: boolean
+                        name:
+                          description: |-
+                            The Load Balancer name
+                            domain name
+                          type: string
+                      type: object
+                    type: array
                   dropletIds:
                     description: A list of the IDs of each droplet to be attached
                       to the Load Balancer.
@@ -836,6 +938,47 @@ spec:
                           type: boolean
                       type: object
                     type: array
+                  glbSettings:
+                    description: |-
+                      A block containing glb_settings required to define target rules for a Global Load Balancer. The glb_settings block is documented below.
+                      NOTE: this is a closed beta feature and not available for public use.
+                      configuration options for global load balancer
+                    items:
+                      properties:
+                        cdn:
+                          description: |-
+                            CDN configuration supporting the following:
+                            CDN specific configurations
+                          items:
+                            properties:
+                              isEnabled:
+                                description: |-
+                                  Control flag to specify if caching is enabled.
+                                  cache enable flag
+                                type: boolean
+                            type: object
+                          type: array
+                        failoverThreshold:
+                          description: fail-over threshold
+                          type: number
+                        regionPriorities:
+                          additionalProperties:
+                            type: number
+                          description: region priority map
+                          type: object
+                          x-kubernetes-map-type: granular
+                        targetPort:
+                          description: |-
+                            An integer representing the port on the backend Droplets to which the Load Balancer will send traffic.
+                            target port rules
+                          type: number
+                        targetProtocol:
+                          description: |-
+                            The protocol used for traffic from the Load Balancer to the backend Droplets. The possible values are: http, https, http2, tcp, or udp.
+                            target protocol rules
+                          type: string
+                      type: object
+                    type: array
                   healthcheck:
                     description: |-
                       A healthcheck block to be assigned to the
@@ -884,6 +1027,12 @@ spec:
                     type: number
                   name:
                     description: The Load Balancer name
+                    type: string
+                  network:
+                    description: |-
+                      The type of network the Load Balancer is accessible from. It must be either of INTERNAL or EXTERNAL. Defaults to EXTERNAL.
+                      NOTE: non-EXTERNAL type may be part of closed beta feature and not available for public use.
+                      the type of network the load balancer is accessible from (EXTERNAL or INTERNAL)
                     type: string
                   projectId:
                     description: The ID of the project that the load balancer is associated
@@ -1000,16 +1149,25 @@ spec:
                             when using cookies for the sticky sessions type.
                           type: number
                         type:
-                          description: An attribute indicating how and if requests
-                            from a client will be persistently served by the same
-                            backend Droplet. The possible values are cookies or none.
-                            If not specified, the default value is none.
+                          description: |-
+                            The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
+                            NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
                           type: string
                       type: object
                     type: array
+                  targetLoadBalancerIds:
+                    description: |-
+                      A list of Load Balancer IDs to be attached behind a Global Load Balancer.
+                      NOTE: this is a closed beta feature and not available for public use.
+                      list of load balancer IDs to put behind a global load balancer
+                    items:
+                      type: string
+                    type: array
+                    x-kubernetes-list-type: set
                   type:
                     description: |-
-                      An attribute indicating how and if requests from a client will be persistently served by the same backend Droplet. The possible values are cookies or none. If not specified, the default value is none.
+                      The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
+                      NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
                       the type of the load balancer (GLOBAL or REGIONAL)
                     type: string
                   vpcUuid:
@@ -1259,10 +1417,6 @@ spec:
             - forProvider
             type: object
             x-kubernetes-validations:
-            - message: spec.forProvider.forwardingRule is a required parameter
-              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
-                || ''Update'' in self.managementPolicies) || has(self.forProvider.forwardingRule)
-                || (has(self.initProvider) && has(self.initProvider.forwardingRule))'
             - message: spec.forProvider.name is a required parameter
               rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
                 || ''Update'' in self.managementPolicies) || has(self.forProvider.name)
@@ -1274,8 +1428,7 @@ spec:
                 properties:
                   algorithm:
                     description: |-
-                      The load balancing algorithm used to determine
-                      which backend Droplet will be selected by a client. It must be either round_robin
+                      Deprecated This field has been deprecated. You can no longer specify an algorithm for load balancers.
                       or least_connections. The default value is round_robin.
                     type: string
                   disableLetsEncryptDnsRecords:
@@ -1283,6 +1436,40 @@ spec:
                       DNS record creation for Let's Encrypt certificates that are
                       added to the load balancer. Default value is false.
                     type: boolean
+                  domains:
+                    description: |-
+                      A list of domains required to ingress traffic to a Global Load Balancer. The domains block is documented below.
+                      NOTE: this is a closed beta feature and not available for public use.
+                      the list of domains required to ingress traffic to global load balancer
+                    items:
+                      properties:
+                        certificateName:
+                          description: |-
+                            The unique name of the TLS certificate to be used for SSL termination.
+                            name of certificate required for TLS handshaking
+                          type: string
+                        isManaged:
+                          description: |-
+                            Control flag to specify whether the domain is managed by DigitalOcean.
+                            flag indicating if domain is managed by DigitalOcean
+                          type: boolean
+                        name:
+                          description: |-
+                            The Load Balancer name
+                            domain name
+                          type: string
+                        sslValidationErrorReasons:
+                          description: list of domain SSL validation errors
+                          items:
+                            type: string
+                          type: array
+                        verificationErrorReasons:
+                          description: list of domain verification errors
+                          items:
+                            type: string
+                          type: array
+                      type: object
+                    type: array
                   dropletIds:
                     description: A list of the IDs of each droplet to be attached
                       to the Load Balancer.
@@ -1366,6 +1553,47 @@ spec:
                           type: boolean
                       type: object
                     type: array
+                  glbSettings:
+                    description: |-
+                      A block containing glb_settings required to define target rules for a Global Load Balancer. The glb_settings block is documented below.
+                      NOTE: this is a closed beta feature and not available for public use.
+                      configuration options for global load balancer
+                    items:
+                      properties:
+                        cdn:
+                          description: |-
+                            CDN configuration supporting the following:
+                            CDN specific configurations
+                          items:
+                            properties:
+                              isEnabled:
+                                description: |-
+                                  Control flag to specify if caching is enabled.
+                                  cache enable flag
+                                type: boolean
+                            type: object
+                          type: array
+                        failoverThreshold:
+                          description: fail-over threshold
+                          type: number
+                        regionPriorities:
+                          additionalProperties:
+                            type: number
+                          description: region priority map
+                          type: object
+                          x-kubernetes-map-type: granular
+                        targetPort:
+                          description: |-
+                            An integer representing the port on the backend Droplets to which the Load Balancer will send traffic.
+                            target port rules
+                          type: number
+                        targetProtocol:
+                          description: |-
+                            The protocol used for traffic from the Load Balancer to the backend Droplets. The possible values are: http, https, http2, tcp, or udp.
+                            target protocol rules
+                          type: string
+                      type: object
+                    type: array
                   healthcheck:
                     description: |-
                       A healthcheck block to be assigned to the
@@ -1421,6 +1649,12 @@ spec:
                   name:
                     description: The Load Balancer name
                     type: string
+                  network:
+                    description: |-
+                      The type of network the Load Balancer is accessible from. It must be either of INTERNAL or EXTERNAL. Defaults to EXTERNAL.
+                      NOTE: non-EXTERNAL type may be part of closed beta feature and not available for public use.
+                      the type of network the load balancer is accessible from (EXTERNAL or INTERNAL)
+                    type: string
                   projectId:
                     description: The ID of the project that the load balancer is associated
                       with. If no ID is provided at creation, the load balancer associates
@@ -1464,16 +1698,25 @@ spec:
                             when using cookies for the sticky sessions type.
                           type: number
                         type:
-                          description: An attribute indicating how and if requests
-                            from a client will be persistently served by the same
-                            backend Droplet. The possible values are cookies or none.
-                            If not specified, the default value is none.
+                          description: |-
+                            The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
+                            NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
                           type: string
                       type: object
                     type: array
+                  targetLoadBalancerIds:
+                    description: |-
+                      A list of Load Balancer IDs to be attached behind a Global Load Balancer.
+                      NOTE: this is a closed beta feature and not available for public use.
+                      list of load balancer IDs to put behind a global load balancer
+                    items:
+                      type: string
+                    type: array
+                    x-kubernetes-list-type: set
                   type:
                     description: |-
-                      An attribute indicating how and if requests from a client will be persistently served by the same backend Droplet. The possible values are cookies or none. If not specified, the default value is none.
+                      The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
+                      NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
                       the type of the load balancer (GLOBAL or REGIONAL)
                     type: string
                   urn:

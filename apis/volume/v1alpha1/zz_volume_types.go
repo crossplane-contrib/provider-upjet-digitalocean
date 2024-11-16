@@ -36,7 +36,7 @@ type VolumeInitParameters struct {
 	// The size of the block storage volume in GiB. If updated, can only be expanded.
 	Size *float64 `json:"size,omitempty" tf:"size,omitempty"`
 
-	// The ID of an existing volume snapshot from which the new volume will be created. If supplied, the region and size will be limitied on creation to that of the referenced snapshot
+	// The ID of an existing volume snapshot from which the new volume will be created. If supplied, the region and size will be limited on creation to that of the referenced snapshot
 	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/volume/v1alpha1.Snapshot
 	SnapshotID *string `json:"snapshotId,omitempty" tf:"snapshot_id,omitempty"`
 
@@ -86,7 +86,7 @@ type VolumeObservation struct {
 	// The size of the block storage volume in GiB. If updated, can only be expanded.
 	Size *float64 `json:"size,omitempty" tf:"size,omitempty"`
 
-	// The ID of an existing volume snapshot from which the new volume will be created. If supplied, the region and size will be limitied on creation to that of the referenced snapshot
+	// The ID of an existing volume snapshot from which the new volume will be created. If supplied, the region and size will be limited on creation to that of the referenced snapshot
 	SnapshotID *string `json:"snapshotId,omitempty" tf:"snapshot_id,omitempty"`
 
 	// A list of the tags to be applied to this Volume.
@@ -128,7 +128,7 @@ type VolumeParameters struct {
 	// +kubebuilder:validation:Optional
 	Size *float64 `json:"size,omitempty" tf:"size,omitempty"`
 
-	// The ID of an existing volume snapshot from which the new volume will be created. If supplied, the region and size will be limitied on creation to that of the referenced snapshot
+	// The ID of an existing volume snapshot from which the new volume will be created. If supplied, the region and size will be limited on creation to that of the referenced snapshot
 	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/volume/v1alpha1.Snapshot
 	// +kubebuilder:validation:Optional
 	SnapshotID *string `json:"snapshotId,omitempty" tf:"snapshot_id,omitempty"`

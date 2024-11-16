@@ -15,7 +15,7 @@ import (
 
 type ConfigInitParameters struct {
 
-	// The topic cleanup policy that decribes whether messages should be deleted, compacted, or both when retention policies are violated.
+	// The topic cleanup policy that describes whether messages should be deleted, compacted, or both when retention policies are violated.
 	// This may be one of "delete", "compact", or "compact_delete".
 	CleanupPolicy *string `json:"cleanupPolicy,omitempty" tf:"cleanup_policy,omitempty"`
 
@@ -88,7 +88,7 @@ type ConfigInitParameters struct {
 
 type ConfigObservation struct {
 
-	// The topic cleanup policy that decribes whether messages should be deleted, compacted, or both when retention policies are violated.
+	// The topic cleanup policy that describes whether messages should be deleted, compacted, or both when retention policies are violated.
 	// This may be one of "delete", "compact", or "compact_delete".
 	CleanupPolicy *string `json:"cleanupPolicy,omitempty" tf:"cleanup_policy,omitempty"`
 
@@ -161,7 +161,7 @@ type ConfigObservation struct {
 
 type ConfigParameters struct {
 
-	// The topic cleanup policy that decribes whether messages should be deleted, compacted, or both when retention policies are violated.
+	// The topic cleanup policy that describes whether messages should be deleted, compacted, or both when retention policies are violated.
 	// This may be one of "delete", "compact", or "compact_delete".
 	// +kubebuilder:validation:Optional
 	CleanupPolicy *string `json:"cleanupPolicy,omitempty" tf:"cleanup_policy,omitempty"`
