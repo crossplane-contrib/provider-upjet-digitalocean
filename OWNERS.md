@@ -10,8 +10,6 @@ guidelines and responsibilities for the steering committee and maintainers.
 
 ## Maintainers
 
-* Yordis Prieto <yordis.prieto@gmail.com> ([yordis](https://github.com/yordis))
-* Alper Ulucinar <alper@upbound.com> ([ulucinar](https://github.com/ulucinar))
-* Sergen Yalcin <sergen@upbound.com> ([sergenyalcin](https://github.com/sergenyalcin))
+- Yordis Prieto <yordis.prieto@gmail.com> ([yordis](https://github.com/yordis))
 
 See [CODEOWNERS](./CODEOWNERS) for automatic PR assignment.
