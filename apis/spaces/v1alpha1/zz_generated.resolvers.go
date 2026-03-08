@@ -120,3 +120,50 @@ func (mg *Cdn) ResolveReferences(ctx context.Context, c client.Reader) error {
 
 	return nil
 }
+
+// ResolveReferences of this Key.
+func (mg *Key) ResolveReferences(ctx context.Context, c client.Reader) error {
+	r := reference.NewAPIResolver(c, mg)
+
+	var rsp reference.ResolutionResponse
+	var err error
+
+	for i3 := 0; i3 < len(mg.Spec.ForProvider.Grant); i3++ {
+		rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+			CurrentValue: ptr.Deref(mg.Spec.ForProvider.Grant[i3].Bucket, ""),
+			Extract:      reference.ExternalName(),
+			Reference:    mg.Spec.ForProvider.Grant[i3].BucketRef,
+			Selector:     mg.Spec.ForProvider.Grant[i3].BucketSelector,
+			To: reference.To{
+				List:    &BucketList{},
+				Managed: &Bucket{},
+			},
+		})
+		if err != nil {
+			return errors.Wrap(err, "mg.Spec.ForProvider.Grant[i3].Bucket")
+		}
+		mg.Spec.ForProvider.Grant[i3].Bucket = ptr.To(rsp.ResolvedValue)
+		mg.Spec.ForProvider.Grant[i3].BucketRef = rsp.ResolvedReference
+
+	}
+	for i3 := 0; i3 < len(mg.Spec.InitProvider.Grant); i3++ {
+		rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+			CurrentValue: ptr.Deref(mg.Spec.InitProvider.Grant[i3].Bucket, ""),
+			Extract:      reference.ExternalName(),
+			Reference:    mg.Spec.InitProvider.Grant[i3].BucketRef,
+			Selector:     mg.Spec.InitProvider.Grant[i3].BucketSelector,
+			To: reference.To{
+				List:    &BucketList{},
+				Managed: &Bucket{},
+			},
+		})
+		if err != nil {
+			return errors.Wrap(err, "mg.Spec.InitProvider.Grant[i3].Bucket")
+		}
+		mg.Spec.InitProvider.Grant[i3].Bucket = ptr.To(rsp.ResolvedValue)
+		mg.Spec.InitProvider.Grant[i3].BucketRef = rsp.ResolvedReference
+
+	}
+
+	return nil
+}
