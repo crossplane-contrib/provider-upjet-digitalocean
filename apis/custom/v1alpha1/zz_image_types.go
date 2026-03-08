@@ -29,8 +29,17 @@ type ImageInitParameters struct {
 	Regions []*string `json:"regions,omitempty" tf:"regions,omitempty"`
 
 	// A list of optional tags for the image.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1.Tag
 	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
+
+	// References to Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsRefs []v1.Reference `json:"tagsRefs,omitempty" tf:"-"`
+
+	// Selector for a list of Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsSelector *v1.Selector `json:"tagsSelector,omitempty" tf:"-"`
 
 	// A URL from which the custom Linux virtual machine image may be retrieved.
 	URL *string `json:"url,omitempty" tf:"url,omitempty"`
@@ -105,9 +114,18 @@ type ImageParameters struct {
 	Regions []*string `json:"regions,omitempty" tf:"regions,omitempty"`
 
 	// A list of optional tags for the image.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1.Tag
 	// +kubebuilder:validation:Optional
 	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
+
+	// References to Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsRefs []v1.Reference `json:"tagsRefs,omitempty" tf:"-"`
+
+	// Selector for a list of Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsSelector *v1.Selector `json:"tagsSelector,omitempty" tf:"-"`
 
 	// A URL from which the custom Linux virtual machine image may be retrieved.
 	// +kubebuilder:validation:Optional

@@ -128,6 +128,11 @@ func GetProvider() *ujconfig.Provider {
 			TerraformName: "digitalocean_spaces_bucket",
 		}
 	})
+	pc.AddResourceConfigurator("digitalocean_custom_image", func(r *ujconfig.Resource) {
+		r.References["tags"] = ujconfig.Reference{
+			TerraformName: "digitalocean_tag",
+		}
+	})
 	pc.AddResourceConfigurator("digitalocean_certificate", func(r *ujconfig.Resource) {
 		r.ShortGroup = networkingShortGroup
 		r.References["domains"] = ujconfig.Reference{
@@ -214,11 +219,17 @@ func GetProvider() *ujconfig.Provider {
 		r.References["volume_id"] = ujconfig.Reference{
 			TerraformName: "digitalocean_volume",
 		}
+		r.References["tags"] = ujconfig.Reference{
+			TerraformName: "digitalocean_tag",
+		}
 	})
 	pc.AddResourceConfigurator("digitalocean_volume", func(r *ujconfig.Resource) {
 		r.ShortGroup = "volume"
 		r.References["snapshot_id"] = ujconfig.Reference{
 			TerraformName: "digitalocean_volume_snapshot",
+		}
+		r.References["tags"] = ujconfig.Reference{
+			TerraformName: "digitalocean_tag",
 		}
 	})
 	pc.AddResourceConfigurator("digitalocean_uptime_alert", func(r *ujconfig.Resource) {
@@ -229,6 +240,9 @@ func GetProvider() *ujconfig.Provider {
 	pc.AddResourceConfigurator("digitalocean_monitor_alert", func(r *ujconfig.Resource) {
 		r.References["entities"] = ujconfig.Reference{
 			TerraformName: "digitalocean_droplet",
+		}
+		r.References["tags"] = ujconfig.Reference{
+			TerraformName: "digitalocean_tag",
 		}
 	})
 	pc.AddResourceConfigurator("digitalocean_reserved_ip", func(r *ujconfig.Resource) {
@@ -245,6 +259,15 @@ func GetProvider() *ujconfig.Provider {
 		r.References["droplet_ids"] = ujconfig.Reference{
 			TerraformName: "digitalocean_droplet",
 		}
+		r.References["tags"] = ujconfig.Reference{
+			TerraformName: "digitalocean_tag",
+		}
+		r.References["inbound_rule.source_tags"] = ujconfig.Reference{
+			TerraformName: "digitalocean_tag",
+		}
+		r.References["outbound_rule.destination_tags"] = ujconfig.Reference{
+			TerraformName: "digitalocean_tag",
+		}
 	})
 	pc.AddResourceConfigurator("digitalocean_droplet_snapshot", func(r *ujconfig.Resource) {
 		r.References["droplet_id"] = ujconfig.Reference{
@@ -258,6 +281,9 @@ func GetProvider() *ujconfig.Provider {
 		r.References["private_network_uuid"] = ujconfig.Reference{
 			TerraformName: "digitalocean_vpc",
 		}
+		r.References["tags"] = ujconfig.Reference{
+			TerraformName: "digitalocean_tag",
+		}
 	})
 	pc.AddResourceConfigurator("digitalocean_database_user", func(r *ujconfig.Resource) {
 		r.References["cluster_id"] = ujconfig.Reference{
@@ -270,6 +296,9 @@ func GetProvider() *ujconfig.Provider {
 		}
 		r.References["project_id"] = ujconfig.Reference{
 			TerraformName: "digitalocean_project",
+		}
+		r.References["tags"] = ujconfig.Reference{
+			TerraformName: "digitalocean_tag",
 		}
 	})
 	pc.AddResourceConfigurator("digitalocean_loadbalancer", func(r *ujconfig.Resource) {
@@ -322,14 +351,16 @@ func GetProvider() *ujconfig.Provider {
 		r.References["vpc_uuid"] = ujconfig.Reference{
 			TerraformName: "digitalocean_vpc",
 		}
-		// r.References["tags"] = ujconfig.Reference{
-		// 	TerraformName: "digitalocean_tag",
-		// 	SelectorFieldName: "Name",
-		// }
+		r.References["tags"] = ujconfig.Reference{
+			TerraformName: "digitalocean_tag",
+		}
 	})
 	pc.AddResourceConfigurator("digitalocean_kubernetes_node_pool", func(r *ujconfig.Resource) {
 		r.References["cluster_id"] = ujconfig.Reference{
 			TerraformName: "digitalocean_kubernetes_cluster",
+		}
+		r.References["tags"] = ujconfig.Reference{
+			TerraformName: "digitalocean_tag",
 		}
 	})
 	pc.AddResourceConfigurator("digitalocean_spaces_key", func(r *ujconfig.Resource) {

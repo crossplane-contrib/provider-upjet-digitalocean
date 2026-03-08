@@ -42,8 +42,17 @@ type FirewallInitParameters struct {
 	OutboundRule []OutboundRuleInitParameters `json:"outboundRule,omitempty" tf:"outbound_rule,omitempty"`
 
 	// The names of the Tags assigned to the Firewall (max. 5).
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1.Tag
 	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
+
+	// References to Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsRefs []v1.Reference `json:"tagsRefs,omitempty" tf:"-"`
+
+	// Selector for a list of Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsSelector *v1.Selector `json:"tagsSelector,omitempty" tf:"-"`
 }
 
 type FirewallObservation struct {
@@ -120,9 +129,18 @@ type FirewallParameters struct {
 	OutboundRule []OutboundRuleParameters `json:"outboundRule,omitempty" tf:"outbound_rule,omitempty"`
 
 	// The names of the Tags assigned to the Firewall (max. 5).
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1.Tag
 	// +kubebuilder:validation:Optional
 	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
+
+	// References to Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsRefs []v1.Reference `json:"tagsRefs,omitempty" tf:"-"`
+
+	// Selector for a list of Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsSelector *v1.Selector `json:"tagsSelector,omitempty" tf:"-"`
 }
 
 type InboundRuleInitParameters struct {
@@ -161,8 +179,17 @@ type InboundRuleInitParameters struct {
 	// An array containing the names of Tags
 	// corresponding to groups of Droplets from which the inbound traffic
 	// will be accepted.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1.Tag
 	// +listType=set
 	SourceTags []*string `json:"sourceTags,omitempty" tf:"source_tags,omitempty"`
+
+	// References to Tag in digitalocean to populate sourceTags.
+	// +kubebuilder:validation:Optional
+	SourceTagsRefs []v1.Reference `json:"sourceTagsRefs,omitempty" tf:"-"`
+
+	// Selector for a list of Tag in digitalocean to populate sourceTags.
+	// +kubebuilder:validation:Optional
+	SourceTagsSelector *v1.Selector `json:"sourceTagsSelector,omitempty" tf:"-"`
 }
 
 type InboundRuleObservation struct {
@@ -247,9 +274,18 @@ type InboundRuleParameters struct {
 	// An array containing the names of Tags
 	// corresponding to groups of Droplets from which the inbound traffic
 	// will be accepted.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1.Tag
 	// +kubebuilder:validation:Optional
 	// +listType=set
 	SourceTags []*string `json:"sourceTags,omitempty" tf:"source_tags,omitempty"`
+
+	// References to Tag in digitalocean to populate sourceTags.
+	// +kubebuilder:validation:Optional
+	SourceTagsRefs []v1.Reference `json:"sourceTagsRefs,omitempty" tf:"-"`
+
+	// Selector for a list of Tag in digitalocean to populate sourceTags.
+	// +kubebuilder:validation:Optional
+	SourceTagsSelector *v1.Selector `json:"sourceTagsSelector,omitempty" tf:"-"`
 }
 
 type OutboundRuleInitParameters struct {
@@ -278,8 +314,17 @@ type OutboundRuleInitParameters struct {
 	// An array containing the names of Tags
 	// corresponding to groups of Droplets to which the outbound traffic will
 	// be allowed.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1.Tag
 	// +listType=set
 	DestinationTags []*string `json:"destinationTags,omitempty" tf:"destination_tags,omitempty"`
+
+	// References to Tag in digitalocean to populate destinationTags.
+	// +kubebuilder:validation:Optional
+	DestinationTagsRefs []v1.Reference `json:"destinationTagsRefs,omitempty" tf:"-"`
+
+	// Selector for a list of Tag in digitalocean to populate destinationTags.
+	// +kubebuilder:validation:Optional
+	DestinationTagsSelector *v1.Selector `json:"destinationTagsSelector,omitempty" tf:"-"`
 
 	// The ports on which traffic will be allowed
 	// specified as a string containing a single port, a range (e.g. "8000-9000"),
@@ -362,9 +407,18 @@ type OutboundRuleParameters struct {
 	// An array containing the names of Tags
 	// corresponding to groups of Droplets to which the outbound traffic will
 	// be allowed.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1.Tag
 	// +kubebuilder:validation:Optional
 	// +listType=set
 	DestinationTags []*string `json:"destinationTags,omitempty" tf:"destination_tags,omitempty"`
+
+	// References to Tag in digitalocean to populate destinationTags.
+	// +kubebuilder:validation:Optional
+	DestinationTagsRefs []v1.Reference `json:"destinationTagsRefs,omitempty" tf:"-"`
+
+	// Selector for a list of Tag in digitalocean to populate destinationTags.
+	// +kubebuilder:validation:Optional
+	DestinationTagsSelector *v1.Selector `json:"destinationTagsSelector,omitempty" tf:"-"`
 
 	// The ports on which traffic will be allowed
 	// specified as a string containing a single port, a range (e.g. "8000-9000"),

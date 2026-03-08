@@ -48,8 +48,17 @@ type AlertInitParameters struct {
 	EntitiesSelector *v1.Selector `json:"entitiesSelector,omitempty" tf:"-"`
 
 	// A list of tags. When an included tag is added to a resource, the alert policy will apply to it.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1.Tag
 	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
+
+	// References to Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsRefs []v1.Reference `json:"tagsRefs,omitempty" tf:"-"`
+
+	// Selector for a list of Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsSelector *v1.Selector `json:"tagsSelector,omitempty" tf:"-"`
 
 	// The type of the alert.
 	// This may be one of v1/insights/droplet/load_1, v1/insights/droplet/load_5, v1/insights/droplet/load_15,
@@ -173,9 +182,18 @@ type AlertParameters struct {
 	EntitiesSelector *v1.Selector `json:"entitiesSelector,omitempty" tf:"-"`
 
 	// A list of tags. When an included tag is added to a resource, the alert policy will apply to it.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1.Tag
 	// +kubebuilder:validation:Optional
 	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
+
+	// References to Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsRefs []v1.Reference `json:"tagsRefs,omitempty" tf:"-"`
+
+	// Selector for a list of Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsSelector *v1.Selector `json:"tagsSelector,omitempty" tf:"-"`
 
 	// The type of the alert.
 	// This may be one of v1/insights/droplet/load_1, v1/insights/droplet/load_5, v1/insights/droplet/load_15,

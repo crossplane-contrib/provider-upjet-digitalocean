@@ -17,8 +17,8 @@ spec:
     name: backend-pool
     nodeCount: 2
     size: c-2
-    tags:
-    - backend
+    tagsRefs:
+    - name: example
     taint:
     - effect: NoSchedule
       key: workloadKind
