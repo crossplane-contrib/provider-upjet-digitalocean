@@ -81,6 +81,13 @@ var ExternalNameConfigs = map[string]ujconfig.ExternalName{
 	// deprecated aliases for reserved_ip/reserved_ip_assignment and produce
 	// an empty schema after upjet parsing; skipped intentionally.
 
+	"digitalocean_byoip_prefix":              ujconfig.IdentifierFromProvider,
+	"digitalocean_container_registries":      ujconfig.IdentifierFromProvider,
+	"digitalocean_database_online_migration": ujconfig.IdentifierFromProvider,
+	"digitalocean_droplet_autoscale":         ujconfig.IdentifierFromProvider,
+	// digitalocean_partner_attachment produces an empty schema after upjet
+	// parsing (Plugin Framework resource); skipped intentionally.
+
 	"digitalocean_vpc_peering":                 ujconfig.IdentifierFromProvider,
 	"digitalocean_vpc_nat_gateway":             ujconfig.IdentifierFromProvider,
 	"digitalocean_nfs":                         ujconfig.IdentifierFromProvider,
@@ -420,7 +427,23 @@ func GetProvider() *ujconfig.Provider {
 			TerraformName: "digitalocean_database_cluster",
 		}
 	})
-
+	pc.AddResourceConfigurator("digitalocean_byoip_prefix", func(r *ujconfig.Resource) {
+		r.ShortGroup = networkingShortGroup
+		r.Kind = "BYOIPPrefix"
+	})
+	pc.AddResourceConfigurator("digitalocean_container_registries", func(r *ujconfig.Resource) {
+		r.Kind = "Registries"
+	})
+	pc.AddResourceConfigurator("digitalocean_database_online_migration", func(r *ujconfig.Resource) {
+		r.Kind = "OnlineMigration"
+		r.References["cluster_id"] = ujconfig.Reference{
+			TerraformName: "digitalocean_database_cluster",
+		}
+	})
+	pc.AddResourceConfigurator("digitalocean_droplet_autoscale", func(r *ujconfig.Resource) {
+		r.ShortGroup = "droplet"
+		r.Kind = "AutoscalePool"
+	})
 	pc.ConfigureResources()
 	return pc
 }

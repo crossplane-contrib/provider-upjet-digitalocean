@@ -40,6 +40,9 @@ func (tr *MongoDBConfig) Hub() {}
 func (tr *MySQLConfig) Hub() {}
 
 // Hub marks this type as a conversion hub.
+func (tr *OnlineMigration) Hub() {}
+
+// Hub marks this type as a conversion hub.
 func (tr *OpenSearchConfig) Hub() {}
 
 // Hub marks this type as a conversion hub.
