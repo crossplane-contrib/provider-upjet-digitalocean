@@ -20,3 +20,6 @@ func (tr *BucketPolicy) Hub() {}
 
 // Hub marks this type as a conversion hub.
 func (tr *Cdn) Hub() {}
+
+// Hub marks this type as a conversion hub.
+func (tr *Key) Hub() {}

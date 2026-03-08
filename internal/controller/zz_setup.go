@@ -43,7 +43,8 @@ import (
 	bucketobject "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/spaces/bucketobject"
 	bucketpolicy "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/spaces/bucketpolicy"
 	cdn "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/spaces/cdn"
-	key "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/ssh/key"
+	key "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/spaces/key"
+	keyssh "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/ssh/key"
 	alertuptime "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/uptime/alert"
 	check "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/uptime/check"
 	attachment "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/volume/attachment"
@@ -91,6 +92,7 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		bucketpolicy.Setup,
 		cdn.Setup,
 		key.Setup,
+		keyssh.Setup,
 		alertuptime.Setup,
 		check.Setup,
 		attachment.Setup,

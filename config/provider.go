@@ -67,6 +67,7 @@ var ExternalNameConfigs = map[string]ujconfig.ExternalName{
 	"digitalocean_database_redis_config":                 ujconfig.IdentifierFromProvider,
 	"digitalocean_database_firewall":                     ujconfig.IdentifierFromProvider,
 	"digitalocean_project_resources":                     ujconfig.IdentifierFromProvider,
+	"digitalocean_spaces_key":                            ujconfig.NameAsIdentifier,
 }
 
 // GetProvider returns provider configuration
@@ -291,6 +292,12 @@ func GetProvider() *ujconfig.Provider {
 	pc.AddResourceConfigurator("digitalocean_kubernetes_node_pool", func(r *ujconfig.Resource) {
 		r.References["cluster_id"] = ujconfig.Reference{
 			TerraformName: "digitalocean_kubernetes_cluster",
+		}
+	})
+	pc.AddResourceConfigurator("digitalocean_spaces_key", func(r *ujconfig.Resource) {
+		r.ShortGroup = "spaces"
+		r.References["grant.bucket"] = ujconfig.Reference{
+			TerraformName: "digitalocean_spaces_bucket",
 		}
 	})
 
