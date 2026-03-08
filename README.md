@@ -16,12 +16,16 @@ up ctp provider install crossplane-contrib/provider-upjet-digitalocean:v0.1.0
 Alternatively, you can use declarative installation:
 ```
 cat <<EOF | kubectl apply -f -
+---
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
   name: provider-upjet-digitalocean
+  # By default, the Provider pod installs in the same namespace as Crossplane (crossplane-system).
+  # https://docs.crossplane.io/latest/packages/providers/
 spec:
-  package: crossplane-contrib/provider-upjet-digitalocean:v0.1.0
+  # https://marketplace.upbound.io/providers/crossplane-contrib/provider-upjet-digitalocean/v0.3.0
+  package: xpkg.upbound.io/crossplane-contrib/provider-upjet-digitalocean:v0.3.0
 EOF
 ```
 
