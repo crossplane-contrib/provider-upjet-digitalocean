@@ -15,6 +15,80 @@ import (
 	client "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
+// ResolveReferences of this BucketLogging.
+func (mg *BucketLogging) ResolveReferences(ctx context.Context, c client.Reader) error {
+	r := reference.NewAPIResolver(c, mg)
+
+	var rsp reference.ResolutionResponse
+	var err error
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: ptr.Deref(mg.Spec.ForProvider.Bucket, ""),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.ForProvider.BucketRef,
+		Selector:     mg.Spec.ForProvider.BucketSelector,
+		To: reference.To{
+			List:    &BucketList{},
+			Managed: &Bucket{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.Bucket")
+	}
+	mg.Spec.ForProvider.Bucket = ptr.To(rsp.ResolvedValue)
+	mg.Spec.ForProvider.BucketRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: ptr.Deref(mg.Spec.ForProvider.TargetBucket, ""),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.ForProvider.TargetBucketRef,
+		Selector:     mg.Spec.ForProvider.TargetBucketSelector,
+		To: reference.To{
+			List:    &BucketList{},
+			Managed: &Bucket{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.TargetBucket")
+	}
+	mg.Spec.ForProvider.TargetBucket = ptr.To(rsp.ResolvedValue)
+	mg.Spec.ForProvider.TargetBucketRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: ptr.Deref(mg.Spec.InitProvider.Bucket, ""),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.BucketRef,
+		Selector:     mg.Spec.InitProvider.BucketSelector,
+		To: reference.To{
+			List:    &BucketList{},
+			Managed: &Bucket{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.Bucket")
+	}
+	mg.Spec.InitProvider.Bucket = ptr.To(rsp.ResolvedValue)
+	mg.Spec.InitProvider.BucketRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: ptr.Deref(mg.Spec.InitProvider.TargetBucket, ""),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.TargetBucketRef,
+		Selector:     mg.Spec.InitProvider.TargetBucketSelector,
+		To: reference.To{
+			List:    &BucketList{},
+			Managed: &Bucket{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.TargetBucket")
+	}
+	mg.Spec.InitProvider.TargetBucket = ptr.To(rsp.ResolvedValue)
+	mg.Spec.InitProvider.TargetBucketRef = rsp.ResolvedReference
+
+	return nil
+}
+
 // ResolveReferences of this Cdn.
 func (mg *Cdn) ResolveReferences(ctx context.Context, c client.Reader) error {
 	r := reference.NewAPIResolver(c, mg)

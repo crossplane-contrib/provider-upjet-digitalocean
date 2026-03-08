@@ -43,6 +43,24 @@ func (l *FirewallList) GetItems() []resource.Managed {
 	return items
 }
 
+// GetItems of this KafkaConfigList.
+func (l *KafkaConfigList) GetItems() []resource.Managed {
+	items := make([]resource.Managed, len(l.Items))
+	for i := range l.Items {
+		items[i] = &l.Items[i]
+	}
+	return items
+}
+
+// GetItems of this KafkaSchemaRegistryList.
+func (l *KafkaSchemaRegistryList) GetItems() []resource.Managed {
+	items := make([]resource.Managed, len(l.Items))
+	for i := range l.Items {
+		items[i] = &l.Items[i]
+	}
+	return items
+}
+
 // GetItems of this KafkaTopicList.
 func (l *KafkaTopicList) GetItems() []resource.Managed {
 	items := make([]resource.Managed, len(l.Items))
@@ -52,8 +70,35 @@ func (l *KafkaTopicList) GetItems() []resource.Managed {
 	return items
 }
 
+// GetItems of this MongoDBConfigList.
+func (l *MongoDBConfigList) GetItems() []resource.Managed {
+	items := make([]resource.Managed, len(l.Items))
+	for i := range l.Items {
+		items[i] = &l.Items[i]
+	}
+	return items
+}
+
 // GetItems of this MySQLConfigList.
 func (l *MySQLConfigList) GetItems() []resource.Managed {
+	items := make([]resource.Managed, len(l.Items))
+	for i := range l.Items {
+		items[i] = &l.Items[i]
+	}
+	return items
+}
+
+// GetItems of this OpenSearchConfigList.
+func (l *OpenSearchConfigList) GetItems() []resource.Managed {
+	items := make([]resource.Managed, len(l.Items))
+	for i := range l.Items {
+		items[i] = &l.Items[i]
+	}
+	return items
+}
+
+// GetItems of this PostgreSQLConfigList.
+func (l *PostgreSQLConfigList) GetItems() []resource.Managed {
 	items := make([]resource.Managed, len(l.Items))
 	for i := range l.Items {
 		items[i] = &l.Items[i]
@@ -81,6 +126,15 @@ func (l *ReplicaList) GetItems() []resource.Managed {
 
 // GetItems of this UserList.
 func (l *UserList) GetItems() []resource.Managed {
+	items := make([]resource.Managed, len(l.Items))
+	for i := range l.Items {
+		items[i] = &l.Items[i]
+	}
+	return items
+}
+
+// GetItems of this ValkeyConfigList.
+func (l *ValkeyConfigList) GetItems() []resource.Managed {
 	items := make([]resource.Managed, len(l.Items))
 	for i := range l.Items {
 		items[i] = &l.Items[i]

@@ -19,10 +19,25 @@ func (tr *DB) Hub() {}
 func (tr *Firewall) Hub() {}
 
 // Hub marks this type as a conversion hub.
+func (tr *KafkaConfig) Hub() {}
+
+// Hub marks this type as a conversion hub.
+func (tr *KafkaSchemaRegistry) Hub() {}
+
+// Hub marks this type as a conversion hub.
 func (tr *KafkaTopic) Hub() {}
 
 // Hub marks this type as a conversion hub.
+func (tr *MongoDBConfig) Hub() {}
+
+// Hub marks this type as a conversion hub.
 func (tr *MySQLConfig) Hub() {}
+
+// Hub marks this type as a conversion hub.
+func (tr *OpenSearchConfig) Hub() {}
+
+// Hub marks this type as a conversion hub.
+func (tr *PostgreSQLConfig) Hub() {}
 
 // Hub marks this type as a conversion hub.
 func (tr *RedisConfig) Hub() {}
@@ -32,3 +47,6 @@ func (tr *Replica) Hub() {}
 
 // Hub marks this type as a conversion hub.
 func (tr *User) Hub() {}
+
+// Hub marks this type as a conversion hub.
+func (tr *ValkeyConfig) Hub() {}

@@ -1,0 +1,49 @@
+apiVersion: database.digitalocean.crossplane.io/v1alpha1
+kind: KafkaConfig
+metadata:
+  annotations:
+    meta.upbound.io/example-id: database/v1alpha1/kafkaconfig
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    autoCreateTopicsEnable: true
+    clusterIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example
+    groupInitialRebalanceDelayMs: 3000
+    groupMaxSessionTimeoutMs: 1800000
+    groupMinSessionTimeoutMs: 6000
+    logCleanerDeleteRetentionMs: 86400000
+    logCleanerMinCompactionLagMs: 0
+    logFlushIntervalMs: 9223372036854775807
+    logIndexIntervalBytes: 4096
+    logMessageDownconversionEnable: true
+    logMessageTimestampDifferenceMaxMs: 9223372036854775807
+    logPreallocate: false
+    logRetentionBytes: -1
+    logRetentionHours: 168
+    logRetentionMs: 604800000
+    logRollJitterMs: 0
+    logSegmentDeleteDelayMs: 60000
+    messageMaxBytes: 1048588
+
+---
+
+apiVersion: database.digitalocean.crossplane.io/v1alpha1
+kind: Cluster
+metadata:
+  annotations:
+    meta.upbound.io/example-id: database/v1alpha1/kafkaconfig
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    engine: kafka
+    name: example-kafka-cluster
+    nodeCount: 3
+    region: nyc3
+    size: db-s-1vcpu-1gb
+    version: "3.7"

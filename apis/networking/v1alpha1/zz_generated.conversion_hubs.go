@@ -19,4 +19,10 @@ func (tr *IP) Hub() {}
 func (tr *IPAssignment) Hub() {}
 
 // Hub marks this type as a conversion hub.
+func (tr *IPv6) Hub() {}
+
+// Hub marks this type as a conversion hub.
+func (tr *IPv6Assignment) Hub() {}
+
+// Hub marks this type as a conversion hub.
 func (tr *Loadbalancer) Hub() {}
