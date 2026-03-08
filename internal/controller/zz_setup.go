@@ -38,6 +38,14 @@ import (
 	autoscalepool "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/droplet/autoscalepool"
 	droplet "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/droplet/droplet"
 	snapshot "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/droplet/snapshot"
+	agent "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/gradientai/agent"
+	agentknowledgebaseattachment "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/gradientai/agentknowledgebaseattachment"
+	agentroute "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/gradientai/agentroute"
+	function "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/gradientai/function"
+	indexingjobcancel "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/gradientai/indexingjobcancel"
+	knowledgebase "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/gradientai/knowledgebase"
+	knowledgebasedatasource "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/gradientai/knowledgebasedatasource"
+	openaiapikey "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/gradientai/openaiapikey"
 	clusterkubernetes "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/kubernetes/cluster"
 	nodepool "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/kubernetes/nodepool"
 	alert "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/monitor/alert"
@@ -106,6 +114,14 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		autoscalepool.Setup,
 		droplet.Setup,
 		snapshot.Setup,
+		agent.Setup,
+		agentknowledgebaseattachment.Setup,
+		agentroute.Setup,
+		function.Setup,
+		indexingjobcancel.Setup,
+		knowledgebase.Setup,
+		knowledgebasedatasource.Setup,
+		openaiapikey.Setup,
 		clusterkubernetes.Setup,
 		nodepool.Setup,
 		alert.Setup,
