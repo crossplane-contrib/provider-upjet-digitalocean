@@ -13,38 +13,106 @@ import (
 	v1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 )
 
+type AlertDestinationsInitParameters struct {
+
+	// Determines which emails receive alerts. The emails must be team members. If not set, the team's email is used by default.
+	Emails []*string `json:"emails,omitempty" tf:"emails,omitempty"`
+
+	// Determines which slack channels or users receive alerts .
+	SlackWebhooks []DestinationsSlackWebhooksInitParameters `json:"slackWebhooks,omitempty" tf:"slack_webhooks,omitempty"`
+}
+
+type AlertDestinationsObservation struct {
+
+	// Determines which emails receive alerts. The emails must be team members. If not set, the team's email is used by default.
+	Emails []*string `json:"emails,omitempty" tf:"emails,omitempty"`
+
+	// Determines which slack channels or users receive alerts .
+	SlackWebhooks []DestinationsSlackWebhooksObservation `json:"slackWebhooks,omitempty" tf:"slack_webhooks,omitempty"`
+}
+
+type AlertDestinationsParameters struct {
+
+	// Determines which emails receive alerts. The emails must be team members. If not set, the team's email is used by default.
+	// +kubebuilder:validation:Optional
+	Emails []*string `json:"emails,omitempty" tf:"emails,omitempty"`
+
+	// Determines which slack channels or users receive alerts .
+	// +kubebuilder:validation:Optional
+	SlackWebhooks []DestinationsSlackWebhooksParameters `json:"slackWebhooks,omitempty" tf:"slack_webhooks,omitempty"`
+}
+
+type AlertDestinationsSlackWebhooksInitParameters struct {
+
+	// The Slack channel to send notifications to.
+	Channel *string `json:"channel,omitempty" tf:"channel,omitempty"`
+
+	// The Slack webhook URL.
+	URL *string `json:"url,omitempty" tf:"url,omitempty"`
+}
+
+type AlertDestinationsSlackWebhooksObservation struct {
+
+	// The Slack channel to send notifications to.
+	Channel *string `json:"channel,omitempty" tf:"channel,omitempty"`
+
+	// The Slack webhook URL.
+	URL *string `json:"url,omitempty" tf:"url,omitempty"`
+}
+
+type AlertDestinationsSlackWebhooksParameters struct {
+
+	// The Slack channel to send notifications to.
+	// +kubebuilder:validation:Optional
+	Channel *string `json:"channel" tf:"channel,omitempty"`
+
+	// The Slack webhook URL.
+	// +kubebuilder:validation:Optional
+	URL *string `json:"url" tf:"url,omitempty"`
+}
+
 type AlertInitParameters struct {
 
-	// Determines whether or not the alert is disabled (default: false).
+	// Specification for alert destination.
+	Destinations []DestinationsInitParameters `json:"destinations,omitempty" tf:"destinations,omitempty"`
+
+	// Determines whether the alert is disabled (default: false).
 	Disabled *bool `json:"disabled,omitempty" tf:"disabled,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or AUTOSCALE_SUCCEEDED.
 	Rule *string `json:"rule,omitempty" tf:"rule,omitempty"`
 }
 
 type AlertObservation struct {
 
-	// Determines whether or not the alert is disabled (default: false).
+	// Specification for alert destination.
+	Destinations []DestinationsObservation `json:"destinations,omitempty" tf:"destinations,omitempty"`
+
+	// Determines whether the alert is disabled (default: false).
 	Disabled *bool `json:"disabled,omitempty" tf:"disabled,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or AUTOSCALE_SUCCEEDED.
 	Rule *string `json:"rule,omitempty" tf:"rule,omitempty"`
 }
 
 type AlertParameters struct {
 
-	// Determines whether or not the alert is disabled (default: false).
+	// Specification for alert destination.
+	// +kubebuilder:validation:Optional
+	Destinations []DestinationsParameters `json:"destinations,omitempty" tf:"destinations,omitempty"`
+
+	// Determines whether the alert is disabled (default: false).
 	// +kubebuilder:validation:Optional
 	Disabled *bool `json:"disabled,omitempty" tf:"disabled,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or AUTOSCALE_SUCCEEDED.
 	// +kubebuilder:validation:Optional
 	Rule *string `json:"rule" tf:"rule,omitempty"`
 }
 
 type AllowOriginsInitParameters struct {
 
-	// The Access-Control-Allow-Origin header will be set to the client's origin only if the client's origin exactly matches the value you provide.
+	// Exact match.
 	// Exact string match.
 	Exact *string `json:"exact,omitempty" tf:"exact,omitempty"`
 
@@ -59,7 +127,7 @@ type AllowOriginsInitParameters struct {
 
 type AllowOriginsObservation struct {
 
-	// The Access-Control-Allow-Origin header will be set to the client's origin only if the client's origin exactly matches the value you provide.
+	// Exact match.
 	// Exact string match.
 	Exact *string `json:"exact,omitempty" tf:"exact,omitempty"`
 
@@ -74,7 +142,7 @@ type AllowOriginsObservation struct {
 
 type AllowOriginsParameters struct {
 
-	// The Access-Control-Allow-Origin header will be set to the client's origin only if the client's origin exactly matches the value you provide.
+	// Exact match.
 	// Exact string match.
 	// +kubebuilder:validation:Optional
 	Exact *string `json:"exact,omitempty" tf:"exact,omitempty"`
@@ -94,6 +162,10 @@ type AppInitParameters struct {
 
 	// The dedicated egress IP addresses associated with the app.
 	DedicatedIps []DedicatedIpsInitParameters `json:"dedicatedIps,omitempty" tf:"dedicated_ips,omitempty"`
+
+	// Controls how many deployments are requested per API page when listing deployments during create/update waits. Defaults to 20. Reduce this value (for example 5) if you experience API timeouts when listing deployments.
+	// Number of deployments to request per page when polling for deployments
+	DeploymentPerPage *float64 `json:"deploymentPerPage,omitempty" tf:"deployment_per_page,omitempty"`
 
 	// The ID of the project that the app is assigned to.
 	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/project/v1alpha1.Project
@@ -129,7 +201,11 @@ type AppObservation struct {
 	// The default URL to access the App
 	DefaultIngress *string `json:"defaultIngress,omitempty" tf:"default_ingress,omitempty"`
 
-	// The ID of the app.
+	// Controls how many deployments are requested per API page when listing deployments during create/update waits. Defaults to 20. Reduce this value (for example 5) if you experience API timeouts when listing deployments.
+	// Number of deployments to request per page when polling for deployments
+	DeploymentPerPage *float64 `json:"deploymentPerPage,omitempty" tf:"deployment_per_page,omitempty"`
+
+	// : The ID of the VPC.
 	ID *string `json:"id,omitempty" tf:"id,omitempty"`
 
 	// The live domain of the app.
@@ -160,6 +236,11 @@ type AppParameters struct {
 	// +kubebuilder:validation:Optional
 	DedicatedIps []DedicatedIpsParameters `json:"dedicatedIps,omitempty" tf:"dedicated_ips,omitempty"`
 
+	// Controls how many deployments are requested per API page when listing deployments during create/update waits. Defaults to 20. Reduce this value (for example 5) if you experience API timeouts when listing deployments.
+	// Number of deployments to request per page when polling for deployments
+	// +kubebuilder:validation:Optional
+	DeploymentPerPage *float64 `json:"deploymentPerPage,omitempty" tf:"deployment_per_page,omitempty"`
+
 	// The ID of the project that the app is assigned to.
 	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/project/v1alpha1.Project
 	// +kubebuilder:validation:Optional
@@ -179,6 +260,25 @@ type AppParameters struct {
 	Spec []SpecParameters `json:"spec,omitempty" tf:"spec,omitempty"`
 }
 
+type AuthorityInitParameters struct {
+
+	// Exact match.
+	Exact *string `json:"exact,omitempty" tf:"exact,omitempty"`
+}
+
+type AuthorityObservation struct {
+
+	// Exact match.
+	Exact *string `json:"exact,omitempty" tf:"exact,omitempty"`
+}
+
+type AuthorityParameters struct {
+
+	// Exact match.
+	// +kubebuilder:validation:Optional
+	Exact *string `json:"exact,omitempty" tf:"exact,omitempty"`
+}
+
 type AutoscalingInitParameters struct {
 
 	// The maximum amount of instances for this component. Must be more than min_instance_count.
@@ -192,6 +292,28 @@ type AutoscalingInitParameters struct {
 	// The minimum amount of instances for this component. Must be less than max_instance_count.
 	// The minimum amount of instances for this component. Must be less than max_instance_count.
 	MinInstanceCount *float64 `json:"minInstanceCount,omitempty" tf:"min_instance_count,omitempty"`
+}
+
+type AutoscalingMetricsInitParameters struct {
+
+	// Settings for scaling the component based on CPU utilization.
+	// Settings for scaling the component based on CPU utilization.
+	CPU []MetricsCPUInitParameters `json:"cpu,omitempty" tf:"cpu,omitempty"`
+}
+
+type AutoscalingMetricsObservation struct {
+
+	// Settings for scaling the component based on CPU utilization.
+	// Settings for scaling the component based on CPU utilization.
+	CPU []MetricsCPUObservation `json:"cpu,omitempty" tf:"cpu,omitempty"`
+}
+
+type AutoscalingMetricsParameters struct {
+
+	// Settings for scaling the component based on CPU utilization.
+	// Settings for scaling the component based on CPU utilization.
+	// +kubebuilder:validation:Optional
+	CPU []MetricsCPUParameters `json:"cpu,omitempty" tf:"cpu,omitempty"`
 }
 
 type AutoscalingObservation struct {
@@ -258,6 +380,54 @@ type BasicAuthParameters struct {
 	User *string `json:"user,omitempty" tf:"user,omitempty"`
 }
 
+type BitbucketInitParameters struct {
+
+	// The name of the branch to use.
+	// The name of the branch to use.
+	Branch *string `json:"branch,omitempty" tf:"branch,omitempty"`
+
+	// Whether to automatically deploy new commits made to the repo.
+	// Whether to automatically deploy new commits made to the repo
+	DeployOnPush *bool `json:"deployOnPush,omitempty" tf:"deploy_on_push,omitempty"`
+
+	// The name of the repo in the format owner/repo.
+	// The name of the repo in the format `owner/repo`.
+	Repo *string `json:"repo,omitempty" tf:"repo,omitempty"`
+}
+
+type BitbucketObservation struct {
+
+	// The name of the branch to use.
+	// The name of the branch to use.
+	Branch *string `json:"branch,omitempty" tf:"branch,omitempty"`
+
+	// Whether to automatically deploy new commits made to the repo.
+	// Whether to automatically deploy new commits made to the repo
+	DeployOnPush *bool `json:"deployOnPush,omitempty" tf:"deploy_on_push,omitempty"`
+
+	// The name of the repo in the format owner/repo.
+	// The name of the repo in the format `owner/repo`.
+	Repo *string `json:"repo,omitempty" tf:"repo,omitempty"`
+}
+
+type BitbucketParameters struct {
+
+	// The name of the branch to use.
+	// The name of the branch to use.
+	// +kubebuilder:validation:Optional
+	Branch *string `json:"branch,omitempty" tf:"branch,omitempty"`
+
+	// Whether to automatically deploy new commits made to the repo.
+	// Whether to automatically deploy new commits made to the repo
+	// +kubebuilder:validation:Optional
+	DeployOnPush *bool `json:"deployOnPush,omitempty" tf:"deploy_on_push,omitempty"`
+
+	// The name of the repo in the format owner/repo.
+	// The name of the repo in the format `owner/repo`.
+	// +kubebuilder:validation:Optional
+	Repo *string `json:"repo,omitempty" tf:"repo,omitempty"`
+}
+
 type CPUInitParameters struct {
 
 	// The average target CPU utilization for the component.
@@ -321,7 +491,7 @@ type ComponentParameters struct {
 
 type CorsAllowOriginsInitParameters struct {
 
-	// The Access-Control-Allow-Origin header will be set to the client's origin only if the client's origin exactly matches the value you provide.
+	// Exact match.
 	// Exact string match.
 	Exact *string `json:"exact,omitempty" tf:"exact,omitempty"`
 
@@ -336,7 +506,7 @@ type CorsAllowOriginsInitParameters struct {
 
 type CorsAllowOriginsObservation struct {
 
-	// The Access-Control-Allow-Origin header will be set to the client's origin only if the client's origin exactly matches the value you provide.
+	// Exact match.
 	// Exact string match.
 	Exact *string `json:"exact,omitempty" tf:"exact,omitempty"`
 
@@ -351,7 +521,7 @@ type CorsAllowOriginsObservation struct {
 
 type CorsAllowOriginsParameters struct {
 
-	// The Access-Control-Allow-Origin header will be set to the client's origin only if the client's origin exactly matches the value you provide.
+	// Exact match.
 	// Exact string match.
 	// +kubebuilder:validation:Optional
 	Exact *string `json:"exact,omitempty" tf:"exact,omitempty"`
@@ -600,7 +770,7 @@ type DatadogParameters struct {
 
 type DedicatedIpsInitParameters struct {
 
-	// The ID of the app.
+	// : The ID of the VPC.
 	// The ID of the dedicated egress IP.
 	ID *string `json:"id,omitempty" tf:"id,omitempty"`
 
@@ -613,7 +783,7 @@ type DedicatedIpsInitParameters struct {
 
 type DedicatedIpsObservation struct {
 
-	// The ID of the app.
+	// : The ID of the VPC.
 	// The ID of the dedicated egress IP.
 	ID *string `json:"id,omitempty" tf:"id,omitempty"`
 
@@ -626,7 +796,7 @@ type DedicatedIpsObservation struct {
 
 type DedicatedIpsParameters struct {
 
-	// The ID of the app.
+	// : The ID of the VPC.
 	// The ID of the dedicated egress IP.
 	// +kubebuilder:validation:Optional
 	ID *string `json:"id,omitempty" tf:"id,omitempty"`
@@ -642,24 +812,82 @@ type DedicatedIpsParameters struct {
 
 type DeployOnPushInitParameters struct {
 
-	// Whether to automatically deploy images pushed to DOCR.
+	// Indicates whether maintenance mode should be enabled for the app.
 	// Whether to automatically deploy images pushed to DOCR.
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 }
 
 type DeployOnPushObservation struct {
 
-	// Whether to automatically deploy images pushed to DOCR.
+	// Indicates whether maintenance mode should be enabled for the app.
 	// Whether to automatically deploy images pushed to DOCR.
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 }
 
 type DeployOnPushParameters struct {
 
-	// Whether to automatically deploy images pushed to DOCR.
+	// Indicates whether maintenance mode should be enabled for the app.
 	// Whether to automatically deploy images pushed to DOCR.
 	// +kubebuilder:validation:Optional
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
+}
+
+type DestinationsInitParameters struct {
+
+	// Determines which emails receive alerts. The emails must be team members. If not set, the team's email is used by default.
+	Emails []*string `json:"emails,omitempty" tf:"emails,omitempty"`
+
+	// Determines which slack channels or users receive alerts .
+	SlackWebhooks []SlackWebhooksInitParameters `json:"slackWebhooks,omitempty" tf:"slack_webhooks,omitempty"`
+}
+
+type DestinationsObservation struct {
+
+	// Determines which emails receive alerts. The emails must be team members. If not set, the team's email is used by default.
+	Emails []*string `json:"emails,omitempty" tf:"emails,omitempty"`
+
+	// Determines which slack channels or users receive alerts .
+	SlackWebhooks []SlackWebhooksObservation `json:"slackWebhooks,omitempty" tf:"slack_webhooks,omitempty"`
+}
+
+type DestinationsParameters struct {
+
+	// Determines which emails receive alerts. The emails must be team members. If not set, the team's email is used by default.
+	// +kubebuilder:validation:Optional
+	Emails []*string `json:"emails,omitempty" tf:"emails,omitempty"`
+
+	// Determines which slack channels or users receive alerts .
+	// +kubebuilder:validation:Optional
+	SlackWebhooks []SlackWebhooksParameters `json:"slackWebhooks,omitempty" tf:"slack_webhooks,omitempty"`
+}
+
+type DestinationsSlackWebhooksInitParameters struct {
+
+	// The Slack channel to send notifications to.
+	Channel *string `json:"channel,omitempty" tf:"channel,omitempty"`
+
+	// The Slack webhook URL.
+	URL *string `json:"url,omitempty" tf:"url,omitempty"`
+}
+
+type DestinationsSlackWebhooksObservation struct {
+
+	// The Slack channel to send notifications to.
+	Channel *string `json:"channel,omitempty" tf:"channel,omitempty"`
+
+	// The Slack webhook URL.
+	URL *string `json:"url,omitempty" tf:"url,omitempty"`
+}
+
+type DestinationsSlackWebhooksParameters struct {
+
+	// The Slack channel to send notifications to.
+	// +kubebuilder:validation:Optional
+	Channel *string `json:"channel" tf:"channel,omitempty"`
+
+	// The Slack webhook URL.
+	// +kubebuilder:validation:Optional
+	URL *string `json:"url" tf:"url,omitempty"`
 }
 
 type DomainInitParameters struct {
@@ -804,13 +1032,16 @@ type EnvParameters struct {
 
 type FunctionAlertInitParameters struct {
 
-	// Determines whether or not the alert is disabled (default: false).
+	// Specification for alert destination.
+	Destinations []AlertDestinationsInitParameters `json:"destinations,omitempty" tf:"destinations,omitempty"`
+
+	// Determines whether the alert is disabled (default: false).
 	Disabled *bool `json:"disabled,omitempty" tf:"disabled,omitempty"`
 
 	// The operator to use. This is either of GREATER_THAN or LESS_THAN.
 	Operator *string `json:"operator,omitempty" tf:"operator,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or AUTOSCALE_SUCCEEDED.
 	Rule *string `json:"rule,omitempty" tf:"rule,omitempty"`
 
 	// The value of the environment variable.
@@ -822,13 +1053,16 @@ type FunctionAlertInitParameters struct {
 
 type FunctionAlertObservation struct {
 
-	// Determines whether or not the alert is disabled (default: false).
+	// Specification for alert destination.
+	Destinations []AlertDestinationsObservation `json:"destinations,omitempty" tf:"destinations,omitempty"`
+
+	// Determines whether the alert is disabled (default: false).
 	Disabled *bool `json:"disabled,omitempty" tf:"disabled,omitempty"`
 
 	// The operator to use. This is either of GREATER_THAN or LESS_THAN.
 	Operator *string `json:"operator,omitempty" tf:"operator,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or AUTOSCALE_SUCCEEDED.
 	Rule *string `json:"rule,omitempty" tf:"rule,omitempty"`
 
 	// The value of the environment variable.
@@ -840,7 +1074,11 @@ type FunctionAlertObservation struct {
 
 type FunctionAlertParameters struct {
 
-	// Determines whether or not the alert is disabled (default: false).
+	// Specification for alert destination.
+	// +kubebuilder:validation:Optional
+	Destinations []AlertDestinationsParameters `json:"destinations,omitempty" tf:"destinations,omitempty"`
+
+	// Determines whether the alert is disabled (default: false).
 	// +kubebuilder:validation:Optional
 	Disabled *bool `json:"disabled,omitempty" tf:"disabled,omitempty"`
 
@@ -848,7 +1086,7 @@ type FunctionAlertParameters struct {
 	// +kubebuilder:validation:Optional
 	Operator *string `json:"operator" tf:"operator,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or AUTOSCALE_SUCCEEDED.
 	// +kubebuilder:validation:Optional
 	Rule *string `json:"rule" tf:"rule,omitempty"`
 
@@ -924,6 +1162,9 @@ type FunctionInitParameters struct {
 	// Alert policies for the app component
 	Alert []FunctionAlertInitParameters `json:"alert,omitempty" tf:"alert,omitempty"`
 
+	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, bitbucket, gitlab, or image may be set.
+	Bitbucket []BitbucketInitParameters `json:"bitbucket,omitempty" tf:"bitbucket,omitempty"`
+
 	// The CORS policies of the app.
 	Cors []CorsInitParameters `json:"cors,omitempty" tf:"cors,omitempty"`
 
@@ -960,6 +1201,9 @@ type FunctionObservation struct {
 	// Describes an alert policy for the app.
 	// Alert policies for the app component
 	Alert []FunctionAlertObservation `json:"alert,omitempty" tf:"alert,omitempty"`
+
+	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, bitbucket, gitlab, or image may be set.
+	Bitbucket []BitbucketObservation `json:"bitbucket,omitempty" tf:"bitbucket,omitempty"`
 
 	// The CORS policies of the app.
 	Cors []CorsObservation `json:"cors,omitempty" tf:"cors,omitempty"`
@@ -998,6 +1242,10 @@ type FunctionParameters struct {
 	// Alert policies for the app component
 	// +kubebuilder:validation:Optional
 	Alert []FunctionAlertParameters `json:"alert,omitempty" tf:"alert,omitempty"`
+
+	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, bitbucket, gitlab, or image may be set.
+	// +kubebuilder:validation:Optional
+	Bitbucket []BitbucketParameters `json:"bitbucket,omitempty" tf:"bitbucket,omitempty"`
 
 	// The CORS policies of the app.
 	// +kubebuilder:validation:Optional
@@ -1272,21 +1520,21 @@ type HealthCheckParameters struct {
 
 type ImageDeployOnPushInitParameters struct {
 
-	// Whether to automatically deploy images pushed to DOCR.
+	// Indicates whether maintenance mode should be enabled for the app.
 	// Whether to automatically deploy images pushed to DOCR.
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 }
 
 type ImageDeployOnPushObservation struct {
 
-	// Whether to automatically deploy images pushed to DOCR.
+	// Indicates whether maintenance mode should be enabled for the app.
 	// Whether to automatically deploy images pushed to DOCR.
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 }
 
 type ImageDeployOnPushParameters struct {
 
-	// Whether to automatically deploy images pushed to DOCR.
+	// Indicates whether maintenance mode should be enabled for the app.
 	// Whether to automatically deploy images pushed to DOCR.
 	// +kubebuilder:validation:Optional
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
@@ -1297,6 +1545,10 @@ type ImageInitParameters struct {
 	// Whether to automatically deploy new commits made to the repo.
 	// Configures automatically deploying images pushed to DOCR.
 	DeployOnPush []DeployOnPushInitParameters `json:"deployOnPush,omitempty" tf:"deploy_on_push,omitempty"`
+
+	// The image digest. Cannot be specified if tag is provided.
+	// The image digest. Cannot be specified if tag is provided.
+	Digest *string `json:"digest,omitempty" tf:"digest,omitempty"`
 
 	// The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.
 	// The registry name. Must be left empty for the DOCR registry type.
@@ -1315,7 +1567,7 @@ type ImageInitParameters struct {
 	Repository *string `json:"repository,omitempty" tf:"repository,omitempty"`
 
 	// The repository tag. Defaults to latest if not provided.
-	// The repository tag. Defaults to latest if not provided.
+	// The repository tag. Defaults to latest if not provided. Cannot be specified if digest is provided.
 	Tag *string `json:"tag,omitempty" tf:"tag,omitempty"`
 }
 
@@ -1324,6 +1576,10 @@ type ImageObservation struct {
 	// Whether to automatically deploy new commits made to the repo.
 	// Configures automatically deploying images pushed to DOCR.
 	DeployOnPush []DeployOnPushObservation `json:"deployOnPush,omitempty" tf:"deploy_on_push,omitempty"`
+
+	// The image digest. Cannot be specified if tag is provided.
+	// The image digest. Cannot be specified if tag is provided.
+	Digest *string `json:"digest,omitempty" tf:"digest,omitempty"`
 
 	// The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.
 	// The registry name. Must be left empty for the DOCR registry type.
@@ -1338,7 +1594,7 @@ type ImageObservation struct {
 	Repository *string `json:"repository,omitempty" tf:"repository,omitempty"`
 
 	// The repository tag. Defaults to latest if not provided.
-	// The repository tag. Defaults to latest if not provided.
+	// The repository tag. Defaults to latest if not provided. Cannot be specified if digest is provided.
 	Tag *string `json:"tag,omitempty" tf:"tag,omitempty"`
 }
 
@@ -1348,6 +1604,11 @@ type ImageParameters struct {
 	// Configures automatically deploying images pushed to DOCR.
 	// +kubebuilder:validation:Optional
 	DeployOnPush []DeployOnPushParameters `json:"deployOnPush,omitempty" tf:"deploy_on_push,omitempty"`
+
+	// The image digest. Cannot be specified if tag is provided.
+	// The image digest. Cannot be specified if tag is provided.
+	// +kubebuilder:validation:Optional
+	Digest *string `json:"digest,omitempty" tf:"digest,omitempty"`
 
 	// The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.
 	// The registry name. Must be left empty for the DOCR registry type.
@@ -1370,39 +1631,78 @@ type ImageParameters struct {
 	Repository *string `json:"repository" tf:"repository,omitempty"`
 
 	// The repository tag. Defaults to latest if not provided.
-	// The repository tag. Defaults to latest if not provided.
+	// The repository tag. Defaults to latest if not provided. Cannot be specified if digest is provided.
 	// +kubebuilder:validation:Optional
 	Tag *string `json:"tag,omitempty" tf:"tag,omitempty"`
 }
 
 type IngressInitParameters struct {
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or AUTOSCALE_SUCCEEDED.
 	Rule []RuleInitParameters `json:"rule,omitempty" tf:"rule,omitempty"`
+
+	SecureHeader []SecureHeaderInitParameters `json:"secureHeader,omitempty" tf:"secure_header,omitempty"`
 }
 
 type IngressObservation struct {
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or AUTOSCALE_SUCCEEDED.
 	Rule []RuleObservation `json:"rule,omitempty" tf:"rule,omitempty"`
+
+	SecureHeader []SecureHeaderObservation `json:"secureHeader,omitempty" tf:"secure_header,omitempty"`
 }
 
 type IngressParameters struct {
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or AUTOSCALE_SUCCEEDED.
 	// +kubebuilder:validation:Optional
 	Rule []RuleParameters `json:"rule,omitempty" tf:"rule,omitempty"`
+
+	// +kubebuilder:validation:Optional
+	SecureHeader []SecureHeaderParameters `json:"secureHeader,omitempty" tf:"secure_header,omitempty"`
+}
+
+type JobAlertDestinationsInitParameters struct {
+
+	// Determines which emails receive alerts. The emails must be team members. If not set, the team's email is used by default.
+	Emails []*string `json:"emails,omitempty" tf:"emails,omitempty"`
+
+	// Determines which slack channels or users receive alerts .
+	SlackWebhooks []AlertDestinationsSlackWebhooksInitParameters `json:"slackWebhooks,omitempty" tf:"slack_webhooks,omitempty"`
+}
+
+type JobAlertDestinationsObservation struct {
+
+	// Determines which emails receive alerts. The emails must be team members. If not set, the team's email is used by default.
+	Emails []*string `json:"emails,omitempty" tf:"emails,omitempty"`
+
+	// Determines which slack channels or users receive alerts .
+	SlackWebhooks []AlertDestinationsSlackWebhooksObservation `json:"slackWebhooks,omitempty" tf:"slack_webhooks,omitempty"`
+}
+
+type JobAlertDestinationsParameters struct {
+
+	// Determines which emails receive alerts. The emails must be team members. If not set, the team's email is used by default.
+	// +kubebuilder:validation:Optional
+	Emails []*string `json:"emails,omitempty" tf:"emails,omitempty"`
+
+	// Determines which slack channels or users receive alerts .
+	// +kubebuilder:validation:Optional
+	SlackWebhooks []AlertDestinationsSlackWebhooksParameters `json:"slackWebhooks,omitempty" tf:"slack_webhooks,omitempty"`
 }
 
 type JobAlertInitParameters struct {
 
-	// Determines whether or not the alert is disabled (default: false).
+	// Specification for alert destination.
+	Destinations []JobAlertDestinationsInitParameters `json:"destinations,omitempty" tf:"destinations,omitempty"`
+
+	// Determines whether the alert is disabled (default: false).
 	Disabled *bool `json:"disabled,omitempty" tf:"disabled,omitempty"`
 
 	// The operator to use. This is either of GREATER_THAN or LESS_THAN.
 	Operator *string `json:"operator,omitempty" tf:"operator,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or AUTOSCALE_SUCCEEDED.
 	Rule *string `json:"rule,omitempty" tf:"rule,omitempty"`
 
 	// The value of the environment variable.
@@ -1414,13 +1714,16 @@ type JobAlertInitParameters struct {
 
 type JobAlertObservation struct {
 
-	// Determines whether or not the alert is disabled (default: false).
+	// Specification for alert destination.
+	Destinations []JobAlertDestinationsObservation `json:"destinations,omitempty" tf:"destinations,omitempty"`
+
+	// Determines whether the alert is disabled (default: false).
 	Disabled *bool `json:"disabled,omitempty" tf:"disabled,omitempty"`
 
 	// The operator to use. This is either of GREATER_THAN or LESS_THAN.
 	Operator *string `json:"operator,omitempty" tf:"operator,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or AUTOSCALE_SUCCEEDED.
 	Rule *string `json:"rule,omitempty" tf:"rule,omitempty"`
 
 	// The value of the environment variable.
@@ -1432,7 +1735,11 @@ type JobAlertObservation struct {
 
 type JobAlertParameters struct {
 
-	// Determines whether or not the alert is disabled (default: false).
+	// Specification for alert destination.
+	// +kubebuilder:validation:Optional
+	Destinations []JobAlertDestinationsParameters `json:"destinations,omitempty" tf:"destinations,omitempty"`
+
+	// Determines whether the alert is disabled (default: false).
 	// +kubebuilder:validation:Optional
 	Disabled *bool `json:"disabled,omitempty" tf:"disabled,omitempty"`
 
@@ -1440,7 +1747,7 @@ type JobAlertParameters struct {
 	// +kubebuilder:validation:Optional
 	Operator *string `json:"operator" tf:"operator,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or AUTOSCALE_SUCCEEDED.
 	// +kubebuilder:validation:Optional
 	Rule *string `json:"rule" tf:"rule,omitempty"`
 
@@ -1451,6 +1758,54 @@ type JobAlertParameters struct {
 	// The time before alerts should be triggered. This is may be one of: FIVE_MINUTES, TEN_MINUTES, THIRTY_MINUTES, ONE_HOUR.
 	// +kubebuilder:validation:Optional
 	Window *string `json:"window" tf:"window,omitempty"`
+}
+
+type JobBitbucketInitParameters struct {
+
+	// The name of the branch to use.
+	// The name of the branch to use.
+	Branch *string `json:"branch,omitempty" tf:"branch,omitempty"`
+
+	// Whether to automatically deploy new commits made to the repo.
+	// Whether to automatically deploy new commits made to the repo
+	DeployOnPush *bool `json:"deployOnPush,omitempty" tf:"deploy_on_push,omitempty"`
+
+	// The name of the repo in the format owner/repo.
+	// The name of the repo in the format `owner/repo`.
+	Repo *string `json:"repo,omitempty" tf:"repo,omitempty"`
+}
+
+type JobBitbucketObservation struct {
+
+	// The name of the branch to use.
+	// The name of the branch to use.
+	Branch *string `json:"branch,omitempty" tf:"branch,omitempty"`
+
+	// Whether to automatically deploy new commits made to the repo.
+	// Whether to automatically deploy new commits made to the repo
+	DeployOnPush *bool `json:"deployOnPush,omitempty" tf:"deploy_on_push,omitempty"`
+
+	// The name of the repo in the format owner/repo.
+	// The name of the repo in the format `owner/repo`.
+	Repo *string `json:"repo,omitempty" tf:"repo,omitempty"`
+}
+
+type JobBitbucketParameters struct {
+
+	// The name of the branch to use.
+	// The name of the branch to use.
+	// +kubebuilder:validation:Optional
+	Branch *string `json:"branch,omitempty" tf:"branch,omitempty"`
+
+	// Whether to automatically deploy new commits made to the repo.
+	// Whether to automatically deploy new commits made to the repo
+	// +kubebuilder:validation:Optional
+	DeployOnPush *bool `json:"deployOnPush,omitempty" tf:"deploy_on_push,omitempty"`
+
+	// The name of the repo in the format owner/repo.
+	// The name of the repo in the format `owner/repo`.
+	// +kubebuilder:validation:Optional
+	Repo *string `json:"repo,omitempty" tf:"repo,omitempty"`
 }
 
 type JobEnvInitParameters struct {
@@ -1647,6 +2002,9 @@ type JobInitParameters struct {
 	// Alert policies for the app component
 	Alert []JobAlertInitParameters `json:"alert,omitempty" tf:"alert,omitempty"`
 
+	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, bitbucket, gitlab, or image may be set.
+	Bitbucket []JobBitbucketInitParameters `json:"bitbucket,omitempty" tf:"bitbucket,omitempty"`
+
 	// An optional build command to run while building this component from source.
 	// An optional build command to run while building this component from source.
 	BuildCommand *string `json:"buildCommand,omitempty" tf:"build_command,omitempty"`
@@ -1701,6 +2059,9 @@ type JobInitParameters struct {
 	// An optional path to the working directory to use for the build.
 	// An optional path to the working directory to use for the build.
 	SourceDir *string `json:"sourceDir,omitempty" tf:"source_dir,omitempty"`
+
+	// Contains a component's termination parameters.
+	Termination []TerminationInitParameters `json:"termination,omitempty" tf:"termination,omitempty"`
 }
 
 type JobLogDestinationInitParameters struct {
@@ -1780,6 +2141,9 @@ type JobObservation struct {
 	// Alert policies for the app component
 	Alert []JobAlertObservation `json:"alert,omitempty" tf:"alert,omitempty"`
 
+	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, bitbucket, gitlab, or image may be set.
+	Bitbucket []JobBitbucketObservation `json:"bitbucket,omitempty" tf:"bitbucket,omitempty"`
+
 	// An optional build command to run while building this component from source.
 	// An optional build command to run while building this component from source.
 	BuildCommand *string `json:"buildCommand,omitempty" tf:"build_command,omitempty"`
@@ -1834,6 +2198,9 @@ type JobObservation struct {
 	// An optional path to the working directory to use for the build.
 	// An optional path to the working directory to use for the build.
 	SourceDir *string `json:"sourceDir,omitempty" tf:"source_dir,omitempty"`
+
+	// Contains a component's termination parameters.
+	Termination []TerminationObservation `json:"termination,omitempty" tf:"termination,omitempty"`
 }
 
 type JobParameters struct {
@@ -1842,6 +2209,10 @@ type JobParameters struct {
 	// Alert policies for the app component
 	// +kubebuilder:validation:Optional
 	Alert []JobAlertParameters `json:"alert,omitempty" tf:"alert,omitempty"`
+
+	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, bitbucket, gitlab, or image may be set.
+	// +kubebuilder:validation:Optional
+	Bitbucket []JobBitbucketParameters `json:"bitbucket,omitempty" tf:"bitbucket,omitempty"`
 
 	// An optional build command to run while building this component from source.
 	// An optional build command to run while building this component from source.
@@ -1912,6 +2283,10 @@ type JobParameters struct {
 	// An optional path to the working directory to use for the build.
 	// +kubebuilder:validation:Optional
 	SourceDir *string `json:"sourceDir,omitempty" tf:"source_dir,omitempty"`
+
+	// Contains a component's termination parameters.
+	// +kubebuilder:validation:Optional
+	Termination []TerminationParameters `json:"termination,omitempty" tf:"termination,omitempty"`
 }
 
 type LogDestinationDatadogInitParameters struct {
@@ -2178,7 +2553,58 @@ type LogtailParameters struct {
 	Token *string `json:"token" tf:"token,omitempty"`
 }
 
+type MaintenanceInitParameters struct {
+
+	// Indicates whether the app should be archived. Setting this to true implies that enabled is set to true.
+	// Indicates whether the app should be archived. Setting this to true implies that enabled is set to true.
+	Archive *bool `json:"archive,omitempty" tf:"archive,omitempty"`
+
+	// Indicates whether maintenance mode should be enabled for the app.
+	// Indicates whether maintenance mode should be enabled for the app.
+	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
+
+	// A custom offline page to display when maintenance mode is enabled or the app is archived.
+	// A custom offline page to display when maintenance mode is enabled or the app is archived.
+	OfflinePageURL *string `json:"offlinePageUrl,omitempty" tf:"offline_page_url,omitempty"`
+}
+
+type MaintenanceObservation struct {
+
+	// Indicates whether the app should be archived. Setting this to true implies that enabled is set to true.
+	// Indicates whether the app should be archived. Setting this to true implies that enabled is set to true.
+	Archive *bool `json:"archive,omitempty" tf:"archive,omitempty"`
+
+	// Indicates whether maintenance mode should be enabled for the app.
+	// Indicates whether maintenance mode should be enabled for the app.
+	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
+
+	// A custom offline page to display when maintenance mode is enabled or the app is archived.
+	// A custom offline page to display when maintenance mode is enabled or the app is archived.
+	OfflinePageURL *string `json:"offlinePageUrl,omitempty" tf:"offline_page_url,omitempty"`
+}
+
+type MaintenanceParameters struct {
+
+	// Indicates whether the app should be archived. Setting this to true implies that enabled is set to true.
+	// Indicates whether the app should be archived. Setting this to true implies that enabled is set to true.
+	// +kubebuilder:validation:Optional
+	Archive *bool `json:"archive,omitempty" tf:"archive,omitempty"`
+
+	// Indicates whether maintenance mode should be enabled for the app.
+	// Indicates whether maintenance mode should be enabled for the app.
+	// +kubebuilder:validation:Optional
+	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
+
+	// A custom offline page to display when maintenance mode is enabled or the app is archived.
+	// A custom offline page to display when maintenance mode is enabled or the app is archived.
+	// +kubebuilder:validation:Optional
+	OfflinePageURL *string `json:"offlinePageUrl,omitempty" tf:"offline_page_url,omitempty"`
+}
+
 type MatchInitParameters struct {
+
+	// The authority (domain) to match on.
+	Authority []AuthorityInitParameters `json:"authority,omitempty" tf:"authority,omitempty"`
 
 	// The path to match on.
 	Path []PathInitParameters `json:"path,omitempty" tf:"path,omitempty"`
@@ -2186,15 +2612,44 @@ type MatchInitParameters struct {
 
 type MatchObservation struct {
 
+	// The authority (domain) to match on.
+	Authority []AuthorityObservation `json:"authority,omitempty" tf:"authority,omitempty"`
+
 	// The path to match on.
 	Path []PathObservation `json:"path,omitempty" tf:"path,omitempty"`
 }
 
 type MatchParameters struct {
 
+	// The authority (domain) to match on.
+	// +kubebuilder:validation:Optional
+	Authority []AuthorityParameters `json:"authority,omitempty" tf:"authority,omitempty"`
+
 	// The path to match on.
 	// +kubebuilder:validation:Optional
 	Path []PathParameters `json:"path,omitempty" tf:"path,omitempty"`
+}
+
+type MetricsCPUInitParameters struct {
+
+	// The average target CPU utilization for the component.
+	// The average target CPU utilization for the component.
+	Percent *float64 `json:"percent,omitempty" tf:"percent,omitempty"`
+}
+
+type MetricsCPUObservation struct {
+
+	// The average target CPU utilization for the component.
+	// The average target CPU utilization for the component.
+	Percent *float64 `json:"percent,omitempty" tf:"percent,omitempty"`
+}
+
+type MetricsCPUParameters struct {
+
+	// The average target CPU utilization for the component.
+	// The average target CPU utilization for the component.
+	// +kubebuilder:validation:Optional
+	Percent *float64 `json:"percent" tf:"percent,omitempty"`
 }
 
 type MetricsInitParameters struct {
@@ -2354,7 +2809,7 @@ type PathParameters struct {
 
 type RedirectInitParameters struct {
 
-	// The authority/host to redirect to. This can be a hostname or IP address.
+	// The authority (domain) to match on.
 	Authority *string `json:"authority,omitempty" tf:"authority,omitempty"`
 
 	// The port to redirect to.
@@ -2372,7 +2827,7 @@ type RedirectInitParameters struct {
 
 type RedirectObservation struct {
 
-	// The authority/host to redirect to. This can be a hostname or IP address.
+	// The authority (domain) to match on.
 	Authority *string `json:"authority,omitempty" tf:"authority,omitempty"`
 
 	// The port to redirect to.
@@ -2390,7 +2845,7 @@ type RedirectObservation struct {
 
 type RedirectParameters struct {
 
-	// The authority/host to redirect to. This can be a hostname or IP address.
+	// The authority (domain) to match on.
 	// +kubebuilder:validation:Optional
 	Authority *string `json:"authority,omitempty" tf:"authority,omitempty"`
 
@@ -2591,15 +3046,105 @@ type RuleParameters struct {
 	Redirect []RedirectParameters `json:"redirect,omitempty" tf:"redirect,omitempty"`
 }
 
+type SecureHeaderInitParameters struct {
+
+	// The name of the environment variable.
+	Key *string `json:"key,omitempty" tf:"key,omitempty"`
+
+	// The value of the environment variable.
+	Value *string `json:"value,omitempty" tf:"value,omitempty"`
+}
+
+type SecureHeaderObservation struct {
+
+	// The name of the environment variable.
+	Key *string `json:"key,omitempty" tf:"key,omitempty"`
+
+	// The value of the environment variable.
+	Value *string `json:"value,omitempty" tf:"value,omitempty"`
+}
+
+type SecureHeaderParameters struct {
+
+	// The name of the environment variable.
+	// +kubebuilder:validation:Optional
+	Key *string `json:"key,omitempty" tf:"key,omitempty"`
+
+	// The value of the environment variable.
+	// +kubebuilder:validation:Optional
+	Value *string `json:"value,omitempty" tf:"value,omitempty"`
+}
+
+type ServiceAlertDestinationsInitParameters struct {
+
+	// Determines which emails receive alerts. The emails must be team members. If not set, the team's email is used by default.
+	Emails []*string `json:"emails,omitempty" tf:"emails,omitempty"`
+
+	// Determines which slack channels or users receive alerts .
+	SlackWebhooks []ServiceAlertDestinationsSlackWebhooksInitParameters `json:"slackWebhooks,omitempty" tf:"slack_webhooks,omitempty"`
+}
+
+type ServiceAlertDestinationsObservation struct {
+
+	// Determines which emails receive alerts. The emails must be team members. If not set, the team's email is used by default.
+	Emails []*string `json:"emails,omitempty" tf:"emails,omitempty"`
+
+	// Determines which slack channels or users receive alerts .
+	SlackWebhooks []ServiceAlertDestinationsSlackWebhooksObservation `json:"slackWebhooks,omitempty" tf:"slack_webhooks,omitempty"`
+}
+
+type ServiceAlertDestinationsParameters struct {
+
+	// Determines which emails receive alerts. The emails must be team members. If not set, the team's email is used by default.
+	// +kubebuilder:validation:Optional
+	Emails []*string `json:"emails,omitempty" tf:"emails,omitempty"`
+
+	// Determines which slack channels or users receive alerts .
+	// +kubebuilder:validation:Optional
+	SlackWebhooks []ServiceAlertDestinationsSlackWebhooksParameters `json:"slackWebhooks,omitempty" tf:"slack_webhooks,omitempty"`
+}
+
+type ServiceAlertDestinationsSlackWebhooksInitParameters struct {
+
+	// The Slack channel to send notifications to.
+	Channel *string `json:"channel,omitempty" tf:"channel,omitempty"`
+
+	// The Slack webhook URL.
+	URL *string `json:"url,omitempty" tf:"url,omitempty"`
+}
+
+type ServiceAlertDestinationsSlackWebhooksObservation struct {
+
+	// The Slack channel to send notifications to.
+	Channel *string `json:"channel,omitempty" tf:"channel,omitempty"`
+
+	// The Slack webhook URL.
+	URL *string `json:"url,omitempty" tf:"url,omitempty"`
+}
+
+type ServiceAlertDestinationsSlackWebhooksParameters struct {
+
+	// The Slack channel to send notifications to.
+	// +kubebuilder:validation:Optional
+	Channel *string `json:"channel" tf:"channel,omitempty"`
+
+	// The Slack webhook URL.
+	// +kubebuilder:validation:Optional
+	URL *string `json:"url" tf:"url,omitempty"`
+}
+
 type ServiceAlertInitParameters struct {
 
-	// Determines whether or not the alert is disabled (default: false).
+	// Specification for alert destination.
+	Destinations []ServiceAlertDestinationsInitParameters `json:"destinations,omitempty" tf:"destinations,omitempty"`
+
+	// Determines whether the alert is disabled (default: false).
 	Disabled *bool `json:"disabled,omitempty" tf:"disabled,omitempty"`
 
 	// The operator to use. This is either of GREATER_THAN or LESS_THAN.
 	Operator *string `json:"operator,omitempty" tf:"operator,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or AUTOSCALE_SUCCEEDED.
 	Rule *string `json:"rule,omitempty" tf:"rule,omitempty"`
 
 	// The value of the environment variable.
@@ -2611,13 +3156,16 @@ type ServiceAlertInitParameters struct {
 
 type ServiceAlertObservation struct {
 
-	// Determines whether or not the alert is disabled (default: false).
+	// Specification for alert destination.
+	Destinations []ServiceAlertDestinationsObservation `json:"destinations,omitempty" tf:"destinations,omitempty"`
+
+	// Determines whether the alert is disabled (default: false).
 	Disabled *bool `json:"disabled,omitempty" tf:"disabled,omitempty"`
 
 	// The operator to use. This is either of GREATER_THAN or LESS_THAN.
 	Operator *string `json:"operator,omitempty" tf:"operator,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or AUTOSCALE_SUCCEEDED.
 	Rule *string `json:"rule,omitempty" tf:"rule,omitempty"`
 
 	// The value of the environment variable.
@@ -2629,7 +3177,11 @@ type ServiceAlertObservation struct {
 
 type ServiceAlertParameters struct {
 
-	// Determines whether or not the alert is disabled (default: false).
+	// Specification for alert destination.
+	// +kubebuilder:validation:Optional
+	Destinations []ServiceAlertDestinationsParameters `json:"destinations,omitempty" tf:"destinations,omitempty"`
+
+	// Determines whether the alert is disabled (default: false).
 	// +kubebuilder:validation:Optional
 	Disabled *bool `json:"disabled,omitempty" tf:"disabled,omitempty"`
 
@@ -2637,7 +3189,7 @@ type ServiceAlertParameters struct {
 	// +kubebuilder:validation:Optional
 	Operator *string `json:"operator" tf:"operator,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or AUTOSCALE_SUCCEEDED.
 	// +kubebuilder:validation:Optional
 	Rule *string `json:"rule" tf:"rule,omitempty"`
 
@@ -2650,9 +3202,57 @@ type ServiceAlertParameters struct {
 	Window *string `json:"window" tf:"window,omitempty"`
 }
 
+type ServiceBitbucketInitParameters struct {
+
+	// The name of the branch to use.
+	// The name of the branch to use.
+	Branch *string `json:"branch,omitempty" tf:"branch,omitempty"`
+
+	// Whether to automatically deploy new commits made to the repo.
+	// Whether to automatically deploy new commits made to the repo
+	DeployOnPush *bool `json:"deployOnPush,omitempty" tf:"deploy_on_push,omitempty"`
+
+	// The name of the repo in the format owner/repo.
+	// The name of the repo in the format `owner/repo`.
+	Repo *string `json:"repo,omitempty" tf:"repo,omitempty"`
+}
+
+type ServiceBitbucketObservation struct {
+
+	// The name of the branch to use.
+	// The name of the branch to use.
+	Branch *string `json:"branch,omitempty" tf:"branch,omitempty"`
+
+	// Whether to automatically deploy new commits made to the repo.
+	// Whether to automatically deploy new commits made to the repo
+	DeployOnPush *bool `json:"deployOnPush,omitempty" tf:"deploy_on_push,omitempty"`
+
+	// The name of the repo in the format owner/repo.
+	// The name of the repo in the format `owner/repo`.
+	Repo *string `json:"repo,omitempty" tf:"repo,omitempty"`
+}
+
+type ServiceBitbucketParameters struct {
+
+	// The name of the branch to use.
+	// The name of the branch to use.
+	// +kubebuilder:validation:Optional
+	Branch *string `json:"branch,omitempty" tf:"branch,omitempty"`
+
+	// Whether to automatically deploy new commits made to the repo.
+	// Whether to automatically deploy new commits made to the repo
+	// +kubebuilder:validation:Optional
+	DeployOnPush *bool `json:"deployOnPush,omitempty" tf:"deploy_on_push,omitempty"`
+
+	// The name of the repo in the format owner/repo.
+	// The name of the repo in the format `owner/repo`.
+	// +kubebuilder:validation:Optional
+	Repo *string `json:"repo,omitempty" tf:"repo,omitempty"`
+}
+
 type ServiceCorsAllowOriginsInitParameters struct {
 
-	// The Access-Control-Allow-Origin header will be set to the client's origin only if the client's origin exactly matches the value you provide.
+	// Exact match.
 	// Exact string match.
 	Exact *string `json:"exact,omitempty" tf:"exact,omitempty"`
 
@@ -2667,7 +3267,7 @@ type ServiceCorsAllowOriginsInitParameters struct {
 
 type ServiceCorsAllowOriginsObservation struct {
 
-	// The Access-Control-Allow-Origin header will be set to the client's origin only if the client's origin exactly matches the value you provide.
+	// Exact match.
 	// Exact string match.
 	Exact *string `json:"exact,omitempty" tf:"exact,omitempty"`
 
@@ -2682,7 +3282,7 @@ type ServiceCorsAllowOriginsObservation struct {
 
 type ServiceCorsAllowOriginsParameters struct {
 
-	// The Access-Control-Allow-Origin header will be set to the client's origin only if the client's origin exactly matches the value you provide.
+	// Exact match.
 	// Exact string match.
 	// +kubebuilder:validation:Optional
 	Exact *string `json:"exact,omitempty" tf:"exact,omitempty"`
@@ -2988,6 +3588,10 @@ type ServiceImageInitParameters struct {
 	// Configures automatically deploying images pushed to DOCR.
 	DeployOnPush []ImageDeployOnPushInitParameters `json:"deployOnPush,omitempty" tf:"deploy_on_push,omitempty"`
 
+	// The image digest. Cannot be specified if tag is provided.
+	// The image digest. Cannot be specified if tag is provided.
+	Digest *string `json:"digest,omitempty" tf:"digest,omitempty"`
+
 	// The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.
 	// The registry name. Must be left empty for the DOCR registry type.
 	Registry *string `json:"registry,omitempty" tf:"registry,omitempty"`
@@ -3005,7 +3609,7 @@ type ServiceImageInitParameters struct {
 	Repository *string `json:"repository,omitempty" tf:"repository,omitempty"`
 
 	// The repository tag. Defaults to latest if not provided.
-	// The repository tag. Defaults to latest if not provided.
+	// The repository tag. Defaults to latest if not provided. Cannot be specified if digest is provided.
 	Tag *string `json:"tag,omitempty" tf:"tag,omitempty"`
 }
 
@@ -3014,6 +3618,10 @@ type ServiceImageObservation struct {
 	// Whether to automatically deploy new commits made to the repo.
 	// Configures automatically deploying images pushed to DOCR.
 	DeployOnPush []ImageDeployOnPushObservation `json:"deployOnPush,omitempty" tf:"deploy_on_push,omitempty"`
+
+	// The image digest. Cannot be specified if tag is provided.
+	// The image digest. Cannot be specified if tag is provided.
+	Digest *string `json:"digest,omitempty" tf:"digest,omitempty"`
 
 	// The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.
 	// The registry name. Must be left empty for the DOCR registry type.
@@ -3028,7 +3636,7 @@ type ServiceImageObservation struct {
 	Repository *string `json:"repository,omitempty" tf:"repository,omitempty"`
 
 	// The repository tag. Defaults to latest if not provided.
-	// The repository tag. Defaults to latest if not provided.
+	// The repository tag. Defaults to latest if not provided. Cannot be specified if digest is provided.
 	Tag *string `json:"tag,omitempty" tf:"tag,omitempty"`
 }
 
@@ -3038,6 +3646,11 @@ type ServiceImageParameters struct {
 	// Configures automatically deploying images pushed to DOCR.
 	// +kubebuilder:validation:Optional
 	DeployOnPush []ImageDeployOnPushParameters `json:"deployOnPush,omitempty" tf:"deploy_on_push,omitempty"`
+
+	// The image digest. Cannot be specified if tag is provided.
+	// The image digest. Cannot be specified if tag is provided.
+	// +kubebuilder:validation:Optional
+	Digest *string `json:"digest,omitempty" tf:"digest,omitempty"`
 
 	// The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.
 	// The registry name. Must be left empty for the DOCR registry type.
@@ -3060,7 +3673,7 @@ type ServiceImageParameters struct {
 	Repository *string `json:"repository" tf:"repository,omitempty"`
 
 	// The repository tag. Defaults to latest if not provided.
-	// The repository tag. Defaults to latest if not provided.
+	// The repository tag. Defaults to latest if not provided. Cannot be specified if digest is provided.
 	// +kubebuilder:validation:Optional
 	Tag *string `json:"tag,omitempty" tf:"tag,omitempty"`
 }
@@ -3073,6 +3686,9 @@ type ServiceInitParameters struct {
 
 	// Configuration for automatically scaling this component based on metrics.
 	Autoscaling []AutoscalingInitParameters `json:"autoscaling,omitempty" tf:"autoscaling,omitempty"`
+
+	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, bitbucket, gitlab, or image may be set.
+	Bitbucket []ServiceBitbucketInitParameters `json:"bitbucket,omitempty" tf:"bitbucket,omitempty"`
 
 	// An optional build command to run while building this component from source.
 	// An optional build command to run while building this component from source.
@@ -3141,6 +3757,9 @@ type ServiceInitParameters struct {
 	// An optional path to the working directory to use for the build.
 	// An optional path to the working directory to use for the build.
 	SourceDir *string `json:"sourceDir,omitempty" tf:"source_dir,omitempty"`
+
+	// Contains a component's termination parameters.
+	Termination []ServiceTerminationInitParameters `json:"termination,omitempty" tf:"termination,omitempty"`
 }
 
 type ServiceLogDestinationDatadogInitParameters struct {
@@ -3363,6 +3982,9 @@ type ServiceObservation struct {
 	// Configuration for automatically scaling this component based on metrics.
 	Autoscaling []AutoscalingObservation `json:"autoscaling,omitempty" tf:"autoscaling,omitempty"`
 
+	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, bitbucket, gitlab, or image may be set.
+	Bitbucket []ServiceBitbucketObservation `json:"bitbucket,omitempty" tf:"bitbucket,omitempty"`
+
 	// An optional build command to run while building this component from source.
 	// An optional build command to run while building this component from source.
 	BuildCommand *string `json:"buildCommand,omitempty" tf:"build_command,omitempty"`
@@ -3430,6 +4052,9 @@ type ServiceObservation struct {
 	// An optional path to the working directory to use for the build.
 	// An optional path to the working directory to use for the build.
 	SourceDir *string `json:"sourceDir,omitempty" tf:"source_dir,omitempty"`
+
+	// Contains a component's termination parameters.
+	Termination []ServiceTerminationObservation `json:"termination,omitempty" tf:"termination,omitempty"`
 }
 
 type ServiceParameters struct {
@@ -3442,6 +4067,10 @@ type ServiceParameters struct {
 	// Configuration for automatically scaling this component based on metrics.
 	// +kubebuilder:validation:Optional
 	Autoscaling []AutoscalingParameters `json:"autoscaling,omitempty" tf:"autoscaling,omitempty"`
+
+	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, bitbucket, gitlab, or image may be set.
+	// +kubebuilder:validation:Optional
+	Bitbucket []ServiceBitbucketParameters `json:"bitbucket,omitempty" tf:"bitbucket,omitempty"`
 
 	// An optional build command to run while building this component from source.
 	// An optional build command to run while building this component from source.
@@ -3529,6 +4158,10 @@ type ServiceParameters struct {
 	// An optional path to the working directory to use for the build.
 	// +kubebuilder:validation:Optional
 	SourceDir *string `json:"sourceDir,omitempty" tf:"source_dir,omitempty"`
+
+	// Contains a component's termination parameters.
+	// +kubebuilder:validation:Optional
+	Termination []ServiceTerminationParameters `json:"termination,omitempty" tf:"termination,omitempty"`
 }
 
 type ServiceRoutesInitParameters struct {
@@ -3566,12 +4199,84 @@ type ServiceRoutesParameters struct {
 	PreservePathPrefix *bool `json:"preservePathPrefix,omitempty" tf:"preserve_path_prefix,omitempty"`
 }
 
+type ServiceTerminationInitParameters struct {
+
+	// The number of seconds to wait between selecting a container instance for termination and issuing the TERM signal. Selecting a container instance for termination begins an asynchronous drain of new requests on upstream load-balancers. Default: 15 seconds, Minimum 1, Maximum 110.
+	// The number of seconds to wait between selecting a container instance for termination and issuing the TERM signal. Selecting a container instance for termination begins an asynchronous drain of new requests on upstream load-balancers. Default: 15 seconds, Minimum 1, Maximum 110.
+	DrainSeconds *float64 `json:"drainSeconds,omitempty" tf:"drain_seconds,omitempty"`
+
+	// The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+	// The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+	GracePeriodSeconds *float64 `json:"gracePeriodSeconds,omitempty" tf:"grace_period_seconds,omitempty"`
+}
+
+type ServiceTerminationObservation struct {
+
+	// The number of seconds to wait between selecting a container instance for termination and issuing the TERM signal. Selecting a container instance for termination begins an asynchronous drain of new requests on upstream load-balancers. Default: 15 seconds, Minimum 1, Maximum 110.
+	// The number of seconds to wait between selecting a container instance for termination and issuing the TERM signal. Selecting a container instance for termination begins an asynchronous drain of new requests on upstream load-balancers. Default: 15 seconds, Minimum 1, Maximum 110.
+	DrainSeconds *float64 `json:"drainSeconds,omitempty" tf:"drain_seconds,omitempty"`
+
+	// The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+	// The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+	GracePeriodSeconds *float64 `json:"gracePeriodSeconds,omitempty" tf:"grace_period_seconds,omitempty"`
+}
+
+type ServiceTerminationParameters struct {
+
+	// The number of seconds to wait between selecting a container instance for termination and issuing the TERM signal. Selecting a container instance for termination begins an asynchronous drain of new requests on upstream load-balancers. Default: 15 seconds, Minimum 1, Maximum 110.
+	// The number of seconds to wait between selecting a container instance for termination and issuing the TERM signal. Selecting a container instance for termination begins an asynchronous drain of new requests on upstream load-balancers. Default: 15 seconds, Minimum 1, Maximum 110.
+	// +kubebuilder:validation:Optional
+	DrainSeconds *float64 `json:"drainSeconds,omitempty" tf:"drain_seconds,omitempty"`
+
+	// The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+	// The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+	// +kubebuilder:validation:Optional
+	GracePeriodSeconds *float64 `json:"gracePeriodSeconds,omitempty" tf:"grace_period_seconds,omitempty"`
+}
+
+type SlackWebhooksInitParameters struct {
+
+	// The Slack channel to send notifications to.
+	Channel *string `json:"channel,omitempty" tf:"channel,omitempty"`
+
+	// The Slack webhook URL.
+	URL *string `json:"url,omitempty" tf:"url,omitempty"`
+}
+
+type SlackWebhooksObservation struct {
+
+	// The Slack channel to send notifications to.
+	Channel *string `json:"channel,omitempty" tf:"channel,omitempty"`
+
+	// The Slack webhook URL.
+	URL *string `json:"url,omitempty" tf:"url,omitempty"`
+}
+
+type SlackWebhooksParameters struct {
+
+	// The Slack channel to send notifications to.
+	// +kubebuilder:validation:Optional
+	Channel *string `json:"channel" tf:"channel,omitempty"`
+
+	// The Slack webhook URL.
+	// +kubebuilder:validation:Optional
+	URL *string `json:"url" tf:"url,omitempty"`
+}
+
 type SpecInitParameters struct {
 
 	// Describes an alert policy for the app.
 	Alert []AlertInitParameters `json:"alert,omitempty" tf:"alert,omitempty"`
 
 	Database []DatabaseInitParameters `json:"database,omitempty" tf:"database,omitempty"`
+
+	// A boolean indicating whether to disable the edge cache for this app. Default: false. Available only for non-static sites. Requires custom domains and applies to all the domains of the app.
+	// Whether to disable the edge cache for the app. Default is false, which enables the edge cache.
+	DisableEdgeCache *bool `json:"disableEdgeCache,omitempty" tf:"disable_edge_cache,omitempty"`
+
+	// A boolean indicating whether to disable email obfuscation for this app. Default: false. Requires custom domains and applies to all the domains of the app.
+	// Email obfuscation configuration for the app. Default is false, which keeps the email obfuscated.
+	DisableEmailObfuscation *bool `json:"disableEmailObfuscation,omitempty" tf:"disable_email_obfuscation,omitempty"`
 
 	// Describes a domain where the application will be made available.
 	Domain []DomainInitParameters `json:"domain,omitempty" tf:"domain,omitempty"`
@@ -3581,6 +4286,10 @@ type SpecInitParameters struct {
 
 	// Specification for app egress configurations.
 	Egress []EgressInitParameters `json:"egress,omitempty" tf:"egress,omitempty"`
+
+	// A boolean, when set to true, enables enhanced analyzing of incoming traffic to prevent layer 7 DDoS attacks. Default: false. Requires custom domains and applies to all the domains of the app.
+	// Whether to enable enhanced threat control for the app. Default is false. Set to true to enable enhanced threat control, putting additional security measures for Layer 7 DDoS attacks.
+	EnhancedThreatControlEnabled *bool `json:"enhancedThreatControlEnabled,omitempty" tf:"enhanced_threat_control_enabled,omitempty"`
 
 	// Describes an app-wide environment variable made available to all components.
 	Env []EnvInitParameters `json:"env,omitempty" tf:"env,omitempty"`
@@ -3597,6 +4306,10 @@ type SpecInitParameters struct {
 
 	Job []JobInitParameters `json:"job,omitempty" tf:"job,omitempty"`
 
+	// Specification to configure maintenance settings for the app, such as maintenance mode and archiving the app.
+	// Specification to configure maintenance settings for the app, such as maintenance mode and archiving the app.
+	Maintenance []MaintenanceInitParameters `json:"maintenance,omitempty" tf:"maintenance,omitempty"`
+
 	// The name of the app. Must be unique across all apps in the same account.
 	// The name of the app. Must be unique across all apps in the same account.
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
@@ -3609,6 +4322,9 @@ type SpecInitParameters struct {
 
 	StaticSite []StaticSiteInitParameters `json:"staticSite,omitempty" tf:"static_site,omitempty"`
 
+	// : Specification for VPC.
+	VPC []VPCInitParameters `json:"vpc,omitempty" tf:"vpc,omitempty"`
+
 	Worker []WorkerInitParameters `json:"worker,omitempty" tf:"worker,omitempty"`
 }
 
@@ -3619,6 +4335,14 @@ type SpecObservation struct {
 
 	Database []DatabaseObservation `json:"database,omitempty" tf:"database,omitempty"`
 
+	// A boolean indicating whether to disable the edge cache for this app. Default: false. Available only for non-static sites. Requires custom domains and applies to all the domains of the app.
+	// Whether to disable the edge cache for the app. Default is false, which enables the edge cache.
+	DisableEdgeCache *bool `json:"disableEdgeCache,omitempty" tf:"disable_edge_cache,omitempty"`
+
+	// A boolean indicating whether to disable email obfuscation for this app. Default: false. Requires custom domains and applies to all the domains of the app.
+	// Email obfuscation configuration for the app. Default is false, which keeps the email obfuscated.
+	DisableEmailObfuscation *bool `json:"disableEmailObfuscation,omitempty" tf:"disable_email_obfuscation,omitempty"`
+
 	// Describes a domain where the application will be made available.
 	Domain []DomainObservation `json:"domain,omitempty" tf:"domain,omitempty"`
 
@@ -3627,6 +4351,10 @@ type SpecObservation struct {
 
 	// Specification for app egress configurations.
 	Egress []EgressObservation `json:"egress,omitempty" tf:"egress,omitempty"`
+
+	// A boolean, when set to true, enables enhanced analyzing of incoming traffic to prevent layer 7 DDoS attacks. Default: false. Requires custom domains and applies to all the domains of the app.
+	// Whether to enable enhanced threat control for the app. Default is false. Set to true to enable enhanced threat control, putting additional security measures for Layer 7 DDoS attacks.
+	EnhancedThreatControlEnabled *bool `json:"enhancedThreatControlEnabled,omitempty" tf:"enhanced_threat_control_enabled,omitempty"`
 
 	// Describes an app-wide environment variable made available to all components.
 	Env []EnvObservation `json:"env,omitempty" tf:"env,omitempty"`
@@ -3643,6 +4371,10 @@ type SpecObservation struct {
 
 	Job []JobObservation `json:"job,omitempty" tf:"job,omitempty"`
 
+	// Specification to configure maintenance settings for the app, such as maintenance mode and archiving the app.
+	// Specification to configure maintenance settings for the app, such as maintenance mode and archiving the app.
+	Maintenance []MaintenanceObservation `json:"maintenance,omitempty" tf:"maintenance,omitempty"`
+
 	// The name of the app. Must be unique across all apps in the same account.
 	// The name of the app. Must be unique across all apps in the same account.
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
@@ -3654,6 +4386,9 @@ type SpecObservation struct {
 	Service []ServiceObservation `json:"service,omitempty" tf:"service,omitempty"`
 
 	StaticSite []StaticSiteObservation `json:"staticSite,omitempty" tf:"static_site,omitempty"`
+
+	// : Specification for VPC.
+	VPC []VPCObservation `json:"vpc,omitempty" tf:"vpc,omitempty"`
 
 	Worker []WorkerObservation `json:"worker,omitempty" tf:"worker,omitempty"`
 }
@@ -3667,6 +4402,16 @@ type SpecParameters struct {
 	// +kubebuilder:validation:Optional
 	Database []DatabaseParameters `json:"database,omitempty" tf:"database,omitempty"`
 
+	// A boolean indicating whether to disable the edge cache for this app. Default: false. Available only for non-static sites. Requires custom domains and applies to all the domains of the app.
+	// Whether to disable the edge cache for the app. Default is false, which enables the edge cache.
+	// +kubebuilder:validation:Optional
+	DisableEdgeCache *bool `json:"disableEdgeCache,omitempty" tf:"disable_edge_cache,omitempty"`
+
+	// A boolean indicating whether to disable email obfuscation for this app. Default: false. Requires custom domains and applies to all the domains of the app.
+	// Email obfuscation configuration for the app. Default is false, which keeps the email obfuscated.
+	// +kubebuilder:validation:Optional
+	DisableEmailObfuscation *bool `json:"disableEmailObfuscation,omitempty" tf:"disable_email_obfuscation,omitempty"`
+
 	// Describes a domain where the application will be made available.
 	// +kubebuilder:validation:Optional
 	Domain []DomainParameters `json:"domain,omitempty" tf:"domain,omitempty"`
@@ -3678,6 +4423,11 @@ type SpecParameters struct {
 	// Specification for app egress configurations.
 	// +kubebuilder:validation:Optional
 	Egress []EgressParameters `json:"egress,omitempty" tf:"egress,omitempty"`
+
+	// A boolean, when set to true, enables enhanced analyzing of incoming traffic to prevent layer 7 DDoS attacks. Default: false. Requires custom domains and applies to all the domains of the app.
+	// Whether to enable enhanced threat control for the app. Default is false. Set to true to enable enhanced threat control, putting additional security measures for Layer 7 DDoS attacks.
+	// +kubebuilder:validation:Optional
+	EnhancedThreatControlEnabled *bool `json:"enhancedThreatControlEnabled,omitempty" tf:"enhanced_threat_control_enabled,omitempty"`
 
 	// Describes an app-wide environment variable made available to all components.
 	// +kubebuilder:validation:Optional
@@ -3699,6 +4449,11 @@ type SpecParameters struct {
 	// +kubebuilder:validation:Optional
 	Job []JobParameters `json:"job,omitempty" tf:"job,omitempty"`
 
+	// Specification to configure maintenance settings for the app, such as maintenance mode and archiving the app.
+	// Specification to configure maintenance settings for the app, such as maintenance mode and archiving the app.
+	// +kubebuilder:validation:Optional
+	Maintenance []MaintenanceParameters `json:"maintenance,omitempty" tf:"maintenance,omitempty"`
+
 	// The name of the app. Must be unique across all apps in the same account.
 	// The name of the app. Must be unique across all apps in the same account.
 	// +kubebuilder:validation:Optional
@@ -3715,13 +4470,65 @@ type SpecParameters struct {
 	// +kubebuilder:validation:Optional
 	StaticSite []StaticSiteParameters `json:"staticSite,omitempty" tf:"static_site,omitempty"`
 
+	// : Specification for VPC.
+	// +kubebuilder:validation:Optional
+	VPC []VPCParameters `json:"vpc,omitempty" tf:"vpc,omitempty"`
+
 	// +kubebuilder:validation:Optional
 	Worker []WorkerParameters `json:"worker,omitempty" tf:"worker,omitempty"`
 }
 
+type StaticSiteBitbucketInitParameters struct {
+
+	// The name of the branch to use.
+	// The name of the branch to use.
+	Branch *string `json:"branch,omitempty" tf:"branch,omitempty"`
+
+	// Whether to automatically deploy new commits made to the repo.
+	// Whether to automatically deploy new commits made to the repo
+	DeployOnPush *bool `json:"deployOnPush,omitempty" tf:"deploy_on_push,omitempty"`
+
+	// The name of the repo in the format owner/repo.
+	// The name of the repo in the format `owner/repo`.
+	Repo *string `json:"repo,omitempty" tf:"repo,omitempty"`
+}
+
+type StaticSiteBitbucketObservation struct {
+
+	// The name of the branch to use.
+	// The name of the branch to use.
+	Branch *string `json:"branch,omitempty" tf:"branch,omitempty"`
+
+	// Whether to automatically deploy new commits made to the repo.
+	// Whether to automatically deploy new commits made to the repo
+	DeployOnPush *bool `json:"deployOnPush,omitempty" tf:"deploy_on_push,omitempty"`
+
+	// The name of the repo in the format owner/repo.
+	// The name of the repo in the format `owner/repo`.
+	Repo *string `json:"repo,omitempty" tf:"repo,omitempty"`
+}
+
+type StaticSiteBitbucketParameters struct {
+
+	// The name of the branch to use.
+	// The name of the branch to use.
+	// +kubebuilder:validation:Optional
+	Branch *string `json:"branch,omitempty" tf:"branch,omitempty"`
+
+	// Whether to automatically deploy new commits made to the repo.
+	// Whether to automatically deploy new commits made to the repo
+	// +kubebuilder:validation:Optional
+	DeployOnPush *bool `json:"deployOnPush,omitempty" tf:"deploy_on_push,omitempty"`
+
+	// The name of the repo in the format owner/repo.
+	// The name of the repo in the format `owner/repo`.
+	// +kubebuilder:validation:Optional
+	Repo *string `json:"repo,omitempty" tf:"repo,omitempty"`
+}
+
 type StaticSiteCorsAllowOriginsInitParameters struct {
 
-	// The Access-Control-Allow-Origin header will be set to the client's origin only if the client's origin exactly matches the value you provide.
+	// Exact match.
 	// Exact string match.
 	Exact *string `json:"exact,omitempty" tf:"exact,omitempty"`
 
@@ -3736,7 +4543,7 @@ type StaticSiteCorsAllowOriginsInitParameters struct {
 
 type StaticSiteCorsAllowOriginsObservation struct {
 
-	// The Access-Control-Allow-Origin header will be set to the client's origin only if the client's origin exactly matches the value you provide.
+	// Exact match.
 	// Exact string match.
 	Exact *string `json:"exact,omitempty" tf:"exact,omitempty"`
 
@@ -3751,7 +4558,7 @@ type StaticSiteCorsAllowOriginsObservation struct {
 
 type StaticSiteCorsAllowOriginsParameters struct {
 
-	// The Access-Control-Allow-Origin header will be set to the client's origin only if the client's origin exactly matches the value you provide.
+	// Exact match.
 	// Exact string match.
 	// +kubebuilder:validation:Optional
 	Exact *string `json:"exact,omitempty" tf:"exact,omitempty"`
@@ -4053,6 +4860,9 @@ type StaticSiteGitlabParameters struct {
 
 type StaticSiteInitParameters struct {
 
+	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, bitbucket, gitlab, or image may be set.
+	Bitbucket []StaticSiteBitbucketInitParameters `json:"bitbucket,omitempty" tf:"bitbucket,omitempty"`
+
 	// An optional build command to run while building this component from source.
 	// An optional build command to run while building this component from source.
 	BuildCommand *string `json:"buildCommand,omitempty" tf:"build_command,omitempty"`
@@ -4110,6 +4920,9 @@ type StaticSiteInitParameters struct {
 
 type StaticSiteObservation struct {
 
+	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, bitbucket, gitlab, or image may be set.
+	Bitbucket []StaticSiteBitbucketObservation `json:"bitbucket,omitempty" tf:"bitbucket,omitempty"`
+
 	// An optional build command to run while building this component from source.
 	// An optional build command to run while building this component from source.
 	BuildCommand *string `json:"buildCommand,omitempty" tf:"build_command,omitempty"`
@@ -4166,6 +4979,10 @@ type StaticSiteObservation struct {
 }
 
 type StaticSiteParameters struct {
+
+	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, bitbucket, gitlab, or image may be set.
+	// +kubebuilder:validation:Optional
+	Bitbucket []StaticSiteBitbucketParameters `json:"bitbucket,omitempty" tf:"bitbucket,omitempty"`
 
 	// An optional build command to run while building this component from source.
 	// An optional build command to run while building this component from source.
@@ -4272,15 +5089,120 @@ type StaticSiteRoutesParameters struct {
 	PreservePathPrefix *bool `json:"preservePathPrefix,omitempty" tf:"preserve_path_prefix,omitempty"`
 }
 
+type TerminationInitParameters struct {
+
+	// The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+	// The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+	GracePeriodSeconds *float64 `json:"gracePeriodSeconds,omitempty" tf:"grace_period_seconds,omitempty"`
+}
+
+type TerminationObservation struct {
+
+	// The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+	// The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+	GracePeriodSeconds *float64 `json:"gracePeriodSeconds,omitempty" tf:"grace_period_seconds,omitempty"`
+}
+
+type TerminationParameters struct {
+
+	// The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+	// The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+	// +kubebuilder:validation:Optional
+	GracePeriodSeconds *float64 `json:"gracePeriodSeconds,omitempty" tf:"grace_period_seconds,omitempty"`
+}
+
+type VPCInitParameters struct {
+
+	// : The ID of the VPC.
+	// The ID of the VPC.
+	ID *string `json:"id,omitempty" tf:"id,omitempty"`
+}
+
+type VPCObservation struct {
+
+	// : The ID of the VPC.
+	// The ID of the VPC.
+	ID *string `json:"id,omitempty" tf:"id,omitempty"`
+}
+
+type VPCParameters struct {
+
+	// : The ID of the VPC.
+	// The ID of the VPC.
+	// +kubebuilder:validation:Optional
+	ID *string `json:"id" tf:"id,omitempty"`
+}
+
+type WorkerAlertDestinationsInitParameters struct {
+
+	// Determines which emails receive alerts. The emails must be team members. If not set, the team's email is used by default.
+	Emails []*string `json:"emails,omitempty" tf:"emails,omitempty"`
+
+	// Determines which slack channels or users receive alerts .
+	SlackWebhooks []WorkerAlertDestinationsSlackWebhooksInitParameters `json:"slackWebhooks,omitempty" tf:"slack_webhooks,omitempty"`
+}
+
+type WorkerAlertDestinationsObservation struct {
+
+	// Determines which emails receive alerts. The emails must be team members. If not set, the team's email is used by default.
+	Emails []*string `json:"emails,omitempty" tf:"emails,omitempty"`
+
+	// Determines which slack channels or users receive alerts .
+	SlackWebhooks []WorkerAlertDestinationsSlackWebhooksObservation `json:"slackWebhooks,omitempty" tf:"slack_webhooks,omitempty"`
+}
+
+type WorkerAlertDestinationsParameters struct {
+
+	// Determines which emails receive alerts. The emails must be team members. If not set, the team's email is used by default.
+	// +kubebuilder:validation:Optional
+	Emails []*string `json:"emails,omitempty" tf:"emails,omitempty"`
+
+	// Determines which slack channels or users receive alerts .
+	// +kubebuilder:validation:Optional
+	SlackWebhooks []WorkerAlertDestinationsSlackWebhooksParameters `json:"slackWebhooks,omitempty" tf:"slack_webhooks,omitempty"`
+}
+
+type WorkerAlertDestinationsSlackWebhooksInitParameters struct {
+
+	// The Slack channel to send notifications to.
+	Channel *string `json:"channel,omitempty" tf:"channel,omitempty"`
+
+	// The Slack webhook URL.
+	URL *string `json:"url,omitempty" tf:"url,omitempty"`
+}
+
+type WorkerAlertDestinationsSlackWebhooksObservation struct {
+
+	// The Slack channel to send notifications to.
+	Channel *string `json:"channel,omitempty" tf:"channel,omitempty"`
+
+	// The Slack webhook URL.
+	URL *string `json:"url,omitempty" tf:"url,omitempty"`
+}
+
+type WorkerAlertDestinationsSlackWebhooksParameters struct {
+
+	// The Slack channel to send notifications to.
+	// +kubebuilder:validation:Optional
+	Channel *string `json:"channel" tf:"channel,omitempty"`
+
+	// The Slack webhook URL.
+	// +kubebuilder:validation:Optional
+	URL *string `json:"url" tf:"url,omitempty"`
+}
+
 type WorkerAlertInitParameters struct {
 
-	// Determines whether or not the alert is disabled (default: false).
+	// Specification for alert destination.
+	Destinations []WorkerAlertDestinationsInitParameters `json:"destinations,omitempty" tf:"destinations,omitempty"`
+
+	// Determines whether the alert is disabled (default: false).
 	Disabled *bool `json:"disabled,omitempty" tf:"disabled,omitempty"`
 
 	// The operator to use. This is either of GREATER_THAN or LESS_THAN.
 	Operator *string `json:"operator,omitempty" tf:"operator,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or AUTOSCALE_SUCCEEDED.
 	Rule *string `json:"rule,omitempty" tf:"rule,omitempty"`
 
 	// The value of the environment variable.
@@ -4292,13 +5214,16 @@ type WorkerAlertInitParameters struct {
 
 type WorkerAlertObservation struct {
 
-	// Determines whether or not the alert is disabled (default: false).
+	// Specification for alert destination.
+	Destinations []WorkerAlertDestinationsObservation `json:"destinations,omitempty" tf:"destinations,omitempty"`
+
+	// Determines whether the alert is disabled (default: false).
 	Disabled *bool `json:"disabled,omitempty" tf:"disabled,omitempty"`
 
 	// The operator to use. This is either of GREATER_THAN or LESS_THAN.
 	Operator *string `json:"operator,omitempty" tf:"operator,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or AUTOSCALE_SUCCEEDED.
 	Rule *string `json:"rule,omitempty" tf:"rule,omitempty"`
 
 	// The value of the environment variable.
@@ -4310,7 +5235,11 @@ type WorkerAlertObservation struct {
 
 type WorkerAlertParameters struct {
 
-	// Determines whether or not the alert is disabled (default: false).
+	// Specification for alert destination.
+	// +kubebuilder:validation:Optional
+	Destinations []WorkerAlertDestinationsParameters `json:"destinations,omitempty" tf:"destinations,omitempty"`
+
+	// Determines whether the alert is disabled (default: false).
 	// +kubebuilder:validation:Optional
 	Disabled *bool `json:"disabled,omitempty" tf:"disabled,omitempty"`
 
@@ -4318,7 +5247,7 @@ type WorkerAlertParameters struct {
 	// +kubebuilder:validation:Optional
 	Operator *string `json:"operator" tf:"operator,omitempty"`
 
-	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.
+	// The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or AUTOSCALE_SUCCEEDED.
 	// +kubebuilder:validation:Optional
 	Rule *string `json:"rule" tf:"rule,omitempty"`
 
@@ -4329,6 +5258,102 @@ type WorkerAlertParameters struct {
 	// The time before alerts should be triggered. This is may be one of: FIVE_MINUTES, TEN_MINUTES, THIRTY_MINUTES, ONE_HOUR.
 	// +kubebuilder:validation:Optional
 	Window *string `json:"window" tf:"window,omitempty"`
+}
+
+type WorkerAutoscalingInitParameters struct {
+
+	// The maximum amount of instances for this component. Must be more than min_instance_count.
+	// The maximum amount of instances for this component. Must be more than min_instance_count.
+	MaxInstanceCount *float64 `json:"maxInstanceCount,omitempty" tf:"max_instance_count,omitempty"`
+
+	// The metrics that the component is scaled on.
+	// The metrics that the component is scaled on.
+	Metrics []AutoscalingMetricsInitParameters `json:"metrics,omitempty" tf:"metrics,omitempty"`
+
+	// The minimum amount of instances for this component. Must be less than max_instance_count.
+	// The minimum amount of instances for this component. Must be less than max_instance_count.
+	MinInstanceCount *float64 `json:"minInstanceCount,omitempty" tf:"min_instance_count,omitempty"`
+}
+
+type WorkerAutoscalingObservation struct {
+
+	// The maximum amount of instances for this component. Must be more than min_instance_count.
+	// The maximum amount of instances for this component. Must be more than min_instance_count.
+	MaxInstanceCount *float64 `json:"maxInstanceCount,omitempty" tf:"max_instance_count,omitempty"`
+
+	// The metrics that the component is scaled on.
+	// The metrics that the component is scaled on.
+	Metrics []AutoscalingMetricsObservation `json:"metrics,omitempty" tf:"metrics,omitempty"`
+
+	// The minimum amount of instances for this component. Must be less than max_instance_count.
+	// The minimum amount of instances for this component. Must be less than max_instance_count.
+	MinInstanceCount *float64 `json:"minInstanceCount,omitempty" tf:"min_instance_count,omitempty"`
+}
+
+type WorkerAutoscalingParameters struct {
+
+	// The maximum amount of instances for this component. Must be more than min_instance_count.
+	// The maximum amount of instances for this component. Must be more than min_instance_count.
+	// +kubebuilder:validation:Optional
+	MaxInstanceCount *float64 `json:"maxInstanceCount" tf:"max_instance_count,omitempty"`
+
+	// The metrics that the component is scaled on.
+	// The metrics that the component is scaled on.
+	// +kubebuilder:validation:Optional
+	Metrics []AutoscalingMetricsParameters `json:"metrics" tf:"metrics,omitempty"`
+
+	// The minimum amount of instances for this component. Must be less than max_instance_count.
+	// The minimum amount of instances for this component. Must be less than max_instance_count.
+	// +kubebuilder:validation:Optional
+	MinInstanceCount *float64 `json:"minInstanceCount" tf:"min_instance_count,omitempty"`
+}
+
+type WorkerBitbucketInitParameters struct {
+
+	// The name of the branch to use.
+	// The name of the branch to use.
+	Branch *string `json:"branch,omitempty" tf:"branch,omitempty"`
+
+	// Whether to automatically deploy new commits made to the repo.
+	// Whether to automatically deploy new commits made to the repo
+	DeployOnPush *bool `json:"deployOnPush,omitempty" tf:"deploy_on_push,omitempty"`
+
+	// The name of the repo in the format owner/repo.
+	// The name of the repo in the format `owner/repo`.
+	Repo *string `json:"repo,omitempty" tf:"repo,omitempty"`
+}
+
+type WorkerBitbucketObservation struct {
+
+	// The name of the branch to use.
+	// The name of the branch to use.
+	Branch *string `json:"branch,omitempty" tf:"branch,omitempty"`
+
+	// Whether to automatically deploy new commits made to the repo.
+	// Whether to automatically deploy new commits made to the repo
+	DeployOnPush *bool `json:"deployOnPush,omitempty" tf:"deploy_on_push,omitempty"`
+
+	// The name of the repo in the format owner/repo.
+	// The name of the repo in the format `owner/repo`.
+	Repo *string `json:"repo,omitempty" tf:"repo,omitempty"`
+}
+
+type WorkerBitbucketParameters struct {
+
+	// The name of the branch to use.
+	// The name of the branch to use.
+	// +kubebuilder:validation:Optional
+	Branch *string `json:"branch,omitempty" tf:"branch,omitempty"`
+
+	// Whether to automatically deploy new commits made to the repo.
+	// Whether to automatically deploy new commits made to the repo
+	// +kubebuilder:validation:Optional
+	DeployOnPush *bool `json:"deployOnPush,omitempty" tf:"deploy_on_push,omitempty"`
+
+	// The name of the repo in the format owner/repo.
+	// The name of the repo in the format `owner/repo`.
+	// +kubebuilder:validation:Optional
+	Repo *string `json:"repo,omitempty" tf:"repo,omitempty"`
 }
 
 type WorkerEnvInitParameters struct {
@@ -4521,21 +5546,21 @@ type WorkerGitlabParameters struct {
 
 type WorkerImageDeployOnPushInitParameters struct {
 
-	// Whether to automatically deploy images pushed to DOCR.
+	// Indicates whether maintenance mode should be enabled for the app.
 	// Whether to automatically deploy images pushed to DOCR.
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 }
 
 type WorkerImageDeployOnPushObservation struct {
 
-	// Whether to automatically deploy images pushed to DOCR.
+	// Indicates whether maintenance mode should be enabled for the app.
 	// Whether to automatically deploy images pushed to DOCR.
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
 }
 
 type WorkerImageDeployOnPushParameters struct {
 
-	// Whether to automatically deploy images pushed to DOCR.
+	// Indicates whether maintenance mode should be enabled for the app.
 	// Whether to automatically deploy images pushed to DOCR.
 	// +kubebuilder:validation:Optional
 	Enabled *bool `json:"enabled,omitempty" tf:"enabled,omitempty"`
@@ -4546,6 +5571,10 @@ type WorkerImageInitParameters struct {
 	// Whether to automatically deploy new commits made to the repo.
 	// Configures automatically deploying images pushed to DOCR.
 	DeployOnPush []WorkerImageDeployOnPushInitParameters `json:"deployOnPush,omitempty" tf:"deploy_on_push,omitempty"`
+
+	// The image digest. Cannot be specified if tag is provided.
+	// The image digest. Cannot be specified if tag is provided.
+	Digest *string `json:"digest,omitempty" tf:"digest,omitempty"`
 
 	// The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.
 	// The registry name. Must be left empty for the DOCR registry type.
@@ -4564,7 +5593,7 @@ type WorkerImageInitParameters struct {
 	Repository *string `json:"repository,omitempty" tf:"repository,omitempty"`
 
 	// The repository tag. Defaults to latest if not provided.
-	// The repository tag. Defaults to latest if not provided.
+	// The repository tag. Defaults to latest if not provided. Cannot be specified if digest is provided.
 	Tag *string `json:"tag,omitempty" tf:"tag,omitempty"`
 }
 
@@ -4573,6 +5602,10 @@ type WorkerImageObservation struct {
 	// Whether to automatically deploy new commits made to the repo.
 	// Configures automatically deploying images pushed to DOCR.
 	DeployOnPush []WorkerImageDeployOnPushObservation `json:"deployOnPush,omitempty" tf:"deploy_on_push,omitempty"`
+
+	// The image digest. Cannot be specified if tag is provided.
+	// The image digest. Cannot be specified if tag is provided.
+	Digest *string `json:"digest,omitempty" tf:"digest,omitempty"`
 
 	// The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.
 	// The registry name. Must be left empty for the DOCR registry type.
@@ -4587,7 +5620,7 @@ type WorkerImageObservation struct {
 	Repository *string `json:"repository,omitempty" tf:"repository,omitempty"`
 
 	// The repository tag. Defaults to latest if not provided.
-	// The repository tag. Defaults to latest if not provided.
+	// The repository tag. Defaults to latest if not provided. Cannot be specified if digest is provided.
 	Tag *string `json:"tag,omitempty" tf:"tag,omitempty"`
 }
 
@@ -4597,6 +5630,11 @@ type WorkerImageParameters struct {
 	// Configures automatically deploying images pushed to DOCR.
 	// +kubebuilder:validation:Optional
 	DeployOnPush []WorkerImageDeployOnPushParameters `json:"deployOnPush,omitempty" tf:"deploy_on_push,omitempty"`
+
+	// The image digest. Cannot be specified if tag is provided.
+	// The image digest. Cannot be specified if tag is provided.
+	// +kubebuilder:validation:Optional
+	Digest *string `json:"digest,omitempty" tf:"digest,omitempty"`
 
 	// The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.
 	// The registry name. Must be left empty for the DOCR registry type.
@@ -4619,7 +5657,7 @@ type WorkerImageParameters struct {
 	Repository *string `json:"repository" tf:"repository,omitempty"`
 
 	// The repository tag. Defaults to latest if not provided.
-	// The repository tag. Defaults to latest if not provided.
+	// The repository tag. Defaults to latest if not provided. Cannot be specified if digest is provided.
 	// +kubebuilder:validation:Optional
 	Tag *string `json:"tag,omitempty" tf:"tag,omitempty"`
 }
@@ -4629,6 +5667,12 @@ type WorkerInitParameters struct {
 	// Describes an alert policy for the app.
 	// Alert policies for the app component
 	Alert []WorkerAlertInitParameters `json:"alert,omitempty" tf:"alert,omitempty"`
+
+	// Configuration for automatically scaling this component based on metrics.
+	Autoscaling []WorkerAutoscalingInitParameters `json:"autoscaling,omitempty" tf:"autoscaling,omitempty"`
+
+	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, bitbucket, gitlab, or image may be set.
+	Bitbucket []WorkerBitbucketInitParameters `json:"bitbucket,omitempty" tf:"bitbucket,omitempty"`
 
 	// An optional build command to run while building this component from source.
 	// An optional build command to run while building this component from source.
@@ -4680,6 +5724,9 @@ type WorkerInitParameters struct {
 	// An optional path to the working directory to use for the build.
 	// An optional path to the working directory to use for the build.
 	SourceDir *string `json:"sourceDir,omitempty" tf:"source_dir,omitempty"`
+
+	// Contains a component's termination parameters.
+	Termination []WorkerTerminationInitParameters `json:"termination,omitempty" tf:"termination,omitempty"`
 }
 
 type WorkerLogDestinationDatadogInitParameters struct {
@@ -4930,6 +5977,12 @@ type WorkerObservation struct {
 	// Alert policies for the app component
 	Alert []WorkerAlertObservation `json:"alert,omitempty" tf:"alert,omitempty"`
 
+	// Configuration for automatically scaling this component based on metrics.
+	Autoscaling []WorkerAutoscalingObservation `json:"autoscaling,omitempty" tf:"autoscaling,omitempty"`
+
+	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, bitbucket, gitlab, or image may be set.
+	Bitbucket []WorkerBitbucketObservation `json:"bitbucket,omitempty" tf:"bitbucket,omitempty"`
+
 	// An optional build command to run while building this component from source.
 	// An optional build command to run while building this component from source.
 	BuildCommand *string `json:"buildCommand,omitempty" tf:"build_command,omitempty"`
@@ -4980,6 +6033,9 @@ type WorkerObservation struct {
 	// An optional path to the working directory to use for the build.
 	// An optional path to the working directory to use for the build.
 	SourceDir *string `json:"sourceDir,omitempty" tf:"source_dir,omitempty"`
+
+	// Contains a component's termination parameters.
+	Termination []WorkerTerminationObservation `json:"termination,omitempty" tf:"termination,omitempty"`
 }
 
 type WorkerParameters struct {
@@ -4988,6 +6044,14 @@ type WorkerParameters struct {
 	// Alert policies for the app component
 	// +kubebuilder:validation:Optional
 	Alert []WorkerAlertParameters `json:"alert,omitempty" tf:"alert,omitempty"`
+
+	// Configuration for automatically scaling this component based on metrics.
+	// +kubebuilder:validation:Optional
+	Autoscaling []WorkerAutoscalingParameters `json:"autoscaling,omitempty" tf:"autoscaling,omitempty"`
+
+	// A GitHub repo to use as the component's source. DigitalOcean App Platform must have access to the repository. Only one of git, github, bitbucket, gitlab, or image may be set.
+	// +kubebuilder:validation:Optional
+	Bitbucket []WorkerBitbucketParameters `json:"bitbucket,omitempty" tf:"bitbucket,omitempty"`
 
 	// An optional build command to run while building this component from source.
 	// An optional build command to run while building this component from source.
@@ -5053,6 +6117,32 @@ type WorkerParameters struct {
 	// An optional path to the working directory to use for the build.
 	// +kubebuilder:validation:Optional
 	SourceDir *string `json:"sourceDir,omitempty" tf:"source_dir,omitempty"`
+
+	// Contains a component's termination parameters.
+	// +kubebuilder:validation:Optional
+	Termination []WorkerTerminationParameters `json:"termination,omitempty" tf:"termination,omitempty"`
+}
+
+type WorkerTerminationInitParameters struct {
+
+	// The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+	// The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+	GracePeriodSeconds *float64 `json:"gracePeriodSeconds,omitempty" tf:"grace_period_seconds,omitempty"`
+}
+
+type WorkerTerminationObservation struct {
+
+	// The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+	// The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+	GracePeriodSeconds *float64 `json:"gracePeriodSeconds,omitempty" tf:"grace_period_seconds,omitempty"`
+}
+
+type WorkerTerminationParameters struct {
+
+	// The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+	// The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+	// +kubebuilder:validation:Optional
+	GracePeriodSeconds *float64 `json:"gracePeriodSeconds,omitempty" tf:"grace_period_seconds,omitempty"`
 }
 
 // AppSpec defines the desired state of App

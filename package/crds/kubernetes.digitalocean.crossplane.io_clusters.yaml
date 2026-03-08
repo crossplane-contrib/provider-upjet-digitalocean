@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.14.0
+    controller-gen.kubebuilder.io/version: v0.16.5
   name: clusters.kubernetes.digitalocean.crossplane.io
 spec:
   group: kubernetes.digitalocean.crossplane.io
@@ -72,15 +72,73 @@ spec:
                 type: string
               forProvider:
                 properties:
+                  amdGpuDeviceMetricsExporterPlugin:
+                    description: Block containing options for the AMD GPU device metrics
+                      exporter component.
+                    items:
+                      properties:
+                        enabled:
+                          description: Boolean flag whether the firewall should be
+                            enabled or not.
+                          type: boolean
+                      type: object
+                    type: array
+                  amdGpuDevicePlugin:
+                    description: Block containing options for the AMD GPU device plugin
+                      component. If not specified, the component will be enabled by
+                      default for clusters with AMD GPU nodes.
+                    items:
+                      properties:
+                        enabled:
+                          description: Boolean flag whether the firewall should be
+                            enabled or not.
+                          type: boolean
+                      type: object
+                    type: array
                   autoUpgrade:
                     description: A boolean value indicating whether the cluster will
                       be automatically upgraded to new patch releases during its maintenance
                       window.
                     type: boolean
+                  clusterAutoscalerConfiguration:
+                    description: Block containing options for cluster auto-scaling.
+                    items:
+                      properties:
+                        expanders:
+                          items:
+                            type: string
+                          type: array
+                        scaleDownUnneededTime:
+                          description: String setting how long a node should be unneeded
+                            before it's eligible for scale down.
+                          type: string
+                        scaleDownUtilizationThreshold:
+                          description: Float setting the Node utilization level, defined
+                            as sum of requested resources divided by capacity, in
+                            which a node can be considered for scale down.
+                          type: number
+                      type: object
+                    type: array
                   clusterSubnet:
                     description: The range of IP addresses in the overlay network
                       of the Kubernetes cluster. For more information, see here.
                     type: string
+                  controlPlaneFirewall:
+                    description: A block representing the cluster's control plane
+                      firewall
+                    items:
+                      properties:
+                        allowedAddresses:
+                          description: A list of addresses allowed (CIDR notation).
+                          items:
+                            type: string
+                          type: array
+                        enabled:
+                          description: Boolean flag whether the firewall should be
+                            enabled or not.
+                          type: boolean
+                      type: object
+                    type: array
                   destroyAllAssociatedResources:
                     description: Use with caution. When set to true, all associated
                       DigitalOcean resources created via the Kubernetes API (load
@@ -92,6 +150,11 @@ spec:
                       for a cluster. Once enabled for a cluster, high availability
                       cannot be disabled. Default: false'
                     type: boolean
+                  kubeconfigExpireSeconds:
+                    description: The duration in seconds that the returned Kubernetes
+                      credentials will be valid. If not set or 0, the credentials
+                      will have a 7 day expiry.
+                    type: number
                   maintenancePolicy:
                     description: A block representing the cluster's maintenance window.
                       Updates will be applied within this window. If not specified,
@@ -186,6 +249,27 @@ spec:
                           type: array
                       type: object
                     type: array
+                  nvidiaGpuDevicePlugin:
+                    description: Block containing options for the NVIDIA GPU device
+                      plugin component. If not specified, the component will be enabled
+                      by default for clusters with NVIDIA GPU nodes.
+                    items:
+                      properties:
+                        enabled:
+                          description: Boolean flag whether the firewall should be
+                            enabled or not.
+                          type: boolean
+                      type: object
+                    type: array
+                  rdmaSharedDevicePlugin:
+                    items:
+                      properties:
+                        enabled:
+                          description: Boolean flag whether the firewall should be
+                            enabled or not.
+                          type: boolean
+                      type: object
+                    type: array
                   region:
                     description: The slug identifier for the region where the Kubernetes
                       cluster will be created.
@@ -195,6 +279,18 @@ spec:
                       integration for the cluster. This requires that a container
                       registry has first been created for the account. Default: false'
                     type: boolean
+                  routingAgent:
+                    description: Block containing options for the routing-agent component.
+                      If not specified, the routing-agent component will not be installed
+                      in the cluster.
+                    items:
+                      properties:
+                        enabled:
+                          description: Boolean flag whether the firewall should be
+                            enabled or not.
+                          type: boolean
+                      type: object
+                    type: array
                   serviceSubnet:
                     description: The range of assignable IP addresses for services
                       running in the Kubernetes cluster. For more information, see
@@ -309,15 +405,73 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
+                  amdGpuDeviceMetricsExporterPlugin:
+                    description: Block containing options for the AMD GPU device metrics
+                      exporter component.
+                    items:
+                      properties:
+                        enabled:
+                          description: Boolean flag whether the firewall should be
+                            enabled or not.
+                          type: boolean
+                      type: object
+                    type: array
+                  amdGpuDevicePlugin:
+                    description: Block containing options for the AMD GPU device plugin
+                      component. If not specified, the component will be enabled by
+                      default for clusters with AMD GPU nodes.
+                    items:
+                      properties:
+                        enabled:
+                          description: Boolean flag whether the firewall should be
+                            enabled or not.
+                          type: boolean
+                      type: object
+                    type: array
                   autoUpgrade:
                     description: A boolean value indicating whether the cluster will
                       be automatically upgraded to new patch releases during its maintenance
                       window.
                     type: boolean
+                  clusterAutoscalerConfiguration:
+                    description: Block containing options for cluster auto-scaling.
+                    items:
+                      properties:
+                        expanders:
+                          items:
+                            type: string
+                          type: array
+                        scaleDownUnneededTime:
+                          description: String setting how long a node should be unneeded
+                            before it's eligible for scale down.
+                          type: string
+                        scaleDownUtilizationThreshold:
+                          description: Float setting the Node utilization level, defined
+                            as sum of requested resources divided by capacity, in
+                            which a node can be considered for scale down.
+                          type: number
+                      type: object
+                    type: array
                   clusterSubnet:
                     description: The range of IP addresses in the overlay network
                       of the Kubernetes cluster. For more information, see here.
                     type: string
+                  controlPlaneFirewall:
+                    description: A block representing the cluster's control plane
+                      firewall
+                    items:
+                      properties:
+                        allowedAddresses:
+                          description: A list of addresses allowed (CIDR notation).
+                          items:
+                            type: string
+                          type: array
+                        enabled:
+                          description: Boolean flag whether the firewall should be
+                            enabled or not.
+                          type: boolean
+                      type: object
+                    type: array
                   destroyAllAssociatedResources:
                     description: Use with caution. When set to true, all associated
                       DigitalOcean resources created via the Kubernetes API (load
@@ -329,6 +483,11 @@ spec:
                       for a cluster. Once enabled for a cluster, high availability
                       cannot be disabled. Default: false'
                     type: boolean
+                  kubeconfigExpireSeconds:
+                    description: The duration in seconds that the returned Kubernetes
+                      credentials will be valid. If not set or 0, the credentials
+                      will have a 7 day expiry.
+                    type: number
                   maintenancePolicy:
                     description: A block representing the cluster's maintenance window.
                       Updates will be applied within this window. If not specified,
@@ -423,6 +582,27 @@ spec:
                           type: array
                       type: object
                     type: array
+                  nvidiaGpuDevicePlugin:
+                    description: Block containing options for the NVIDIA GPU device
+                      plugin component. If not specified, the component will be enabled
+                      by default for clusters with NVIDIA GPU nodes.
+                    items:
+                      properties:
+                        enabled:
+                          description: Boolean flag whether the firewall should be
+                            enabled or not.
+                          type: boolean
+                      type: object
+                    type: array
+                  rdmaSharedDevicePlugin:
+                    items:
+                      properties:
+                        enabled:
+                          description: Boolean flag whether the firewall should be
+                            enabled or not.
+                          type: boolean
+                      type: object
+                    type: array
                   region:
                     description: The slug identifier for the region where the Kubernetes
                       cluster will be created.
@@ -432,6 +612,18 @@ spec:
                       integration for the cluster. This requires that a container
                       registry has first been created for the account. Default: false'
                     type: boolean
+                  routingAgent:
+                    description: Block containing options for the routing-agent component.
+                      If not specified, the routing-agent component will not be installed
+                      in the cluster.
+                    items:
+                      properties:
+                        enabled:
+                          description: Boolean flag whether the firewall should be
+                            enabled or not.
+                          type: boolean
+                      type: object
+                    type: array
                   serviceSubnet:
                     description: The range of assignable IP addresses for services
                       running in the Kubernetes cluster. For more information, see
@@ -722,15 +914,73 @@ spec:
             properties:
               atProvider:
                 properties:
+                  amdGpuDeviceMetricsExporterPlugin:
+                    description: Block containing options for the AMD GPU device metrics
+                      exporter component.
+                    items:
+                      properties:
+                        enabled:
+                          description: Boolean flag whether the firewall should be
+                            enabled or not.
+                          type: boolean
+                      type: object
+                    type: array
+                  amdGpuDevicePlugin:
+                    description: Block containing options for the AMD GPU device plugin
+                      component. If not specified, the component will be enabled by
+                      default for clusters with AMD GPU nodes.
+                    items:
+                      properties:
+                        enabled:
+                          description: Boolean flag whether the firewall should be
+                            enabled or not.
+                          type: boolean
+                      type: object
+                    type: array
                   autoUpgrade:
                     description: A boolean value indicating whether the cluster will
                       be automatically upgraded to new patch releases during its maintenance
                       window.
                     type: boolean
+                  clusterAutoscalerConfiguration:
+                    description: Block containing options for cluster auto-scaling.
+                    items:
+                      properties:
+                        expanders:
+                          items:
+                            type: string
+                          type: array
+                        scaleDownUnneededTime:
+                          description: String setting how long a node should be unneeded
+                            before it's eligible for scale down.
+                          type: string
+                        scaleDownUtilizationThreshold:
+                          description: Float setting the Node utilization level, defined
+                            as sum of requested resources divided by capacity, in
+                            which a node can be considered for scale down.
+                          type: number
+                      type: object
+                    type: array
                   clusterSubnet:
                     description: The range of IP addresses in the overlay network
                       of the Kubernetes cluster. For more information, see here.
                     type: string
+                  controlPlaneFirewall:
+                    description: A block representing the cluster's control plane
+                      firewall
+                    items:
+                      properties:
+                        allowedAddresses:
+                          description: A list of addresses allowed (CIDR notation).
+                          items:
+                            type: string
+                          type: array
+                        enabled:
+                          description: Boolean flag whether the firewall should be
+                            enabled or not.
+                          type: boolean
+                      type: object
+                    type: array
                   createdAt:
                     description: The date and time when the Kubernetes cluster was
                       created.
@@ -759,6 +1009,11 @@ spec:
                       node. This will not be set if high availability is configured
                       on the cluster (v1.21+)
                     type: string
+                  kubeconfigExpireSeconds:
+                    description: The duration in seconds that the returned Kubernetes
+                      credentials will be valid. If not set or 0, the credentials
+                      will have a 7 day expiry.
+                    type: number
                   maintenancePolicy:
                     description: A block representing the cluster's maintenance window.
                       Updates will be applied within this window. If not specified,
@@ -896,6 +1151,27 @@ spec:
                           type: array
                       type: object
                     type: array
+                  nvidiaGpuDevicePlugin:
+                    description: Block containing options for the NVIDIA GPU device
+                      plugin component. If not specified, the component will be enabled
+                      by default for clusters with NVIDIA GPU nodes.
+                    items:
+                      properties:
+                        enabled:
+                          description: Boolean flag whether the firewall should be
+                            enabled or not.
+                          type: boolean
+                      type: object
+                    type: array
+                  rdmaSharedDevicePlugin:
+                    items:
+                      properties:
+                        enabled:
+                          description: Boolean flag whether the firewall should be
+                            enabled or not.
+                          type: boolean
+                      type: object
+                    type: array
                   region:
                     description: The slug identifier for the region where the Kubernetes
                       cluster will be created.
@@ -905,6 +1181,18 @@ spec:
                       integration for the cluster. This requires that a container
                       registry has first been created for the account. Default: false'
                     type: boolean
+                  routingAgent:
+                    description: Block containing options for the routing-agent component.
+                      If not specified, the routing-agent component will not be installed
+                      in the cluster.
+                    items:
+                      properties:
+                        enabled:
+                          description: Boolean flag whether the firewall should be
+                            enabled or not.
+                          type: boolean
+                      type: object
+                    type: array
                   serviceSubnet:
                     description: The range of assignable IP addresses for services
                       running in the Kubernetes cluster. For more information, see

@@ -9,6 +9,7 @@ import (
 	"context"
 	reference "github.com/crossplane/crossplane-runtime/pkg/reference"
 	errors "github.com/pkg/errors"
+	ptr "k8s.io/utils/ptr"
 	client "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -20,7 +21,7 @@ func (mg *Record) ResolveReferences(ctx context.Context, c client.Reader) error 
 	var err error
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.Domain),
+		CurrentValue: ptr.Deref(mg.Spec.ForProvider.Domain, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.ForProvider.DomainRef,
 		Selector:     mg.Spec.ForProvider.DomainSelector,
@@ -32,11 +33,11 @@ func (mg *Record) ResolveReferences(ctx context.Context, c client.Reader) error 
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.ForProvider.Domain")
 	}
-	mg.Spec.ForProvider.Domain = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.Domain = ptr.To(rsp.ResolvedValue)
 	mg.Spec.ForProvider.DomainRef = rsp.ResolvedReference
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.Domain),
+		CurrentValue: ptr.Deref(mg.Spec.InitProvider.Domain, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.InitProvider.DomainRef,
 		Selector:     mg.Spec.InitProvider.DomainSelector,
@@ -48,7 +49,7 @@ func (mg *Record) ResolveReferences(ctx context.Context, c client.Reader) error 
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.InitProvider.Domain")
 	}
-	mg.Spec.InitProvider.Domain = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.Domain = ptr.To(rsp.ResolvedValue)
 	mg.Spec.InitProvider.DomainRef = rsp.ResolvedReference
 
 	return nil

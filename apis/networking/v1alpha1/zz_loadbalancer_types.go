@@ -52,6 +52,10 @@ type DomainsInitParameters struct {
 
 type DomainsObservation struct {
 
+	// Deprecated The ID of the TLS certificate to be used for SSL termination. Use certificate_name instead.
+	// certificate ID for TLS handshaking
+	CertificateID *string `json:"certificateId,omitempty" tf:"certificate_id,omitempty"`
+
 	// The unique name of the TLS certificate to be used for SSL termination.
 	// name of certificate required for TLS handshaking
 	CertificateName *string `json:"certificateName,omitempty" tf:"certificate_name,omitempty"`
@@ -91,7 +95,7 @@ type DomainsParameters struct {
 
 type ForwardingRuleInitParameters struct {
 
-	// Deprecated The ID of the TLS certificate to be used for SSL termination.
+	// Deprecated The ID of the TLS certificate to be used for SSL termination. Use certificate_name instead.
 	CertificateID *string `json:"certificateId,omitempty" tf:"certificate_id,omitempty"`
 
 	// The unique name of the TLS certificate to be used for SSL termination.
@@ -124,7 +128,7 @@ type ForwardingRuleInitParameters struct {
 
 type ForwardingRuleObservation struct {
 
-	// Deprecated The ID of the TLS certificate to be used for SSL termination.
+	// Deprecated The ID of the TLS certificate to be used for SSL termination. Use certificate_name instead.
 	CertificateID *string `json:"certificateId,omitempty" tf:"certificate_id,omitempty"`
 
 	// The unique name of the TLS certificate to be used for SSL termination.
@@ -148,7 +152,7 @@ type ForwardingRuleObservation struct {
 
 type ForwardingRuleParameters struct {
 
-	// Deprecated The ID of the TLS certificate to be used for SSL termination.
+	// Deprecated The ID of the TLS certificate to be used for SSL termination. Use certificate_name instead.
 	// +kubebuilder:validation:Optional
 	CertificateID *string `json:"certificateId,omitempty" tf:"certificate_id,omitempty"`
 
@@ -381,7 +385,6 @@ type LoadbalancerInitParameters struct {
 	DisableLetsEncryptDNSRecords *bool `json:"disableLetsEncryptDnsRecords,omitempty" tf:"disable_lets_encrypt_dns_records,omitempty"`
 
 	// A list of domains required to ingress traffic to a Global Load Balancer. The domains block is documented below.
-	// NOTE: this is a closed beta feature and not available for public use.
 	// the list of domains required to ingress traffic to global load balancer
 	Domains []DomainsInitParameters `json:"domains,omitempty" tf:"domains,omitempty"`
 
@@ -417,7 +420,6 @@ type LoadbalancerInitParameters struct {
 	ForwardingRule []ForwardingRuleInitParameters `json:"forwardingRule,omitempty" tf:"forwarding_rule,omitempty"`
 
 	// A block containing glb_settings required to define target rules for a Global Load Balancer. The glb_settings block is documented below.
-	// NOTE: this is a closed beta feature and not available for public use.
 	// configuration options for global load balancer
 	GlbSettings []GlbSettingsInitParameters `json:"glbSettings,omitempty" tf:"glb_settings,omitempty"`
 
@@ -432,9 +434,12 @@ type LoadbalancerInitParameters struct {
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
 
 	// The type of network the Load Balancer is accessible from. It must be either of INTERNAL or EXTERNAL. Defaults to EXTERNAL.
-	// NOTE: non-EXTERNAL type may be part of closed beta feature and not available for public use.
 	// the type of network the load balancer is accessible from (EXTERNAL or INTERNAL)
 	Network *string `json:"network,omitempty" tf:"network,omitempty"`
+
+	// The network stack determines the allocation of ipv4/ipv6 addresses to the load balancer. It must be either of IPV4 or DUALSTACK. Defaults to IPV4.
+	// The network stack determines the allocation of ipv4/ipv6 addresses to the load balancer. Enum: 'IPV4' 'DUALSTACK'
+	NetworkStack *string `json:"networkStack,omitempty" tf:"network_stack,omitempty"`
 
 	// The ID of the project that the load balancer is associated with. If no ID is provided at creation, the load balancer associates with the user's default project.
 	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/project/v1alpha1.Project
@@ -459,22 +464,24 @@ type LoadbalancerInitParameters struct {
 	// The size of the Load Balancer. It must be either lb-small, lb-medium, or lb-large. Defaults to lb-small. Only one of size or size_unit may be provided.
 	Size *string `json:"size,omitempty" tf:"size,omitempty"`
 
-	// The size of the Load Balancer. It must be in the range (1, 100). Defaults to 1. Only one of size or size_unit may be provided.
+	// The size of the Load Balancer. It must be in the range (1, 200). Defaults to 1. Only one of size or size_unit may be provided.
 	SizeUnit *float64 `json:"sizeUnit,omitempty" tf:"size_unit,omitempty"`
 
 	// A sticky_sessions block to be assigned to the
 	// Load Balancer. The sticky_sessions block is documented below. Only 1 sticky_sessions block is allowed.
 	StickySessions []StickySessionsInitParameters `json:"stickySessions,omitempty" tf:"sticky_sessions,omitempty"`
 
+	// The tls cipher policy controls the cipher suites to be used by the load balancer. It must be either of DEFAULT or STRONG. Defaults to DEFAULT.
+	// The tls cipher policy to be used for the load balancer. Enum: 'DEFAULT' 'STRONG'
+	TLSCipherPolicy *string `json:"tlsCipherPolicy,omitempty" tf:"tls_cipher_policy,omitempty"`
+
 	// A list of Load Balancer IDs to be attached behind a Global Load Balancer.
-	// NOTE: this is a closed beta feature and not available for public use.
 	// list of load balancer IDs to put behind a global load balancer
 	// +listType=set
 	TargetLoadBalancerIds []*string `json:"targetLoadBalancerIds,omitempty" tf:"target_load_balancer_ids,omitempty"`
 
-	// The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
-	// NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
-	// the type of the load balancer (GLOBAL or REGIONAL)
+	// The type of the Load Balancer. It must be either of REGIONAL, REGIONAL_NETWORK, or GLOBAL. Defaults to REGIONAL.
+	// the type of the load balancer (GLOBAL, REGIONAL, or REGIONAL_NETWORK)
 	Type *string `json:"type,omitempty" tf:"type,omitempty"`
 
 	// The ID of the VPC where the load balancer will be located.
@@ -500,7 +507,6 @@ type LoadbalancerObservation struct {
 	DisableLetsEncryptDNSRecords *bool `json:"disableLetsEncryptDnsRecords,omitempty" tf:"disable_lets_encrypt_dns_records,omitempty"`
 
 	// A list of domains required to ingress traffic to a Global Load Balancer. The domains block is documented below.
-	// NOTE: this is a closed beta feature and not available for public use.
 	// the list of domains required to ingress traffic to global load balancer
 	Domains []DomainsObservation `json:"domains,omitempty" tf:"domains,omitempty"`
 
@@ -527,7 +533,6 @@ type LoadbalancerObservation struct {
 	ForwardingRule []ForwardingRuleObservation `json:"forwardingRule,omitempty" tf:"forwarding_rule,omitempty"`
 
 	// A block containing glb_settings required to define target rules for a Global Load Balancer. The glb_settings block is documented below.
-	// NOTE: this is a closed beta feature and not available for public use.
 	// configuration options for global load balancer
 	GlbSettings []GlbSettingsObservation `json:"glbSettings,omitempty" tf:"glb_settings,omitempty"`
 
@@ -544,13 +549,18 @@ type LoadbalancerObservation struct {
 	// The ip of the Load Balancer
 	IP *string `json:"ip,omitempty" tf:"ip,omitempty"`
 
+	IPv6 *string `json:"ipv6,omitempty" tf:"ipv6,omitempty"`
+
 	// The Load Balancer name
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
 
 	// The type of network the Load Balancer is accessible from. It must be either of INTERNAL or EXTERNAL. Defaults to EXTERNAL.
-	// NOTE: non-EXTERNAL type may be part of closed beta feature and not available for public use.
 	// the type of network the load balancer is accessible from (EXTERNAL or INTERNAL)
 	Network *string `json:"network,omitempty" tf:"network,omitempty"`
+
+	// The network stack determines the allocation of ipv4/ipv6 addresses to the load balancer. It must be either of IPV4 or DUALSTACK. Defaults to IPV4.
+	// The network stack determines the allocation of ipv4/ipv6 addresses to the load balancer. Enum: 'IPV4' 'DUALSTACK'
+	NetworkStack *string `json:"networkStack,omitempty" tf:"network_stack,omitempty"`
 
 	// The ID of the project that the load balancer is associated with. If no ID is provided at creation, the load balancer associates with the user's default project.
 	ProjectID *string `json:"projectId,omitempty" tf:"project_id,omitempty"`
@@ -566,7 +576,7 @@ type LoadbalancerObservation struct {
 	// The size of the Load Balancer. It must be either lb-small, lb-medium, or lb-large. Defaults to lb-small. Only one of size or size_unit may be provided.
 	Size *string `json:"size,omitempty" tf:"size,omitempty"`
 
-	// The size of the Load Balancer. It must be in the range (1, 100). Defaults to 1. Only one of size or size_unit may be provided.
+	// The size of the Load Balancer. It must be in the range (1, 200). Defaults to 1. Only one of size or size_unit may be provided.
 	SizeUnit *float64 `json:"sizeUnit,omitempty" tf:"size_unit,omitempty"`
 
 	Status *string `json:"status,omitempty" tf:"status,omitempty"`
@@ -575,15 +585,17 @@ type LoadbalancerObservation struct {
 	// Load Balancer. The sticky_sessions block is documented below. Only 1 sticky_sessions block is allowed.
 	StickySessions []StickySessionsObservation `json:"stickySessions,omitempty" tf:"sticky_sessions,omitempty"`
 
+	// The tls cipher policy controls the cipher suites to be used by the load balancer. It must be either of DEFAULT or STRONG. Defaults to DEFAULT.
+	// The tls cipher policy to be used for the load balancer. Enum: 'DEFAULT' 'STRONG'
+	TLSCipherPolicy *string `json:"tlsCipherPolicy,omitempty" tf:"tls_cipher_policy,omitempty"`
+
 	// A list of Load Balancer IDs to be attached behind a Global Load Balancer.
-	// NOTE: this is a closed beta feature and not available for public use.
 	// list of load balancer IDs to put behind a global load balancer
 	// +listType=set
 	TargetLoadBalancerIds []*string `json:"targetLoadBalancerIds,omitempty" tf:"target_load_balancer_ids,omitempty"`
 
-	// The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
-	// NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
-	// the type of the load balancer (GLOBAL or REGIONAL)
+	// The type of the Load Balancer. It must be either of REGIONAL, REGIONAL_NETWORK, or GLOBAL. Defaults to REGIONAL.
+	// the type of the load balancer (GLOBAL, REGIONAL, or REGIONAL_NETWORK)
 	Type *string `json:"type,omitempty" tf:"type,omitempty"`
 
 	// The uniform resource name for the Load Balancer
@@ -606,7 +618,6 @@ type LoadbalancerParameters struct {
 	DisableLetsEncryptDNSRecords *bool `json:"disableLetsEncryptDnsRecords,omitempty" tf:"disable_lets_encrypt_dns_records,omitempty"`
 
 	// A list of domains required to ingress traffic to a Global Load Balancer. The domains block is documented below.
-	// NOTE: this is a closed beta feature and not available for public use.
 	// the list of domains required to ingress traffic to global load balancer
 	// +kubebuilder:validation:Optional
 	Domains []DomainsParameters `json:"domains,omitempty" tf:"domains,omitempty"`
@@ -649,7 +660,6 @@ type LoadbalancerParameters struct {
 	ForwardingRule []ForwardingRuleParameters `json:"forwardingRule,omitempty" tf:"forwarding_rule,omitempty"`
 
 	// A block containing glb_settings required to define target rules for a Global Load Balancer. The glb_settings block is documented below.
-	// NOTE: this is a closed beta feature and not available for public use.
 	// configuration options for global load balancer
 	// +kubebuilder:validation:Optional
 	GlbSettings []GlbSettingsParameters `json:"glbSettings,omitempty" tf:"glb_settings,omitempty"`
@@ -668,10 +678,14 @@ type LoadbalancerParameters struct {
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
 
 	// The type of network the Load Balancer is accessible from. It must be either of INTERNAL or EXTERNAL. Defaults to EXTERNAL.
-	// NOTE: non-EXTERNAL type may be part of closed beta feature and not available for public use.
 	// the type of network the load balancer is accessible from (EXTERNAL or INTERNAL)
 	// +kubebuilder:validation:Optional
 	Network *string `json:"network,omitempty" tf:"network,omitempty"`
+
+	// The network stack determines the allocation of ipv4/ipv6 addresses to the load balancer. It must be either of IPV4 or DUALSTACK. Defaults to IPV4.
+	// The network stack determines the allocation of ipv4/ipv6 addresses to the load balancer. Enum: 'IPV4' 'DUALSTACK'
+	// +kubebuilder:validation:Optional
+	NetworkStack *string `json:"networkStack,omitempty" tf:"network_stack,omitempty"`
 
 	// The ID of the project that the load balancer is associated with. If no ID is provided at creation, the load balancer associates with the user's default project.
 	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/project/v1alpha1.Project
@@ -700,7 +714,7 @@ type LoadbalancerParameters struct {
 	// +kubebuilder:validation:Optional
 	Size *string `json:"size,omitempty" tf:"size,omitempty"`
 
-	// The size of the Load Balancer. It must be in the range (1, 100). Defaults to 1. Only one of size or size_unit may be provided.
+	// The size of the Load Balancer. It must be in the range (1, 200). Defaults to 1. Only one of size or size_unit may be provided.
 	// +kubebuilder:validation:Optional
 	SizeUnit *float64 `json:"sizeUnit,omitempty" tf:"size_unit,omitempty"`
 
@@ -709,16 +723,19 @@ type LoadbalancerParameters struct {
 	// +kubebuilder:validation:Optional
 	StickySessions []StickySessionsParameters `json:"stickySessions,omitempty" tf:"sticky_sessions,omitempty"`
 
+	// The tls cipher policy controls the cipher suites to be used by the load balancer. It must be either of DEFAULT or STRONG. Defaults to DEFAULT.
+	// The tls cipher policy to be used for the load balancer. Enum: 'DEFAULT' 'STRONG'
+	// +kubebuilder:validation:Optional
+	TLSCipherPolicy *string `json:"tlsCipherPolicy,omitempty" tf:"tls_cipher_policy,omitempty"`
+
 	// A list of Load Balancer IDs to be attached behind a Global Load Balancer.
-	// NOTE: this is a closed beta feature and not available for public use.
 	// list of load balancer IDs to put behind a global load balancer
 	// +kubebuilder:validation:Optional
 	// +listType=set
 	TargetLoadBalancerIds []*string `json:"targetLoadBalancerIds,omitempty" tf:"target_load_balancer_ids,omitempty"`
 
-	// The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
-	// NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
-	// the type of the load balancer (GLOBAL or REGIONAL)
+	// The type of the Load Balancer. It must be either of REGIONAL, REGIONAL_NETWORK, or GLOBAL. Defaults to REGIONAL.
+	// the type of the load balancer (GLOBAL, REGIONAL, or REGIONAL_NETWORK)
 	// +kubebuilder:validation:Optional
 	Type *string `json:"type,omitempty" tf:"type,omitempty"`
 
@@ -744,8 +761,7 @@ type StickySessionsInitParameters struct {
 	// The number of seconds until the cookie set by the Load Balancer expires. This attribute is required when using cookies for the sticky sessions type.
 	CookieTTLSeconds *float64 `json:"cookieTtlSeconds,omitempty" tf:"cookie_ttl_seconds,omitempty"`
 
-	// The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
-	// NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
+	// The type of the Load Balancer. It must be either of REGIONAL, REGIONAL_NETWORK, or GLOBAL. Defaults to REGIONAL.
 	Type *string `json:"type,omitempty" tf:"type,omitempty"`
 }
 
@@ -757,8 +773,7 @@ type StickySessionsObservation struct {
 	// The number of seconds until the cookie set by the Load Balancer expires. This attribute is required when using cookies for the sticky sessions type.
 	CookieTTLSeconds *float64 `json:"cookieTtlSeconds,omitempty" tf:"cookie_ttl_seconds,omitempty"`
 
-	// The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
-	// NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
+	// The type of the Load Balancer. It must be either of REGIONAL, REGIONAL_NETWORK, or GLOBAL. Defaults to REGIONAL.
 	Type *string `json:"type,omitempty" tf:"type,omitempty"`
 }
 
@@ -772,8 +787,7 @@ type StickySessionsParameters struct {
 	// +kubebuilder:validation:Optional
 	CookieTTLSeconds *float64 `json:"cookieTtlSeconds,omitempty" tf:"cookie_ttl_seconds,omitempty"`
 
-	// The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
-	// NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
+	// The type of the Load Balancer. It must be either of REGIONAL, REGIONAL_NETWORK, or GLOBAL. Defaults to REGIONAL.
 	// +kubebuilder:validation:Optional
 	Type *string `json:"type,omitempty" tf:"type,omitempty"`
 }

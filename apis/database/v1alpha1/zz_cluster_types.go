@@ -47,10 +47,10 @@ type ClusterInitParameters struct {
 	// Create a new database cluster based on a backup of an existing cluster.
 	BackupRestore []BackupRestoreInitParameters `json:"backupRestore,omitempty" tf:"backup_restore,omitempty"`
 
-	// Database engine used by the cluster (ex. pg for PostreSQL, mysql for MySQL, redis for Redis, mongodb for MongoDB, or kafka for Kafka).
+	// Database engine used by the cluster (ex. pg for PostreSQL, mysql for MySQL, valkey for Valkey, mongodb for MongoDB, or kafka for Kafka).
 	Engine *string `json:"engine,omitempty" tf:"engine,omitempty"`
 
-	// A string specifying the eviction policy for a Redis cluster. Valid values are: noeviction, allkeys_lru, allkeys_random, volatile_lru, volatile_random, or volatile_ttl.
+	// A string specifying the eviction policy for a Valkey cluster. Valid values are: noeviction, allkeys_lru, allkeys_random, volatile_lru, volatile_random, or volatile_ttl.
 	EvictionPolicy *string `json:"evictionPolicy,omitempty" tf:"eviction_policy,omitempty"`
 
 	// Defines when the automatic maintenance should be performed for the database cluster.
@@ -92,7 +92,7 @@ type ClusterInitParameters struct {
 	// A comma separated string specifying the  SQL modes for a MySQL cluster.
 	SQLMode *string `json:"sqlMode,omitempty" tf:"sql_mode,omitempty"`
 
-	// Database Droplet size associated with the cluster (ex. db-s-1vcpu-1gb). See here for a list of valid size slugs.
+	// Database Droplet size associated with the cluster (ex. db-s-1vcpu-1gb). See the DigitalOcean API for a list of valid size slugs.
 	Size *string `json:"size,omitempty" tf:"size,omitempty"`
 
 	// Defines the disk size, in MiB, allocated to the cluster. This can be adjusted on MySQL and PostreSQL clusters based on predefined ranges for each slug/droplet size.
@@ -115,10 +115,10 @@ type ClusterObservation struct {
 	// Name of the cluster's default database.
 	Database *string `json:"database,omitempty" tf:"database,omitempty"`
 
-	// Database engine used by the cluster (ex. pg for PostreSQL, mysql for MySQL, redis for Redis, mongodb for MongoDB, or kafka for Kafka).
+	// Database engine used by the cluster (ex. pg for PostreSQL, mysql for MySQL, valkey for Valkey, mongodb for MongoDB, or kafka for Kafka).
 	Engine *string `json:"engine,omitempty" tf:"engine,omitempty"`
 
-	// A string specifying the eviction policy for a Redis cluster. Valid values are: noeviction, allkeys_lru, allkeys_random, volatile_lru, volatile_random, or volatile_ttl.
+	// A string specifying the eviction policy for a Valkey cluster. Valid values are: noeviction, allkeys_lru, allkeys_random, volatile_lru, volatile_random, or volatile_ttl.
 	EvictionPolicy *string `json:"evictionPolicy,omitempty" tf:"eviction_policy,omitempty"`
 
 	// Database cluster's hostname.
@@ -129,6 +129,9 @@ type ClusterObservation struct {
 
 	// Defines when the automatic maintenance should be performed for the database cluster.
 	MaintenanceWindow []MaintenanceWindowObservation `json:"maintenanceWindow,omitempty" tf:"maintenance_window,omitempty"`
+
+	// A list of metrics endpoints for the database cluster, providing URLs to access Prometheus-compatible metrics.
+	MetricsEndpoints []*string `json:"metricsEndpoints,omitempty" tf:"metrics_endpoints,omitempty"`
 
 	// The name of the database cluster.
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
@@ -154,7 +157,7 @@ type ClusterObservation struct {
 	// A comma separated string specifying the  SQL modes for a MySQL cluster.
 	SQLMode *string `json:"sqlMode,omitempty" tf:"sql_mode,omitempty"`
 
-	// Database Droplet size associated with the cluster (ex. db-s-1vcpu-1gb). See here for a list of valid size slugs.
+	// Database Droplet size associated with the cluster (ex. db-s-1vcpu-1gb). See the DigitalOcean API for a list of valid size slugs.
 	Size *string `json:"size,omitempty" tf:"size,omitempty"`
 
 	// Defines the disk size, in MiB, allocated to the cluster. This can be adjusted on MySQL and PostreSQL clusters based on predefined ranges for each slug/droplet size.
@@ -193,11 +196,11 @@ type ClusterParameters struct {
 	// +kubebuilder:validation:Optional
 	BackupRestore []BackupRestoreParameters `json:"backupRestore,omitempty" tf:"backup_restore,omitempty"`
 
-	// Database engine used by the cluster (ex. pg for PostreSQL, mysql for MySQL, redis for Redis, mongodb for MongoDB, or kafka for Kafka).
+	// Database engine used by the cluster (ex. pg for PostreSQL, mysql for MySQL, valkey for Valkey, mongodb for MongoDB, or kafka for Kafka).
 	// +kubebuilder:validation:Optional
 	Engine *string `json:"engine,omitempty" tf:"engine,omitempty"`
 
-	// A string specifying the eviction policy for a Redis cluster. Valid values are: noeviction, allkeys_lru, allkeys_random, volatile_lru, volatile_random, or volatile_ttl.
+	// A string specifying the eviction policy for a Valkey cluster. Valid values are: noeviction, allkeys_lru, allkeys_random, volatile_lru, volatile_random, or volatile_ttl.
 	// +kubebuilder:validation:Optional
 	EvictionPolicy *string `json:"evictionPolicy,omitempty" tf:"eviction_policy,omitempty"`
 
@@ -247,7 +250,7 @@ type ClusterParameters struct {
 	// +kubebuilder:validation:Optional
 	SQLMode *string `json:"sqlMode,omitempty" tf:"sql_mode,omitempty"`
 
-	// Database Droplet size associated with the cluster (ex. db-s-1vcpu-1gb). See here for a list of valid size slugs.
+	// Database Droplet size associated with the cluster (ex. db-s-1vcpu-1gb). See the DigitalOcean API for a list of valid size slugs.
 	// +kubebuilder:validation:Optional
 	Size *string `json:"size,omitempty" tf:"size,omitempty"`
 
@@ -268,29 +271,29 @@ type ClusterParameters struct {
 
 type MaintenanceWindowInitParameters struct {
 
-	// The day of the week on which to apply maintenance updates.
+	// The day of the week on which to apply maintenance updates. May be one of monday through sunday.
 	Day *string `json:"day,omitempty" tf:"day,omitempty"`
 
-	// The hour in UTC at which maintenance updates will be applied in 24 hour format.
+	// The hour in UTC at which maintenance updates will be applied as a string in 24 hour format, e.g. 13:00.
 	Hour *string `json:"hour,omitempty" tf:"hour,omitempty"`
 }
 
 type MaintenanceWindowObservation struct {
 
-	// The day of the week on which to apply maintenance updates.
+	// The day of the week on which to apply maintenance updates. May be one of monday through sunday.
 	Day *string `json:"day,omitempty" tf:"day,omitempty"`
 
-	// The hour in UTC at which maintenance updates will be applied in 24 hour format.
+	// The hour in UTC at which maintenance updates will be applied as a string in 24 hour format, e.g. 13:00.
 	Hour *string `json:"hour,omitempty" tf:"hour,omitempty"`
 }
 
 type MaintenanceWindowParameters struct {
 
-	// The day of the week on which to apply maintenance updates.
+	// The day of the week on which to apply maintenance updates. May be one of monday through sunday.
 	// +kubebuilder:validation:Optional
 	Day *string `json:"day" tf:"day,omitempty"`
 
-	// The hour in UTC at which maintenance updates will be applied in 24 hour format.
+	// The hour in UTC at which maintenance updates will be applied as a string in 24 hour format, e.g. 13:00.
 	// +kubebuilder:validation:Optional
 	Hour *string `json:"hour" tf:"hour,omitempty"`
 }

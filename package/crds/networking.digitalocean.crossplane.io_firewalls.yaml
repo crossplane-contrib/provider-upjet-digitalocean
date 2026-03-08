@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.14.0
+    controller-gen.kubebuilder.io/version: v0.16.5
   name: firewalls.networking.digitalocean.crossplane.io
 spec:
   group: networking.digitalocean.crossplane.io
@@ -75,7 +75,8 @@ spec:
                   dropletIds:
                     description: |-
                       The list of the IDs of the Droplets assigned
-                      to the Firewall.
+                      to the Firewall (max. 10). If you want to assign more droplets to the
+                      Firewall, add Tags to them and use the tags argument below.
                     items:
                       type: number
                     type: array
@@ -286,7 +287,8 @@ spec:
                       type: object
                     type: array
                   tags:
-                    description: The names of the Tags assigned to the Firewall.
+                    description: The names of the Tags assigned to the Firewall (max.
+                      5).
                     items:
                       type: string
                     type: array
@@ -308,7 +310,8 @@ spec:
                   dropletIds:
                     description: |-
                       The list of the IDs of the Droplets assigned
-                      to the Firewall.
+                      to the Firewall (max. 10). If you want to assign more droplets to the
+                      Firewall, add Tags to them and use the tags argument below.
                     items:
                       type: number
                     type: array
@@ -519,7 +522,8 @@ spec:
                       type: object
                     type: array
                   tags:
-                    description: The names of the Tags assigned to the Firewall.
+                    description: The names of the Tags assigned to the Firewall (max.
+                      5).
                     items:
                       type: string
                     type: array
@@ -710,7 +714,8 @@ spec:
                   dropletIds:
                     description: |-
                       The list of the IDs of the Droplets assigned
-                      to the Firewall.
+                      to the Firewall (max. 10). If you want to assign more droplets to the
+                      Firewall, add Tags to them and use the tags argument below.
                     items:
                       type: number
                     type: array
@@ -873,7 +878,8 @@ spec:
                       This can be "waiting", "succeeded", or "failed".
                     type: string
                   tags:
-                    description: The names of the Tags assigned to the Firewall.
+                    description: The names of the Tags assigned to the Firewall (max.
+                      5).
                     items:
                       type: string
                     type: array

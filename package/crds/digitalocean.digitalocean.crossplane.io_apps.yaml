@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.14.0
+    controller-gen.kubebuilder.io/version: v0.16.5
   name: apps.digitalocean.digitalocean.crossplane.io
 spec:
   group: digitalocean.digitalocean.crossplane.io
@@ -79,7 +79,7 @@ spec:
                       properties:
                         id:
                           description: |-
-                            The ID of the app.
+                            : The ID of the VPC.
                             The ID of the dedicated egress IP.
                           type: string
                         ip:
@@ -91,6 +91,11 @@ spec:
                           type: string
                       type: object
                     type: array
+                  deploymentPerPage:
+                    description: |-
+                      Controls how many deployments are requested per API page when listing deployments during create/update waits. Defaults to 20. Reduce this value (for example 5) if you experience API timeouts when listing deployments.
+                      Number of deployments to request per page when polling for deployments
+                    type: number
                   projectId:
                     description: The ID of the project that the app is assigned to.
                     type: string
@@ -178,15 +183,43 @@ spec:
                           description: Describes an alert policy for the app.
                           items:
                             properties:
+                              destinations:
+                                description: Specification for alert destination.
+                                items:
+                                  properties:
+                                    emails:
+                                      description: Determines which emails receive
+                                        alerts. The emails must be team members. If
+                                        not set, the team's email is used by default.
+                                      items:
+                                        type: string
+                                      type: array
+                                    slackWebhooks:
+                                      description: Determines which slack channels
+                                        or users receive alerts .
+                                      items:
+                                        properties:
+                                          channel:
+                                            description: The Slack channel to send
+                                              notifications to.
+                                            type: string
+                                          url:
+                                            description: The Slack webhook URL.
+                                            type: string
+                                        type: object
+                                      type: array
+                                  type: object
+                                type: array
                               disabled:
-                                description: 'Determines whether or not the alert
-                                  is disabled (default: false).'
+                                description: 'Determines whether the alert is disabled
+                                  (default: false).'
                                 type: boolean
                               rule:
                                 description: 'The type of the alert to configure.
                                   Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
                                   DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
-                                  DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                  DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or
+                                  AUTOSCALE_SUCCEEDED.'
                                 type: string
                             type: object
                           type: array
@@ -230,6 +263,16 @@ spec:
                                 type: string
                             type: object
                           type: array
+                        disableEdgeCache:
+                          description: |-
+                            A boolean indicating whether to disable the edge cache for this app. Default: false. Available only for non-static sites. Requires custom domains and applies to all the domains of the app.
+                            Whether to disable the edge cache for the app. Default is false, which enables the edge cache.
+                          type: boolean
+                        disableEmailObfuscation:
+                          description: |-
+                            A boolean indicating whether to disable email obfuscation for this app. Default: false. Requires custom domains and applies to all the domains of the app.
+                            Email obfuscation configuration for the app. Default is false, which keeps the email obfuscated.
+                          type: boolean
                         domain:
                           description: Describes a domain where the application will
                             be made available.
@@ -273,6 +316,11 @@ spec:
                                 type: string
                             type: object
                           type: array
+                        enhancedThreatControlEnabled:
+                          description: |-
+                            A boolean, when set to true, enables enhanced analyzing of incoming traffic to prevent layer 7 DDoS attacks. Default: false. Requires custom domains and applies to all the domains of the app.
+                            Whether to enable enhanced threat control for the app. Default is false. Set to true to enable enhanced threat control, putting additional security measures for Layer 7 DDoS attacks.
+                          type: boolean
                         env:
                           description: Describes an app-wide environment variable
                             made available to all components.
@@ -331,9 +379,37 @@ spec:
                                   Alert policies for the app component
                                 items:
                                   properties:
+                                    destinations:
+                                      description: Specification for alert destination.
+                                      items:
+                                        properties:
+                                          emails:
+                                            description: Determines which emails receive
+                                              alerts. The emails must be team members.
+                                              If not set, the team's email is used
+                                              by default.
+                                            items:
+                                              type: string
+                                            type: array
+                                          slackWebhooks:
+                                            description: Determines which slack channels
+                                              or users receive alerts .
+                                            items:
+                                              properties:
+                                                channel:
+                                                  description: The Slack channel to
+                                                    send notifications to.
+                                                  type: string
+                                                url:
+                                                  description: The Slack webhook URL.
+                                                  type: string
+                                              type: object
+                                            type: array
+                                        type: object
+                                      type: array
                                     disabled:
-                                      description: 'Determines whether or not the
-                                        alert is disabled (default: false).'
+                                      description: 'Determines whether the alert is
+                                        disabled (default: false).'
                                       type: boolean
                                     operator:
                                       description: The operator to use. This is either
@@ -343,7 +419,8 @@ spec:
                                       description: 'The type of the alert to configure.
                                         Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
                                         DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
-                                        DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                        DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED,
+                                        or AUTOSCALE_SUCCEEDED.'
                                       type: string
                                     value:
                                       description: The value of the environment variable.
@@ -352,6 +429,30 @@ spec:
                                       description: 'The time before alerts should
                                         be triggered. This is may be one of: FIVE_MINUTES,
                                         TEN_MINUTES, THIRTY_MINUTES, ONE_HOUR.'
+                                      type: string
+                                  type: object
+                                type: array
+                              bitbucket:
+                                description: A GitHub repo to use as the component's
+                                  source. DigitalOcean App Platform must have access
+                                  to the repository. Only one of git, github, bitbucket,
+                                  gitlab, or image may be set.
+                                items:
+                                  properties:
+                                    branch:
+                                      description: |-
+                                        The name of the branch to use.
+                                        The name of the branch to use.
+                                      type: string
+                                    deployOnPush:
+                                      description: |-
+                                        Whether to automatically deploy new commits made to the repo.
+                                        Whether to automatically deploy new commits made to the repo
+                                      type: boolean
+                                    repo:
+                                      description: |-
+                                        The name of the repo in the format owner/repo.
+                                        The name of the repo in the format `owner/repo`.
                                       type: string
                                   type: object
                                 type: array
@@ -388,7 +489,7 @@ spec:
                                         properties:
                                           exact:
                                             description: |-
-                                              The Access-Control-Allow-Origin header will be set to the client's origin only if the client's origin exactly matches the value you provide.
+                                              Exact match.
                                               Exact string match.
                                             type: string
                                           prefix:
@@ -675,7 +776,8 @@ spec:
                                 description: 'The type of the alert to configure.
                                   Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
                                   DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
-                                  DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                  DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or
+                                  AUTOSCALE_SUCCEEDED.'
                                 items:
                                   properties:
                                     component:
@@ -737,7 +839,7 @@ spec:
                                               properties:
                                                 exact:
                                                   description: |-
-                                                    The Access-Control-Allow-Origin header will be set to the client's origin only if the client's origin exactly matches the value you provide.
+                                                    Exact match.
                                                     Exact string match.
                                                   type: string
                                                 prefix:
@@ -772,6 +874,16 @@ spec:
                                         rule
                                       items:
                                         properties:
+                                          authority:
+                                            description: The authority (domain) to
+                                              match on.
+                                            items:
+                                              properties:
+                                                exact:
+                                                  description: Exact match.
+                                                  type: string
+                                              type: object
+                                            type: array
                                           path:
                                             description: The path to match on.
                                             items:
@@ -790,8 +902,8 @@ spec:
                                       items:
                                         properties:
                                           authority:
-                                            description: The authority/host to redirect
-                                              to. This can be a hostname or IP address.
+                                            description: The authority (domain) to
+                                              match on.
                                             type: string
                                           port:
                                             description: The port to redirect to.
@@ -813,6 +925,17 @@ spec:
                                       type: array
                                   type: object
                                 type: array
+                              secureHeader:
+                                items:
+                                  properties:
+                                    key:
+                                      description: The name of the environment variable.
+                                      type: string
+                                    value:
+                                      description: The value of the environment variable.
+                                      type: string
+                                  type: object
+                                type: array
                             type: object
                           type: array
                         job:
@@ -824,9 +947,37 @@ spec:
                                   Alert policies for the app component
                                 items:
                                   properties:
+                                    destinations:
+                                      description: Specification for alert destination.
+                                      items:
+                                        properties:
+                                          emails:
+                                            description: Determines which emails receive
+                                              alerts. The emails must be team members.
+                                              If not set, the team's email is used
+                                              by default.
+                                            items:
+                                              type: string
+                                            type: array
+                                          slackWebhooks:
+                                            description: Determines which slack channels
+                                              or users receive alerts .
+                                            items:
+                                              properties:
+                                                channel:
+                                                  description: The Slack channel to
+                                                    send notifications to.
+                                                  type: string
+                                                url:
+                                                  description: The Slack webhook URL.
+                                                  type: string
+                                              type: object
+                                            type: array
+                                        type: object
+                                      type: array
                                     disabled:
-                                      description: 'Determines whether or not the
-                                        alert is disabled (default: false).'
+                                      description: 'Determines whether the alert is
+                                        disabled (default: false).'
                                       type: boolean
                                     operator:
                                       description: The operator to use. This is either
@@ -836,7 +987,8 @@ spec:
                                       description: 'The type of the alert to configure.
                                         Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
                                         DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
-                                        DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                        DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED,
+                                        or AUTOSCALE_SUCCEEDED.'
                                       type: string
                                     value:
                                       description: The value of the environment variable.
@@ -845,6 +997,30 @@ spec:
                                       description: 'The time before alerts should
                                         be triggered. This is may be one of: FIVE_MINUTES,
                                         TEN_MINUTES, THIRTY_MINUTES, ONE_HOUR.'
+                                      type: string
+                                  type: object
+                                type: array
+                              bitbucket:
+                                description: A GitHub repo to use as the component's
+                                  source. DigitalOcean App Platform must have access
+                                  to the repository. Only one of git, github, bitbucket,
+                                  gitlab, or image may be set.
+                                items:
+                                  properties:
+                                    branch:
+                                      description: |-
+                                        The name of the branch to use.
+                                        The name of the branch to use.
+                                      type: string
+                                    deployOnPush:
+                                      description: |-
+                                        Whether to automatically deploy new commits made to the repo.
+                                        Whether to automatically deploy new commits made to the repo
+                                      type: boolean
+                                    repo:
+                                      description: |-
+                                        The name of the repo in the format owner/repo.
+                                        The name of the repo in the format `owner/repo`.
                                       type: string
                                   type: object
                                 type: array
@@ -985,11 +1161,16 @@ spec:
                                         properties:
                                           enabled:
                                             description: |-
-                                              Whether to automatically deploy images pushed to DOCR.
+                                              Indicates whether maintenance mode should be enabled for the app.
                                               Whether to automatically deploy images pushed to DOCR.
                                             type: boolean
                                         type: object
                                       type: array
+                                    digest:
+                                      description: |-
+                                        The image digest. Cannot be specified if tag is provided.
+                                        The image digest. Cannot be specified if tag is provided.
+                                      type: string
                                     registry:
                                       description: |-
                                         The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.
@@ -1027,7 +1208,7 @@ spec:
                                     tag:
                                       description: |-
                                         The repository tag. Defaults to latest if not provided.
-                                        The repository tag. Defaults to latest if not provided.
+                                        The repository tag. Defaults to latest if not provided. Cannot be specified if digest is provided.
                                       type: string
                                   type: object
                                 type: array
@@ -1172,6 +1353,40 @@ spec:
                                   An optional path to the working directory to use for the build.
                                   An optional path to the working directory to use for the build.
                                 type: string
+                              termination:
+                                description: Contains a component's termination parameters.
+                                items:
+                                  properties:
+                                    gracePeriodSeconds:
+                                      description: |-
+                                        The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+                                        The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+                                      type: number
+                                  type: object
+                                type: array
+                            type: object
+                          type: array
+                        maintenance:
+                          description: |-
+                            Specification to configure maintenance settings for the app, such as maintenance mode and archiving the app.
+                            Specification to configure maintenance settings for the app, such as maintenance mode and archiving the app.
+                          items:
+                            properties:
+                              archive:
+                                description: |-
+                                  Indicates whether the app should be archived. Setting this to true implies that enabled is set to true.
+                                  Indicates whether the app should be archived. Setting this to true implies that enabled is set to true.
+                                type: boolean
+                              enabled:
+                                description: |-
+                                  Indicates whether maintenance mode should be enabled for the app.
+                                  Indicates whether maintenance mode should be enabled for the app.
+                                type: boolean
+                              offlinePageUrl:
+                                description: |-
+                                  A custom offline page to display when maintenance mode is enabled or the app is archived.
+                                  A custom offline page to display when maintenance mode is enabled or the app is archived.
+                                type: string
                             type: object
                           type: array
                         name:
@@ -1193,9 +1408,37 @@ spec:
                                   Alert policies for the app component
                                 items:
                                   properties:
+                                    destinations:
+                                      description: Specification for alert destination.
+                                      items:
+                                        properties:
+                                          emails:
+                                            description: Determines which emails receive
+                                              alerts. The emails must be team members.
+                                              If not set, the team's email is used
+                                              by default.
+                                            items:
+                                              type: string
+                                            type: array
+                                          slackWebhooks:
+                                            description: Determines which slack channels
+                                              or users receive alerts .
+                                            items:
+                                              properties:
+                                                channel:
+                                                  description: The Slack channel to
+                                                    send notifications to.
+                                                  type: string
+                                                url:
+                                                  description: The Slack webhook URL.
+                                                  type: string
+                                              type: object
+                                            type: array
+                                        type: object
+                                      type: array
                                     disabled:
-                                      description: 'Determines whether or not the
-                                        alert is disabled (default: false).'
+                                      description: 'Determines whether the alert is
+                                        disabled (default: false).'
                                       type: boolean
                                     operator:
                                       description: The operator to use. This is either
@@ -1205,7 +1448,8 @@ spec:
                                       description: 'The type of the alert to configure.
                                         Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
                                         DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
-                                        DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                        DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED,
+                                        or AUTOSCALE_SUCCEEDED.'
                                       type: string
                                     value:
                                       description: The value of the environment variable.
@@ -1255,6 +1499,30 @@ spec:
                                       type: number
                                   type: object
                                 type: array
+                              bitbucket:
+                                description: A GitHub repo to use as the component's
+                                  source. DigitalOcean App Platform must have access
+                                  to the repository. Only one of git, github, bitbucket,
+                                  gitlab, or image may be set.
+                                items:
+                                  properties:
+                                    branch:
+                                      description: |-
+                                        The name of the branch to use.
+                                        The name of the branch to use.
+                                      type: string
+                                    deployOnPush:
+                                      description: |-
+                                        Whether to automatically deploy new commits made to the repo.
+                                        Whether to automatically deploy new commits made to the repo
+                                      type: boolean
+                                    repo:
+                                      description: |-
+                                        The name of the repo in the format owner/repo.
+                                        The name of the repo in the format `owner/repo`.
+                                      type: string
+                                  type: object
+                                type: array
                               buildCommand:
                                 description: |-
                                   An optional build command to run while building this component from source.
@@ -1293,7 +1561,7 @@ spec:
                                         properties:
                                           exact:
                                             description: |-
-                                              The Access-Control-Allow-Origin header will be set to the client's origin only if the client's origin exactly matches the value you provide.
+                                              Exact match.
                                               Exact string match.
                                             type: string
                                           prefix:
@@ -1502,11 +1770,16 @@ spec:
                                         properties:
                                           enabled:
                                             description: |-
-                                              Whether to automatically deploy images pushed to DOCR.
+                                              Indicates whether maintenance mode should be enabled for the app.
                                               Whether to automatically deploy images pushed to DOCR.
                                             type: boolean
                                         type: object
                                       type: array
+                                    digest:
+                                      description: |-
+                                        The image digest. Cannot be specified if tag is provided.
+                                        The image digest. Cannot be specified if tag is provided.
+                                      type: string
                                     registry:
                                       description: |-
                                         The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.
@@ -1544,7 +1817,7 @@ spec:
                                     tag:
                                       description: |-
                                         The repository tag. Defaults to latest if not provided.
-                                        The repository tag. Defaults to latest if not provided.
+                                        The repository tag. Defaults to latest if not provided. Cannot be specified if digest is provided.
                                       type: string
                                   type: object
                                 type: array
@@ -1708,11 +1981,51 @@ spec:
                                   An optional path to the working directory to use for the build.
                                   An optional path to the working directory to use for the build.
                                 type: string
+                              termination:
+                                description: Contains a component's termination parameters.
+                                items:
+                                  properties:
+                                    drainSeconds:
+                                      description: |-
+                                        The number of seconds to wait between selecting a container instance for termination and issuing the TERM signal. Selecting a container instance for termination begins an asynchronous drain of new requests on upstream load-balancers. Default: 15 seconds, Minimum 1, Maximum 110.
+                                        The number of seconds to wait between selecting a container instance for termination and issuing the TERM signal. Selecting a container instance for termination begins an asynchronous drain of new requests on upstream load-balancers. Default: 15 seconds, Minimum 1, Maximum 110.
+                                      type: number
+                                    gracePeriodSeconds:
+                                      description: |-
+                                        The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+                                        The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+                                      type: number
+                                  type: object
+                                type: array
                             type: object
                           type: array
                         staticSite:
                           items:
                             properties:
+                              bitbucket:
+                                description: A GitHub repo to use as the component's
+                                  source. DigitalOcean App Platform must have access
+                                  to the repository. Only one of git, github, bitbucket,
+                                  gitlab, or image may be set.
+                                items:
+                                  properties:
+                                    branch:
+                                      description: |-
+                                        The name of the branch to use.
+                                        The name of the branch to use.
+                                      type: string
+                                    deployOnPush:
+                                      description: |-
+                                        Whether to automatically deploy new commits made to the repo.
+                                        Whether to automatically deploy new commits made to the repo
+                                      type: boolean
+                                    repo:
+                                      description: |-
+                                        The name of the repo in the format owner/repo.
+                                        The name of the repo in the format `owner/repo`.
+                                      type: string
+                                  type: object
+                                type: array
                               buildCommand:
                                 description: |-
                                   An optional build command to run while building this component from source.
@@ -1756,7 +2069,7 @@ spec:
                                         properties:
                                           exact:
                                             description: |-
-                                              The Access-Control-Allow-Origin header will be set to the client's origin only if the client's origin exactly matches the value you provide.
+                                              Exact match.
                                               Exact string match.
                                             type: string
                                           prefix:
@@ -1948,6 +2261,17 @@ spec:
                                 type: string
                             type: object
                           type: array
+                        vpc:
+                          description: ': Specification for VPC.'
+                          items:
+                            properties:
+                              id:
+                                description: |-
+                                  : The ID of the VPC.
+                                  The ID of the VPC.
+                                type: string
+                            type: object
+                          type: array
                         worker:
                           items:
                             properties:
@@ -1957,9 +2281,37 @@ spec:
                                   Alert policies for the app component
                                 items:
                                   properties:
+                                    destinations:
+                                      description: Specification for alert destination.
+                                      items:
+                                        properties:
+                                          emails:
+                                            description: Determines which emails receive
+                                              alerts. The emails must be team members.
+                                              If not set, the team's email is used
+                                              by default.
+                                            items:
+                                              type: string
+                                            type: array
+                                          slackWebhooks:
+                                            description: Determines which slack channels
+                                              or users receive alerts .
+                                            items:
+                                              properties:
+                                                channel:
+                                                  description: The Slack channel to
+                                                    send notifications to.
+                                                  type: string
+                                                url:
+                                                  description: The Slack webhook URL.
+                                                  type: string
+                                              type: object
+                                            type: array
+                                        type: object
+                                      type: array
                                     disabled:
-                                      description: 'Determines whether or not the
-                                        alert is disabled (default: false).'
+                                      description: 'Determines whether the alert is
+                                        disabled (default: false).'
                                       type: boolean
                                     operator:
                                       description: The operator to use. This is either
@@ -1969,7 +2321,8 @@ spec:
                                       description: 'The type of the alert to configure.
                                         Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
                                         DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
-                                        DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                        DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED,
+                                        or AUTOSCALE_SUCCEEDED.'
                                       type: string
                                     value:
                                       description: The value of the environment variable.
@@ -1978,6 +2331,68 @@ spec:
                                       description: 'The time before alerts should
                                         be triggered. This is may be one of: FIVE_MINUTES,
                                         TEN_MINUTES, THIRTY_MINUTES, ONE_HOUR.'
+                                      type: string
+                                  type: object
+                                type: array
+                              autoscaling:
+                                description: Configuration for automatically scaling
+                                  this component based on metrics.
+                                items:
+                                  properties:
+                                    maxInstanceCount:
+                                      description: |-
+                                        The maximum amount of instances for this component. Must be more than min_instance_count.
+                                        The maximum amount of instances for this component. Must be more than min_instance_count.
+                                      type: number
+                                    metrics:
+                                      description: |-
+                                        The metrics that the component is scaled on.
+                                        The metrics that the component is scaled on.
+                                      items:
+                                        properties:
+                                          cpu:
+                                            description: |-
+                                              Settings for scaling the component based on CPU utilization.
+                                              Settings for scaling the component based on CPU utilization.
+                                            items:
+                                              properties:
+                                                percent:
+                                                  description: |-
+                                                    The average target CPU utilization for the component.
+                                                    The average target CPU utilization for the component.
+                                                  type: number
+                                              type: object
+                                            type: array
+                                        type: object
+                                      type: array
+                                    minInstanceCount:
+                                      description: |-
+                                        The minimum amount of instances for this component. Must be less than max_instance_count.
+                                        The minimum amount of instances for this component. Must be less than max_instance_count.
+                                      type: number
+                                  type: object
+                                type: array
+                              bitbucket:
+                                description: A GitHub repo to use as the component's
+                                  source. DigitalOcean App Platform must have access
+                                  to the repository. Only one of git, github, bitbucket,
+                                  gitlab, or image may be set.
+                                items:
+                                  properties:
+                                    branch:
+                                      description: |-
+                                        The name of the branch to use.
+                                        The name of the branch to use.
+                                      type: string
+                                    deployOnPush:
+                                      description: |-
+                                        Whether to automatically deploy new commits made to the repo.
+                                        Whether to automatically deploy new commits made to the repo
+                                      type: boolean
+                                    repo:
+                                      description: |-
+                                        The name of the repo in the format owner/repo.
+                                        The name of the repo in the format `owner/repo`.
                                       type: string
                                   type: object
                                 type: array
@@ -2118,11 +2533,16 @@ spec:
                                         properties:
                                           enabled:
                                             description: |-
-                                              Whether to automatically deploy images pushed to DOCR.
+                                              Indicates whether maintenance mode should be enabled for the app.
                                               Whether to automatically deploy images pushed to DOCR.
                                             type: boolean
                                         type: object
                                       type: array
+                                    digest:
+                                      description: |-
+                                        The image digest. Cannot be specified if tag is provided.
+                                        The image digest. Cannot be specified if tag is provided.
+                                      type: string
                                     registry:
                                       description: |-
                                         The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.
@@ -2160,7 +2580,7 @@ spec:
                                     tag:
                                       description: |-
                                         The repository tag. Defaults to latest if not provided.
-                                        The repository tag. Defaults to latest if not provided.
+                                        The repository tag. Defaults to latest if not provided. Cannot be specified if digest is provided.
                                       type: string
                                   type: object
                                 type: array
@@ -2300,6 +2720,17 @@ spec:
                                   An optional path to the working directory to use for the build.
                                   An optional path to the working directory to use for the build.
                                 type: string
+                              termination:
+                                description: Contains a component's termination parameters.
+                                items:
+                                  properties:
+                                    gracePeriodSeconds:
+                                      description: |-
+                                        The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+                                        The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+                                      type: number
+                                  type: object
+                                type: array
                             type: object
                           type: array
                       type: object
@@ -2325,7 +2756,7 @@ spec:
                       properties:
                         id:
                           description: |-
-                            The ID of the app.
+                            : The ID of the VPC.
                             The ID of the dedicated egress IP.
                           type: string
                         ip:
@@ -2337,6 +2768,11 @@ spec:
                           type: string
                       type: object
                     type: array
+                  deploymentPerPage:
+                    description: |-
+                      Controls how many deployments are requested per API page when listing deployments during create/update waits. Defaults to 20. Reduce this value (for example 5) if you experience API timeouts when listing deployments.
+                      Number of deployments to request per page when polling for deployments
+                    type: number
                   projectId:
                     description: The ID of the project that the app is assigned to.
                     type: string
@@ -2424,15 +2860,43 @@ spec:
                           description: Describes an alert policy for the app.
                           items:
                             properties:
+                              destinations:
+                                description: Specification for alert destination.
+                                items:
+                                  properties:
+                                    emails:
+                                      description: Determines which emails receive
+                                        alerts. The emails must be team members. If
+                                        not set, the team's email is used by default.
+                                      items:
+                                        type: string
+                                      type: array
+                                    slackWebhooks:
+                                      description: Determines which slack channels
+                                        or users receive alerts .
+                                      items:
+                                        properties:
+                                          channel:
+                                            description: The Slack channel to send
+                                              notifications to.
+                                            type: string
+                                          url:
+                                            description: The Slack webhook URL.
+                                            type: string
+                                        type: object
+                                      type: array
+                                  type: object
+                                type: array
                               disabled:
-                                description: 'Determines whether or not the alert
-                                  is disabled (default: false).'
+                                description: 'Determines whether the alert is disabled
+                                  (default: false).'
                                 type: boolean
                               rule:
                                 description: 'The type of the alert to configure.
                                   Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
                                   DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
-                                  DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                  DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or
+                                  AUTOSCALE_SUCCEEDED.'
                                 type: string
                             type: object
                           type: array
@@ -2476,6 +2940,16 @@ spec:
                                 type: string
                             type: object
                           type: array
+                        disableEdgeCache:
+                          description: |-
+                            A boolean indicating whether to disable the edge cache for this app. Default: false. Available only for non-static sites. Requires custom domains and applies to all the domains of the app.
+                            Whether to disable the edge cache for the app. Default is false, which enables the edge cache.
+                          type: boolean
+                        disableEmailObfuscation:
+                          description: |-
+                            A boolean indicating whether to disable email obfuscation for this app. Default: false. Requires custom domains and applies to all the domains of the app.
+                            Email obfuscation configuration for the app. Default is false, which keeps the email obfuscated.
+                          type: boolean
                         domain:
                           description: Describes a domain where the application will
                             be made available.
@@ -2519,6 +2993,11 @@ spec:
                                 type: string
                             type: object
                           type: array
+                        enhancedThreatControlEnabled:
+                          description: |-
+                            A boolean, when set to true, enables enhanced analyzing of incoming traffic to prevent layer 7 DDoS attacks. Default: false. Requires custom domains and applies to all the domains of the app.
+                            Whether to enable enhanced threat control for the app. Default is false. Set to true to enable enhanced threat control, putting additional security measures for Layer 7 DDoS attacks.
+                          type: boolean
                         env:
                           description: Describes an app-wide environment variable
                             made available to all components.
@@ -2577,9 +3056,37 @@ spec:
                                   Alert policies for the app component
                                 items:
                                   properties:
+                                    destinations:
+                                      description: Specification for alert destination.
+                                      items:
+                                        properties:
+                                          emails:
+                                            description: Determines which emails receive
+                                              alerts. The emails must be team members.
+                                              If not set, the team's email is used
+                                              by default.
+                                            items:
+                                              type: string
+                                            type: array
+                                          slackWebhooks:
+                                            description: Determines which slack channels
+                                              or users receive alerts .
+                                            items:
+                                              properties:
+                                                channel:
+                                                  description: The Slack channel to
+                                                    send notifications to.
+                                                  type: string
+                                                url:
+                                                  description: The Slack webhook URL.
+                                                  type: string
+                                              type: object
+                                            type: array
+                                        type: object
+                                      type: array
                                     disabled:
-                                      description: 'Determines whether or not the
-                                        alert is disabled (default: false).'
+                                      description: 'Determines whether the alert is
+                                        disabled (default: false).'
                                       type: boolean
                                     operator:
                                       description: The operator to use. This is either
@@ -2589,7 +3096,8 @@ spec:
                                       description: 'The type of the alert to configure.
                                         Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
                                         DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
-                                        DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                        DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED,
+                                        or AUTOSCALE_SUCCEEDED.'
                                       type: string
                                     value:
                                       description: The value of the environment variable.
@@ -2598,6 +3106,30 @@ spec:
                                       description: 'The time before alerts should
                                         be triggered. This is may be one of: FIVE_MINUTES,
                                         TEN_MINUTES, THIRTY_MINUTES, ONE_HOUR.'
+                                      type: string
+                                  type: object
+                                type: array
+                              bitbucket:
+                                description: A GitHub repo to use as the component's
+                                  source. DigitalOcean App Platform must have access
+                                  to the repository. Only one of git, github, bitbucket,
+                                  gitlab, or image may be set.
+                                items:
+                                  properties:
+                                    branch:
+                                      description: |-
+                                        The name of the branch to use.
+                                        The name of the branch to use.
+                                      type: string
+                                    deployOnPush:
+                                      description: |-
+                                        Whether to automatically deploy new commits made to the repo.
+                                        Whether to automatically deploy new commits made to the repo
+                                      type: boolean
+                                    repo:
+                                      description: |-
+                                        The name of the repo in the format owner/repo.
+                                        The name of the repo in the format `owner/repo`.
                                       type: string
                                   type: object
                                 type: array
@@ -2634,7 +3166,7 @@ spec:
                                         properties:
                                           exact:
                                             description: |-
-                                              The Access-Control-Allow-Origin header will be set to the client's origin only if the client's origin exactly matches the value you provide.
+                                              Exact match.
                                               Exact string match.
                                             type: string
                                           prefix:
@@ -2921,7 +3453,8 @@ spec:
                                 description: 'The type of the alert to configure.
                                   Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
                                   DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
-                                  DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                  DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or
+                                  AUTOSCALE_SUCCEEDED.'
                                 items:
                                   properties:
                                     component:
@@ -2983,7 +3516,7 @@ spec:
                                               properties:
                                                 exact:
                                                   description: |-
-                                                    The Access-Control-Allow-Origin header will be set to the client's origin only if the client's origin exactly matches the value you provide.
+                                                    Exact match.
                                                     Exact string match.
                                                   type: string
                                                 prefix:
@@ -3018,6 +3551,16 @@ spec:
                                         rule
                                       items:
                                         properties:
+                                          authority:
+                                            description: The authority (domain) to
+                                              match on.
+                                            items:
+                                              properties:
+                                                exact:
+                                                  description: Exact match.
+                                                  type: string
+                                              type: object
+                                            type: array
                                           path:
                                             description: The path to match on.
                                             items:
@@ -3036,8 +3579,8 @@ spec:
                                       items:
                                         properties:
                                           authority:
-                                            description: The authority/host to redirect
-                                              to. This can be a hostname or IP address.
+                                            description: The authority (domain) to
+                                              match on.
                                             type: string
                                           port:
                                             description: The port to redirect to.
@@ -3059,6 +3602,17 @@ spec:
                                       type: array
                                   type: object
                                 type: array
+                              secureHeader:
+                                items:
+                                  properties:
+                                    key:
+                                      description: The name of the environment variable.
+                                      type: string
+                                    value:
+                                      description: The value of the environment variable.
+                                      type: string
+                                  type: object
+                                type: array
                             type: object
                           type: array
                         job:
@@ -3070,9 +3624,37 @@ spec:
                                   Alert policies for the app component
                                 items:
                                   properties:
+                                    destinations:
+                                      description: Specification for alert destination.
+                                      items:
+                                        properties:
+                                          emails:
+                                            description: Determines which emails receive
+                                              alerts. The emails must be team members.
+                                              If not set, the team's email is used
+                                              by default.
+                                            items:
+                                              type: string
+                                            type: array
+                                          slackWebhooks:
+                                            description: Determines which slack channels
+                                              or users receive alerts .
+                                            items:
+                                              properties:
+                                                channel:
+                                                  description: The Slack channel to
+                                                    send notifications to.
+                                                  type: string
+                                                url:
+                                                  description: The Slack webhook URL.
+                                                  type: string
+                                              type: object
+                                            type: array
+                                        type: object
+                                      type: array
                                     disabled:
-                                      description: 'Determines whether or not the
-                                        alert is disabled (default: false).'
+                                      description: 'Determines whether the alert is
+                                        disabled (default: false).'
                                       type: boolean
                                     operator:
                                       description: The operator to use. This is either
@@ -3082,7 +3664,8 @@ spec:
                                       description: 'The type of the alert to configure.
                                         Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
                                         DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
-                                        DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                        DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED,
+                                        or AUTOSCALE_SUCCEEDED.'
                                       type: string
                                     value:
                                       description: The value of the environment variable.
@@ -3091,6 +3674,30 @@ spec:
                                       description: 'The time before alerts should
                                         be triggered. This is may be one of: FIVE_MINUTES,
                                         TEN_MINUTES, THIRTY_MINUTES, ONE_HOUR.'
+                                      type: string
+                                  type: object
+                                type: array
+                              bitbucket:
+                                description: A GitHub repo to use as the component's
+                                  source. DigitalOcean App Platform must have access
+                                  to the repository. Only one of git, github, bitbucket,
+                                  gitlab, or image may be set.
+                                items:
+                                  properties:
+                                    branch:
+                                      description: |-
+                                        The name of the branch to use.
+                                        The name of the branch to use.
+                                      type: string
+                                    deployOnPush:
+                                      description: |-
+                                        Whether to automatically deploy new commits made to the repo.
+                                        Whether to automatically deploy new commits made to the repo
+                                      type: boolean
+                                    repo:
+                                      description: |-
+                                        The name of the repo in the format owner/repo.
+                                        The name of the repo in the format `owner/repo`.
                                       type: string
                                   type: object
                                 type: array
@@ -3231,11 +3838,16 @@ spec:
                                         properties:
                                           enabled:
                                             description: |-
-                                              Whether to automatically deploy images pushed to DOCR.
+                                              Indicates whether maintenance mode should be enabled for the app.
                                               Whether to automatically deploy images pushed to DOCR.
                                             type: boolean
                                         type: object
                                       type: array
+                                    digest:
+                                      description: |-
+                                        The image digest. Cannot be specified if tag is provided.
+                                        The image digest. Cannot be specified if tag is provided.
+                                      type: string
                                     registry:
                                       description: |-
                                         The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.
@@ -3273,7 +3885,7 @@ spec:
                                     tag:
                                       description: |-
                                         The repository tag. Defaults to latest if not provided.
-                                        The repository tag. Defaults to latest if not provided.
+                                        The repository tag. Defaults to latest if not provided. Cannot be specified if digest is provided.
                                       type: string
                                   type: object
                                 type: array
@@ -3418,6 +4030,40 @@ spec:
                                   An optional path to the working directory to use for the build.
                                   An optional path to the working directory to use for the build.
                                 type: string
+                              termination:
+                                description: Contains a component's termination parameters.
+                                items:
+                                  properties:
+                                    gracePeriodSeconds:
+                                      description: |-
+                                        The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+                                        The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+                                      type: number
+                                  type: object
+                                type: array
+                            type: object
+                          type: array
+                        maintenance:
+                          description: |-
+                            Specification to configure maintenance settings for the app, such as maintenance mode and archiving the app.
+                            Specification to configure maintenance settings for the app, such as maintenance mode and archiving the app.
+                          items:
+                            properties:
+                              archive:
+                                description: |-
+                                  Indicates whether the app should be archived. Setting this to true implies that enabled is set to true.
+                                  Indicates whether the app should be archived. Setting this to true implies that enabled is set to true.
+                                type: boolean
+                              enabled:
+                                description: |-
+                                  Indicates whether maintenance mode should be enabled for the app.
+                                  Indicates whether maintenance mode should be enabled for the app.
+                                type: boolean
+                              offlinePageUrl:
+                                description: |-
+                                  A custom offline page to display when maintenance mode is enabled or the app is archived.
+                                  A custom offline page to display when maintenance mode is enabled or the app is archived.
+                                type: string
                             type: object
                           type: array
                         name:
@@ -3439,9 +4085,37 @@ spec:
                                   Alert policies for the app component
                                 items:
                                   properties:
+                                    destinations:
+                                      description: Specification for alert destination.
+                                      items:
+                                        properties:
+                                          emails:
+                                            description: Determines which emails receive
+                                              alerts. The emails must be team members.
+                                              If not set, the team's email is used
+                                              by default.
+                                            items:
+                                              type: string
+                                            type: array
+                                          slackWebhooks:
+                                            description: Determines which slack channels
+                                              or users receive alerts .
+                                            items:
+                                              properties:
+                                                channel:
+                                                  description: The Slack channel to
+                                                    send notifications to.
+                                                  type: string
+                                                url:
+                                                  description: The Slack webhook URL.
+                                                  type: string
+                                              type: object
+                                            type: array
+                                        type: object
+                                      type: array
                                     disabled:
-                                      description: 'Determines whether or not the
-                                        alert is disabled (default: false).'
+                                      description: 'Determines whether the alert is
+                                        disabled (default: false).'
                                       type: boolean
                                     operator:
                                       description: The operator to use. This is either
@@ -3451,7 +4125,8 @@ spec:
                                       description: 'The type of the alert to configure.
                                         Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
                                         DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
-                                        DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                        DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED,
+                                        or AUTOSCALE_SUCCEEDED.'
                                       type: string
                                     value:
                                       description: The value of the environment variable.
@@ -3501,6 +4176,30 @@ spec:
                                       type: number
                                   type: object
                                 type: array
+                              bitbucket:
+                                description: A GitHub repo to use as the component's
+                                  source. DigitalOcean App Platform must have access
+                                  to the repository. Only one of git, github, bitbucket,
+                                  gitlab, or image may be set.
+                                items:
+                                  properties:
+                                    branch:
+                                      description: |-
+                                        The name of the branch to use.
+                                        The name of the branch to use.
+                                      type: string
+                                    deployOnPush:
+                                      description: |-
+                                        Whether to automatically deploy new commits made to the repo.
+                                        Whether to automatically deploy new commits made to the repo
+                                      type: boolean
+                                    repo:
+                                      description: |-
+                                        The name of the repo in the format owner/repo.
+                                        The name of the repo in the format `owner/repo`.
+                                      type: string
+                                  type: object
+                                type: array
                               buildCommand:
                                 description: |-
                                   An optional build command to run while building this component from source.
@@ -3539,7 +4238,7 @@ spec:
                                         properties:
                                           exact:
                                             description: |-
-                                              The Access-Control-Allow-Origin header will be set to the client's origin only if the client's origin exactly matches the value you provide.
+                                              Exact match.
                                               Exact string match.
                                             type: string
                                           prefix:
@@ -3748,11 +4447,16 @@ spec:
                                         properties:
                                           enabled:
                                             description: |-
-                                              Whether to automatically deploy images pushed to DOCR.
+                                              Indicates whether maintenance mode should be enabled for the app.
                                               Whether to automatically deploy images pushed to DOCR.
                                             type: boolean
                                         type: object
                                       type: array
+                                    digest:
+                                      description: |-
+                                        The image digest. Cannot be specified if tag is provided.
+                                        The image digest. Cannot be specified if tag is provided.
+                                      type: string
                                     registry:
                                       description: |-
                                         The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.
@@ -3790,7 +4494,7 @@ spec:
                                     tag:
                                       description: |-
                                         The repository tag. Defaults to latest if not provided.
-                                        The repository tag. Defaults to latest if not provided.
+                                        The repository tag. Defaults to latest if not provided. Cannot be specified if digest is provided.
                                       type: string
                                   type: object
                                 type: array
@@ -3954,11 +4658,51 @@ spec:
                                   An optional path to the working directory to use for the build.
                                   An optional path to the working directory to use for the build.
                                 type: string
+                              termination:
+                                description: Contains a component's termination parameters.
+                                items:
+                                  properties:
+                                    drainSeconds:
+                                      description: |-
+                                        The number of seconds to wait between selecting a container instance for termination and issuing the TERM signal. Selecting a container instance for termination begins an asynchronous drain of new requests on upstream load-balancers. Default: 15 seconds, Minimum 1, Maximum 110.
+                                        The number of seconds to wait between selecting a container instance for termination and issuing the TERM signal. Selecting a container instance for termination begins an asynchronous drain of new requests on upstream load-balancers. Default: 15 seconds, Minimum 1, Maximum 110.
+                                      type: number
+                                    gracePeriodSeconds:
+                                      description: |-
+                                        The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+                                        The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+                                      type: number
+                                  type: object
+                                type: array
                             type: object
                           type: array
                         staticSite:
                           items:
                             properties:
+                              bitbucket:
+                                description: A GitHub repo to use as the component's
+                                  source. DigitalOcean App Platform must have access
+                                  to the repository. Only one of git, github, bitbucket,
+                                  gitlab, or image may be set.
+                                items:
+                                  properties:
+                                    branch:
+                                      description: |-
+                                        The name of the branch to use.
+                                        The name of the branch to use.
+                                      type: string
+                                    deployOnPush:
+                                      description: |-
+                                        Whether to automatically deploy new commits made to the repo.
+                                        Whether to automatically deploy new commits made to the repo
+                                      type: boolean
+                                    repo:
+                                      description: |-
+                                        The name of the repo in the format owner/repo.
+                                        The name of the repo in the format `owner/repo`.
+                                      type: string
+                                  type: object
+                                type: array
                               buildCommand:
                                 description: |-
                                   An optional build command to run while building this component from source.
@@ -4002,7 +4746,7 @@ spec:
                                         properties:
                                           exact:
                                             description: |-
-                                              The Access-Control-Allow-Origin header will be set to the client's origin only if the client's origin exactly matches the value you provide.
+                                              Exact match.
                                               Exact string match.
                                             type: string
                                           prefix:
@@ -4194,6 +4938,17 @@ spec:
                                 type: string
                             type: object
                           type: array
+                        vpc:
+                          description: ': Specification for VPC.'
+                          items:
+                            properties:
+                              id:
+                                description: |-
+                                  : The ID of the VPC.
+                                  The ID of the VPC.
+                                type: string
+                            type: object
+                          type: array
                         worker:
                           items:
                             properties:
@@ -4203,9 +4958,37 @@ spec:
                                   Alert policies for the app component
                                 items:
                                   properties:
+                                    destinations:
+                                      description: Specification for alert destination.
+                                      items:
+                                        properties:
+                                          emails:
+                                            description: Determines which emails receive
+                                              alerts. The emails must be team members.
+                                              If not set, the team's email is used
+                                              by default.
+                                            items:
+                                              type: string
+                                            type: array
+                                          slackWebhooks:
+                                            description: Determines which slack channels
+                                              or users receive alerts .
+                                            items:
+                                              properties:
+                                                channel:
+                                                  description: The Slack channel to
+                                                    send notifications to.
+                                                  type: string
+                                                url:
+                                                  description: The Slack webhook URL.
+                                                  type: string
+                                              type: object
+                                            type: array
+                                        type: object
+                                      type: array
                                     disabled:
-                                      description: 'Determines whether or not the
-                                        alert is disabled (default: false).'
+                                      description: 'Determines whether the alert is
+                                        disabled (default: false).'
                                       type: boolean
                                     operator:
                                       description: The operator to use. This is either
@@ -4215,7 +4998,8 @@ spec:
                                       description: 'The type of the alert to configure.
                                         Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
                                         DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
-                                        DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                        DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED,
+                                        or AUTOSCALE_SUCCEEDED.'
                                       type: string
                                     value:
                                       description: The value of the environment variable.
@@ -4224,6 +5008,68 @@ spec:
                                       description: 'The time before alerts should
                                         be triggered. This is may be one of: FIVE_MINUTES,
                                         TEN_MINUTES, THIRTY_MINUTES, ONE_HOUR.'
+                                      type: string
+                                  type: object
+                                type: array
+                              autoscaling:
+                                description: Configuration for automatically scaling
+                                  this component based on metrics.
+                                items:
+                                  properties:
+                                    maxInstanceCount:
+                                      description: |-
+                                        The maximum amount of instances for this component. Must be more than min_instance_count.
+                                        The maximum amount of instances for this component. Must be more than min_instance_count.
+                                      type: number
+                                    metrics:
+                                      description: |-
+                                        The metrics that the component is scaled on.
+                                        The metrics that the component is scaled on.
+                                      items:
+                                        properties:
+                                          cpu:
+                                            description: |-
+                                              Settings for scaling the component based on CPU utilization.
+                                              Settings for scaling the component based on CPU utilization.
+                                            items:
+                                              properties:
+                                                percent:
+                                                  description: |-
+                                                    The average target CPU utilization for the component.
+                                                    The average target CPU utilization for the component.
+                                                  type: number
+                                              type: object
+                                            type: array
+                                        type: object
+                                      type: array
+                                    minInstanceCount:
+                                      description: |-
+                                        The minimum amount of instances for this component. Must be less than max_instance_count.
+                                        The minimum amount of instances for this component. Must be less than max_instance_count.
+                                      type: number
+                                  type: object
+                                type: array
+                              bitbucket:
+                                description: A GitHub repo to use as the component's
+                                  source. DigitalOcean App Platform must have access
+                                  to the repository. Only one of git, github, bitbucket,
+                                  gitlab, or image may be set.
+                                items:
+                                  properties:
+                                    branch:
+                                      description: |-
+                                        The name of the branch to use.
+                                        The name of the branch to use.
+                                      type: string
+                                    deployOnPush:
+                                      description: |-
+                                        Whether to automatically deploy new commits made to the repo.
+                                        Whether to automatically deploy new commits made to the repo
+                                      type: boolean
+                                    repo:
+                                      description: |-
+                                        The name of the repo in the format owner/repo.
+                                        The name of the repo in the format `owner/repo`.
                                       type: string
                                   type: object
                                 type: array
@@ -4364,11 +5210,16 @@ spec:
                                         properties:
                                           enabled:
                                             description: |-
-                                              Whether to automatically deploy images pushed to DOCR.
+                                              Indicates whether maintenance mode should be enabled for the app.
                                               Whether to automatically deploy images pushed to DOCR.
                                             type: boolean
                                         type: object
                                       type: array
+                                    digest:
+                                      description: |-
+                                        The image digest. Cannot be specified if tag is provided.
+                                        The image digest. Cannot be specified if tag is provided.
+                                      type: string
                                     registry:
                                       description: |-
                                         The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.
@@ -4406,7 +5257,7 @@ spec:
                                     tag:
                                       description: |-
                                         The repository tag. Defaults to latest if not provided.
-                                        The repository tag. Defaults to latest if not provided.
+                                        The repository tag. Defaults to latest if not provided. Cannot be specified if digest is provided.
                                       type: string
                                   type: object
                                 type: array
@@ -4546,6 +5397,17 @@ spec:
                                   An optional path to the working directory to use for the build.
                                   An optional path to the working directory to use for the build.
                                 type: string
+                              termination:
+                                description: Contains a component's termination parameters.
+                                items:
+                                  properties:
+                                    gracePeriodSeconds:
+                                      description: |-
+                                        The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+                                        The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+                                      type: number
+                                  type: object
+                                type: array
                             type: object
                           type: array
                       type: object
@@ -4740,7 +5602,7 @@ spec:
                       properties:
                         id:
                           description: |-
-                            The ID of the app.
+                            : The ID of the VPC.
                             The ID of the dedicated egress IP.
                           type: string
                         ip:
@@ -4757,8 +5619,13 @@ spec:
                       The default URL to access the app.
                       The default URL to access the App
                     type: string
+                  deploymentPerPage:
+                    description: |-
+                      Controls how many deployments are requested per API page when listing deployments during create/update waits. Defaults to 20. Reduce this value (for example 5) if you experience API timeouts when listing deployments.
+                      Number of deployments to request per page when polling for deployments
+                    type: number
                   id:
-                    description: The ID of the app.
+                    description: ': The ID of the VPC.'
                     type: string
                   liveDomain:
                     description: The live domain of the app.
@@ -4779,15 +5646,43 @@ spec:
                           description: Describes an alert policy for the app.
                           items:
                             properties:
+                              destinations:
+                                description: Specification for alert destination.
+                                items:
+                                  properties:
+                                    emails:
+                                      description: Determines which emails receive
+                                        alerts. The emails must be team members. If
+                                        not set, the team's email is used by default.
+                                      items:
+                                        type: string
+                                      type: array
+                                    slackWebhooks:
+                                      description: Determines which slack channels
+                                        or users receive alerts .
+                                      items:
+                                        properties:
+                                          channel:
+                                            description: The Slack channel to send
+                                              notifications to.
+                                            type: string
+                                          url:
+                                            description: The Slack webhook URL.
+                                            type: string
+                                        type: object
+                                      type: array
+                                  type: object
+                                type: array
                               disabled:
-                                description: 'Determines whether or not the alert
-                                  is disabled (default: false).'
+                                description: 'Determines whether the alert is disabled
+                                  (default: false).'
                                 type: boolean
                               rule:
                                 description: 'The type of the alert to configure.
                                   Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
                                   DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
-                                  DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                  DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or
+                                  AUTOSCALE_SUCCEEDED.'
                                 type: string
                             type: object
                           type: array
@@ -4831,6 +5726,16 @@ spec:
                                 type: string
                             type: object
                           type: array
+                        disableEdgeCache:
+                          description: |-
+                            A boolean indicating whether to disable the edge cache for this app. Default: false. Available only for non-static sites. Requires custom domains and applies to all the domains of the app.
+                            Whether to disable the edge cache for the app. Default is false, which enables the edge cache.
+                          type: boolean
+                        disableEmailObfuscation:
+                          description: |-
+                            A boolean indicating whether to disable email obfuscation for this app. Default: false. Requires custom domains and applies to all the domains of the app.
+                            Email obfuscation configuration for the app. Default is false, which keeps the email obfuscated.
+                          type: boolean
                         domain:
                           description: Describes a domain where the application will
                             be made available.
@@ -4874,6 +5779,11 @@ spec:
                                 type: string
                             type: object
                           type: array
+                        enhancedThreatControlEnabled:
+                          description: |-
+                            A boolean, when set to true, enables enhanced analyzing of incoming traffic to prevent layer 7 DDoS attacks. Default: false. Requires custom domains and applies to all the domains of the app.
+                            Whether to enable enhanced threat control for the app. Default is false. Set to true to enable enhanced threat control, putting additional security measures for Layer 7 DDoS attacks.
+                          type: boolean
                         env:
                           description: Describes an app-wide environment variable
                             made available to all components.
@@ -4913,9 +5823,37 @@ spec:
                                   Alert policies for the app component
                                 items:
                                   properties:
+                                    destinations:
+                                      description: Specification for alert destination.
+                                      items:
+                                        properties:
+                                          emails:
+                                            description: Determines which emails receive
+                                              alerts. The emails must be team members.
+                                              If not set, the team's email is used
+                                              by default.
+                                            items:
+                                              type: string
+                                            type: array
+                                          slackWebhooks:
+                                            description: Determines which slack channels
+                                              or users receive alerts .
+                                            items:
+                                              properties:
+                                                channel:
+                                                  description: The Slack channel to
+                                                    send notifications to.
+                                                  type: string
+                                                url:
+                                                  description: The Slack webhook URL.
+                                                  type: string
+                                              type: object
+                                            type: array
+                                        type: object
+                                      type: array
                                     disabled:
-                                      description: 'Determines whether or not the
-                                        alert is disabled (default: false).'
+                                      description: 'Determines whether the alert is
+                                        disabled (default: false).'
                                       type: boolean
                                     operator:
                                       description: The operator to use. This is either
@@ -4925,7 +5863,8 @@ spec:
                                       description: 'The type of the alert to configure.
                                         Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
                                         DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
-                                        DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                        DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED,
+                                        or AUTOSCALE_SUCCEEDED.'
                                       type: string
                                     value:
                                       description: The value of the environment variable.
@@ -4934,6 +5873,30 @@ spec:
                                       description: 'The time before alerts should
                                         be triggered. This is may be one of: FIVE_MINUTES,
                                         TEN_MINUTES, THIRTY_MINUTES, ONE_HOUR.'
+                                      type: string
+                                  type: object
+                                type: array
+                              bitbucket:
+                                description: A GitHub repo to use as the component's
+                                  source. DigitalOcean App Platform must have access
+                                  to the repository. Only one of git, github, bitbucket,
+                                  gitlab, or image may be set.
+                                items:
+                                  properties:
+                                    branch:
+                                      description: |-
+                                        The name of the branch to use.
+                                        The name of the branch to use.
+                                      type: string
+                                    deployOnPush:
+                                      description: |-
+                                        Whether to automatically deploy new commits made to the repo.
+                                        Whether to automatically deploy new commits made to the repo
+                                      type: boolean
+                                    repo:
+                                      description: |-
+                                        The name of the repo in the format owner/repo.
+                                        The name of the repo in the format `owner/repo`.
                                       type: string
                                   type: object
                                 type: array
@@ -4970,7 +5933,7 @@ spec:
                                         properties:
                                           exact:
                                             description: |-
-                                              The Access-Control-Allow-Origin header will be set to the client's origin only if the client's origin exactly matches the value you provide.
+                                              Exact match.
                                               Exact string match.
                                             type: string
                                           prefix:
@@ -5218,7 +6181,8 @@ spec:
                                 description: 'The type of the alert to configure.
                                   Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
                                   DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
-                                  DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                  DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or
+                                  AUTOSCALE_SUCCEEDED.'
                                 items:
                                   properties:
                                     component:
@@ -5280,7 +6244,7 @@ spec:
                                               properties:
                                                 exact:
                                                   description: |-
-                                                    The Access-Control-Allow-Origin header will be set to the client's origin only if the client's origin exactly matches the value you provide.
+                                                    Exact match.
                                                     Exact string match.
                                                   type: string
                                                 prefix:
@@ -5315,6 +6279,16 @@ spec:
                                         rule
                                       items:
                                         properties:
+                                          authority:
+                                            description: The authority (domain) to
+                                              match on.
+                                            items:
+                                              properties:
+                                                exact:
+                                                  description: Exact match.
+                                                  type: string
+                                              type: object
+                                            type: array
                                           path:
                                             description: The path to match on.
                                             items:
@@ -5333,8 +6307,8 @@ spec:
                                       items:
                                         properties:
                                           authority:
-                                            description: The authority/host to redirect
-                                              to. This can be a hostname or IP address.
+                                            description: The authority (domain) to
+                                              match on.
                                             type: string
                                           port:
                                             description: The port to redirect to.
@@ -5356,6 +6330,17 @@ spec:
                                       type: array
                                   type: object
                                 type: array
+                              secureHeader:
+                                items:
+                                  properties:
+                                    key:
+                                      description: The name of the environment variable.
+                                      type: string
+                                    value:
+                                      description: The value of the environment variable.
+                                      type: string
+                                  type: object
+                                type: array
                             type: object
                           type: array
                         job:
@@ -5367,9 +6352,37 @@ spec:
                                   Alert policies for the app component
                                 items:
                                   properties:
+                                    destinations:
+                                      description: Specification for alert destination.
+                                      items:
+                                        properties:
+                                          emails:
+                                            description: Determines which emails receive
+                                              alerts. The emails must be team members.
+                                              If not set, the team's email is used
+                                              by default.
+                                            items:
+                                              type: string
+                                            type: array
+                                          slackWebhooks:
+                                            description: Determines which slack channels
+                                              or users receive alerts .
+                                            items:
+                                              properties:
+                                                channel:
+                                                  description: The Slack channel to
+                                                    send notifications to.
+                                                  type: string
+                                                url:
+                                                  description: The Slack webhook URL.
+                                                  type: string
+                                              type: object
+                                            type: array
+                                        type: object
+                                      type: array
                                     disabled:
-                                      description: 'Determines whether or not the
-                                        alert is disabled (default: false).'
+                                      description: 'Determines whether the alert is
+                                        disabled (default: false).'
                                       type: boolean
                                     operator:
                                       description: The operator to use. This is either
@@ -5379,7 +6392,8 @@ spec:
                                       description: 'The type of the alert to configure.
                                         Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
                                         DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
-                                        DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                        DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED,
+                                        or AUTOSCALE_SUCCEEDED.'
                                       type: string
                                     value:
                                       description: The value of the environment variable.
@@ -5388,6 +6402,30 @@ spec:
                                       description: 'The time before alerts should
                                         be triggered. This is may be one of: FIVE_MINUTES,
                                         TEN_MINUTES, THIRTY_MINUTES, ONE_HOUR.'
+                                      type: string
+                                  type: object
+                                type: array
+                              bitbucket:
+                                description: A GitHub repo to use as the component's
+                                  source. DigitalOcean App Platform must have access
+                                  to the repository. Only one of git, github, bitbucket,
+                                  gitlab, or image may be set.
+                                items:
+                                  properties:
+                                    branch:
+                                      description: |-
+                                        The name of the branch to use.
+                                        The name of the branch to use.
+                                      type: string
+                                    deployOnPush:
+                                      description: |-
+                                        Whether to automatically deploy new commits made to the repo.
+                                        Whether to automatically deploy new commits made to the repo
+                                      type: boolean
+                                    repo:
+                                      description: |-
+                                        The name of the repo in the format owner/repo.
+                                        The name of the repo in the format `owner/repo`.
                                       type: string
                                   type: object
                                 type: array
@@ -5509,11 +6547,16 @@ spec:
                                         properties:
                                           enabled:
                                             description: |-
-                                              Whether to automatically deploy images pushed to DOCR.
+                                              Indicates whether maintenance mode should be enabled for the app.
                                               Whether to automatically deploy images pushed to DOCR.
                                             type: boolean
                                         type: object
                                       type: array
+                                    digest:
+                                      description: |-
+                                        The image digest. Cannot be specified if tag is provided.
+                                        The image digest. Cannot be specified if tag is provided.
+                                      type: string
                                     registry:
                                       description: |-
                                         The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.
@@ -5532,7 +6575,7 @@ spec:
                                     tag:
                                       description: |-
                                         The repository tag. Defaults to latest if not provided.
-                                        The repository tag. Defaults to latest if not provided.
+                                        The repository tag. Defaults to latest if not provided. Cannot be specified if digest is provided.
                                       type: string
                                   type: object
                                 type: array
@@ -5657,6 +6700,40 @@ spec:
                                   An optional path to the working directory to use for the build.
                                   An optional path to the working directory to use for the build.
                                 type: string
+                              termination:
+                                description: Contains a component's termination parameters.
+                                items:
+                                  properties:
+                                    gracePeriodSeconds:
+                                      description: |-
+                                        The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+                                        The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+                                      type: number
+                                  type: object
+                                type: array
+                            type: object
+                          type: array
+                        maintenance:
+                          description: |-
+                            Specification to configure maintenance settings for the app, such as maintenance mode and archiving the app.
+                            Specification to configure maintenance settings for the app, such as maintenance mode and archiving the app.
+                          items:
+                            properties:
+                              archive:
+                                description: |-
+                                  Indicates whether the app should be archived. Setting this to true implies that enabled is set to true.
+                                  Indicates whether the app should be archived. Setting this to true implies that enabled is set to true.
+                                type: boolean
+                              enabled:
+                                description: |-
+                                  Indicates whether maintenance mode should be enabled for the app.
+                                  Indicates whether maintenance mode should be enabled for the app.
+                                type: boolean
+                              offlinePageUrl:
+                                description: |-
+                                  A custom offline page to display when maintenance mode is enabled or the app is archived.
+                                  A custom offline page to display when maintenance mode is enabled or the app is archived.
+                                type: string
                             type: object
                           type: array
                         name:
@@ -5678,9 +6755,37 @@ spec:
                                   Alert policies for the app component
                                 items:
                                   properties:
+                                    destinations:
+                                      description: Specification for alert destination.
+                                      items:
+                                        properties:
+                                          emails:
+                                            description: Determines which emails receive
+                                              alerts. The emails must be team members.
+                                              If not set, the team's email is used
+                                              by default.
+                                            items:
+                                              type: string
+                                            type: array
+                                          slackWebhooks:
+                                            description: Determines which slack channels
+                                              or users receive alerts .
+                                            items:
+                                              properties:
+                                                channel:
+                                                  description: The Slack channel to
+                                                    send notifications to.
+                                                  type: string
+                                                url:
+                                                  description: The Slack webhook URL.
+                                                  type: string
+                                              type: object
+                                            type: array
+                                        type: object
+                                      type: array
                                     disabled:
-                                      description: 'Determines whether or not the
-                                        alert is disabled (default: false).'
+                                      description: 'Determines whether the alert is
+                                        disabled (default: false).'
                                       type: boolean
                                     operator:
                                       description: The operator to use. This is either
@@ -5690,7 +6795,8 @@ spec:
                                       description: 'The type of the alert to configure.
                                         Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
                                         DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
-                                        DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                        DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED,
+                                        or AUTOSCALE_SUCCEEDED.'
                                       type: string
                                     value:
                                       description: The value of the environment variable.
@@ -5740,6 +6846,30 @@ spec:
                                       type: number
                                   type: object
                                 type: array
+                              bitbucket:
+                                description: A GitHub repo to use as the component's
+                                  source. DigitalOcean App Platform must have access
+                                  to the repository. Only one of git, github, bitbucket,
+                                  gitlab, or image may be set.
+                                items:
+                                  properties:
+                                    branch:
+                                      description: |-
+                                        The name of the branch to use.
+                                        The name of the branch to use.
+                                      type: string
+                                    deployOnPush:
+                                      description: |-
+                                        Whether to automatically deploy new commits made to the repo.
+                                        Whether to automatically deploy new commits made to the repo
+                                      type: boolean
+                                    repo:
+                                      description: |-
+                                        The name of the repo in the format owner/repo.
+                                        The name of the repo in the format `owner/repo`.
+                                      type: string
+                                  type: object
+                                type: array
                               buildCommand:
                                 description: |-
                                   An optional build command to run while building this component from source.
@@ -5778,7 +6908,7 @@ spec:
                                         properties:
                                           exact:
                                             description: |-
-                                              The Access-Control-Allow-Origin header will be set to the client's origin only if the client's origin exactly matches the value you provide.
+                                              Exact match.
                                               Exact string match.
                                             type: string
                                           prefix:
@@ -5968,11 +7098,16 @@ spec:
                                         properties:
                                           enabled:
                                             description: |-
-                                              Whether to automatically deploy images pushed to DOCR.
+                                              Indicates whether maintenance mode should be enabled for the app.
                                               Whether to automatically deploy images pushed to DOCR.
                                             type: boolean
                                         type: object
                                       type: array
+                                    digest:
+                                      description: |-
+                                        The image digest. Cannot be specified if tag is provided.
+                                        The image digest. Cannot be specified if tag is provided.
+                                      type: string
                                     registry:
                                       description: |-
                                         The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.
@@ -5991,7 +7126,7 @@ spec:
                                     tag:
                                       description: |-
                                         The repository tag. Defaults to latest if not provided.
-                                        The repository tag. Defaults to latest if not provided.
+                                        The repository tag. Defaults to latest if not provided. Cannot be specified if digest is provided.
                                       type: string
                                   type: object
                                 type: array
@@ -6135,11 +7270,51 @@ spec:
                                   An optional path to the working directory to use for the build.
                                   An optional path to the working directory to use for the build.
                                 type: string
+                              termination:
+                                description: Contains a component's termination parameters.
+                                items:
+                                  properties:
+                                    drainSeconds:
+                                      description: |-
+                                        The number of seconds to wait between selecting a container instance for termination and issuing the TERM signal. Selecting a container instance for termination begins an asynchronous drain of new requests on upstream load-balancers. Default: 15 seconds, Minimum 1, Maximum 110.
+                                        The number of seconds to wait between selecting a container instance for termination and issuing the TERM signal. Selecting a container instance for termination begins an asynchronous drain of new requests on upstream load-balancers. Default: 15 seconds, Minimum 1, Maximum 110.
+                                      type: number
+                                    gracePeriodSeconds:
+                                      description: |-
+                                        The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+                                        The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+                                      type: number
+                                  type: object
+                                type: array
                             type: object
                           type: array
                         staticSite:
                           items:
                             properties:
+                              bitbucket:
+                                description: A GitHub repo to use as the component's
+                                  source. DigitalOcean App Platform must have access
+                                  to the repository. Only one of git, github, bitbucket,
+                                  gitlab, or image may be set.
+                                items:
+                                  properties:
+                                    branch:
+                                      description: |-
+                                        The name of the branch to use.
+                                        The name of the branch to use.
+                                      type: string
+                                    deployOnPush:
+                                      description: |-
+                                        Whether to automatically deploy new commits made to the repo.
+                                        Whether to automatically deploy new commits made to the repo
+                                      type: boolean
+                                    repo:
+                                      description: |-
+                                        The name of the repo in the format owner/repo.
+                                        The name of the repo in the format `owner/repo`.
+                                      type: string
+                                  type: object
+                                type: array
                               buildCommand:
                                 description: |-
                                   An optional build command to run while building this component from source.
@@ -6183,7 +7358,7 @@ spec:
                                         properties:
                                           exact:
                                             description: |-
-                                              The Access-Control-Allow-Origin header will be set to the client's origin only if the client's origin exactly matches the value you provide.
+                                              Exact match.
                                               Exact string match.
                                             type: string
                                           prefix:
@@ -6356,6 +7531,17 @@ spec:
                                 type: string
                             type: object
                           type: array
+                        vpc:
+                          description: ': Specification for VPC.'
+                          items:
+                            properties:
+                              id:
+                                description: |-
+                                  : The ID of the VPC.
+                                  The ID of the VPC.
+                                type: string
+                            type: object
+                          type: array
                         worker:
                           items:
                             properties:
@@ -6365,9 +7551,37 @@ spec:
                                   Alert policies for the app component
                                 items:
                                   properties:
+                                    destinations:
+                                      description: Specification for alert destination.
+                                      items:
+                                        properties:
+                                          emails:
+                                            description: Determines which emails receive
+                                              alerts. The emails must be team members.
+                                              If not set, the team's email is used
+                                              by default.
+                                            items:
+                                              type: string
+                                            type: array
+                                          slackWebhooks:
+                                            description: Determines which slack channels
+                                              or users receive alerts .
+                                            items:
+                                              properties:
+                                                channel:
+                                                  description: The Slack channel to
+                                                    send notifications to.
+                                                  type: string
+                                                url:
+                                                  description: The Slack webhook URL.
+                                                  type: string
+                                              type: object
+                                            type: array
+                                        type: object
+                                      type: array
                                     disabled:
-                                      description: 'Determines whether or not the
-                                        alert is disabled (default: false).'
+                                      description: 'Determines whether the alert is
+                                        disabled (default: false).'
                                       type: boolean
                                     operator:
                                       description: The operator to use. This is either
@@ -6377,7 +7591,8 @@ spec:
                                       description: 'The type of the alert to configure.
                                         Top-level app alert policies can be: DEPLOYMENT_CANCELLED,
                                         DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED,
-                                        DOMAIN_FAILED, or DOMAIN_LIVE.'
+                                        DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED,
+                                        or AUTOSCALE_SUCCEEDED.'
                                       type: string
                                     value:
                                       description: The value of the environment variable.
@@ -6386,6 +7601,68 @@ spec:
                                       description: 'The time before alerts should
                                         be triggered. This is may be one of: FIVE_MINUTES,
                                         TEN_MINUTES, THIRTY_MINUTES, ONE_HOUR.'
+                                      type: string
+                                  type: object
+                                type: array
+                              autoscaling:
+                                description: Configuration for automatically scaling
+                                  this component based on metrics.
+                                items:
+                                  properties:
+                                    maxInstanceCount:
+                                      description: |-
+                                        The maximum amount of instances for this component. Must be more than min_instance_count.
+                                        The maximum amount of instances for this component. Must be more than min_instance_count.
+                                      type: number
+                                    metrics:
+                                      description: |-
+                                        The metrics that the component is scaled on.
+                                        The metrics that the component is scaled on.
+                                      items:
+                                        properties:
+                                          cpu:
+                                            description: |-
+                                              Settings for scaling the component based on CPU utilization.
+                                              Settings for scaling the component based on CPU utilization.
+                                            items:
+                                              properties:
+                                                percent:
+                                                  description: |-
+                                                    The average target CPU utilization for the component.
+                                                    The average target CPU utilization for the component.
+                                                  type: number
+                                              type: object
+                                            type: array
+                                        type: object
+                                      type: array
+                                    minInstanceCount:
+                                      description: |-
+                                        The minimum amount of instances for this component. Must be less than max_instance_count.
+                                        The minimum amount of instances for this component. Must be less than max_instance_count.
+                                      type: number
+                                  type: object
+                                type: array
+                              bitbucket:
+                                description: A GitHub repo to use as the component's
+                                  source. DigitalOcean App Platform must have access
+                                  to the repository. Only one of git, github, bitbucket,
+                                  gitlab, or image may be set.
+                                items:
+                                  properties:
+                                    branch:
+                                      description: |-
+                                        The name of the branch to use.
+                                        The name of the branch to use.
+                                      type: string
+                                    deployOnPush:
+                                      description: |-
+                                        Whether to automatically deploy new commits made to the repo.
+                                        Whether to automatically deploy new commits made to the repo
+                                      type: boolean
+                                    repo:
+                                      description: |-
+                                        The name of the repo in the format owner/repo.
+                                        The name of the repo in the format `owner/repo`.
                                       type: string
                                   type: object
                                 type: array
@@ -6507,11 +7784,16 @@ spec:
                                         properties:
                                           enabled:
                                             description: |-
-                                              Whether to automatically deploy images pushed to DOCR.
+                                              Indicates whether maintenance mode should be enabled for the app.
                                               Whether to automatically deploy images pushed to DOCR.
                                             type: boolean
                                         type: object
                                       type: array
+                                    digest:
+                                      description: |-
+                                        The image digest. Cannot be specified if tag is provided.
+                                        The image digest. Cannot be specified if tag is provided.
+                                      type: string
                                     registry:
                                       description: |-
                                         The registry name. Must be left empty for the DOCR registry type. Required for the DOCKER_HUB registry type.
@@ -6530,7 +7812,7 @@ spec:
                                     tag:
                                       description: |-
                                         The repository tag. Defaults to latest if not provided.
-                                        The repository tag. Defaults to latest if not provided.
+                                        The repository tag. Defaults to latest if not provided. Cannot be specified if digest is provided.
                                       type: string
                                   type: object
                                 type: array
@@ -6650,6 +7932,17 @@ spec:
                                   An optional path to the working directory to use for the build.
                                   An optional path to the working directory to use for the build.
                                 type: string
+                              termination:
+                                description: Contains a component's termination parameters.
+                                items:
+                                  properties:
+                                    gracePeriodSeconds:
+                                      description: |-
+                                        The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+                                        The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.
+                                      type: number
+                                  type: object
+                                type: array
                             type: object
                           type: array
                       type: object

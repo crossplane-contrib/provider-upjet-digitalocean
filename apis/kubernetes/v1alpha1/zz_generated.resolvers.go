@@ -10,6 +10,7 @@ import (
 	v1alpha1 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/vpc/v1alpha1"
 	reference "github.com/crossplane/crossplane-runtime/pkg/reference"
 	errors "github.com/pkg/errors"
+	ptr "k8s.io/utils/ptr"
 	client "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -21,7 +22,7 @@ func (mg *Cluster) ResolveReferences(ctx context.Context, c client.Reader) error
 	var err error
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.VPCUUID),
+		CurrentValue: ptr.Deref(mg.Spec.ForProvider.VPCUUID, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.ForProvider.VPCUUIDRef,
 		Selector:     mg.Spec.ForProvider.VPCUUIDSelector,
@@ -33,11 +34,11 @@ func (mg *Cluster) ResolveReferences(ctx context.Context, c client.Reader) error
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.ForProvider.VPCUUID")
 	}
-	mg.Spec.ForProvider.VPCUUID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.VPCUUID = ptr.To(rsp.ResolvedValue)
 	mg.Spec.ForProvider.VPCUUIDRef = rsp.ResolvedReference
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.VPCUUID),
+		CurrentValue: ptr.Deref(mg.Spec.InitProvider.VPCUUID, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.InitProvider.VPCUUIDRef,
 		Selector:     mg.Spec.InitProvider.VPCUUIDSelector,
@@ -49,7 +50,7 @@ func (mg *Cluster) ResolveReferences(ctx context.Context, c client.Reader) error
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.InitProvider.VPCUUID")
 	}
-	mg.Spec.InitProvider.VPCUUID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.VPCUUID = ptr.To(rsp.ResolvedValue)
 	mg.Spec.InitProvider.VPCUUIDRef = rsp.ResolvedReference
 
 	return nil
@@ -63,7 +64,7 @@ func (mg *NodePool) ResolveReferences(ctx context.Context, c client.Reader) erro
 	var err error
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.ClusterID),
+		CurrentValue: ptr.Deref(mg.Spec.ForProvider.ClusterID, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.ForProvider.ClusterIDRef,
 		Selector:     mg.Spec.ForProvider.ClusterIDSelector,
@@ -75,11 +76,11 @@ func (mg *NodePool) ResolveReferences(ctx context.Context, c client.Reader) erro
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.ForProvider.ClusterID")
 	}
-	mg.Spec.ForProvider.ClusterID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.ClusterID = ptr.To(rsp.ResolvedValue)
 	mg.Spec.ForProvider.ClusterIDRef = rsp.ResolvedReference
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.ClusterID),
+		CurrentValue: ptr.Deref(mg.Spec.InitProvider.ClusterID, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.InitProvider.ClusterIDRef,
 		Selector:     mg.Spec.InitProvider.ClusterIDSelector,
@@ -91,7 +92,7 @@ func (mg *NodePool) ResolveReferences(ctx context.Context, c client.Reader) erro
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.InitProvider.ClusterID")
 	}
-	mg.Spec.InitProvider.ClusterID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.ClusterID = ptr.To(rsp.ResolvedValue)
 	mg.Spec.InitProvider.ClusterIDRef = rsp.ResolvedReference
 
 	return nil

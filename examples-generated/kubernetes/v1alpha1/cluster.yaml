@@ -18,4 +18,4 @@ spec:
         key: workloadKind
         value: database
     region: nyc1
-    version: 1.22.8-do.1
+    version: latest

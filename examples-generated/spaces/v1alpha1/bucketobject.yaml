@@ -12,7 +12,7 @@ spec:
     content: <html><body><p>This page is empty.</p></body></html>
     contentType: text/html
     key: index.html
-    region: nyc3
+    region: ${digitalocean_spaces_bucket.foobar.region}
 
 ---
 

@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.14.0
+    controller-gen.kubebuilder.io/version: v0.16.5
   name: loadbalancers.networking.digitalocean.crossplane.io
 spec:
   group: networking.digitalocean.crossplane.io
@@ -85,7 +85,6 @@ spec:
                   domains:
                     description: |-
                       A list of domains required to ingress traffic to a Global Load Balancer. The domains block is documented below.
-                      NOTE: this is a closed beta feature and not available for public use.
                       the list of domains required to ingress traffic to global load balancer
                     items:
                       properties:
@@ -236,7 +235,7 @@ spec:
                       properties:
                         certificateId:
                           description: Deprecated The ID of the TLS certificate to
-                            be used for SSL termination.
+                            be used for SSL termination. Use certificate_name instead.
                           type: string
                         certificateName:
                           description: The unique name of the TLS certificate to be
@@ -346,7 +345,6 @@ spec:
                   glbSettings:
                     description: |-
                       A block containing glb_settings required to define target rules for a Global Load Balancer. The glb_settings block is documented below.
-                      NOTE: this is a closed beta feature and not available for public use.
                       configuration options for global load balancer
                     items:
                       properties:
@@ -436,8 +434,12 @@ spec:
                   network:
                     description: |-
                       The type of network the Load Balancer is accessible from. It must be either of INTERNAL or EXTERNAL. Defaults to EXTERNAL.
-                      NOTE: non-EXTERNAL type may be part of closed beta feature and not available for public use.
                       the type of network the load balancer is accessible from (EXTERNAL or INTERNAL)
+                    type: string
+                  networkStack:
+                    description: |-
+                      The network stack determines the allocation of ipv4/ipv6 addresses to the load balancer. It must be either of IPV4 or DUALSTACK. Defaults to IPV4.
+                      The network stack determines the allocation of ipv4/ipv6 addresses to the load balancer. Enum: 'IPV4' 'DUALSTACK'
                     type: string
                   projectId:
                     description: The ID of the project that the load balancer is associated
@@ -534,7 +536,7 @@ spec:
                     type: string
                   sizeUnit:
                     description: The size of the Load Balancer. It must be in the
-                      range (1, 100). Defaults to 1. Only one of size or size_unit
+                      range (1, 200). Defaults to 1. Only one of size or size_unit
                       may be provided.
                     type: number
                   stickySessions:
@@ -554,26 +556,29 @@ spec:
                             when using cookies for the sticky sessions type.
                           type: number
                         type:
-                          description: |-
-                            The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
-                            NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
+                          description: The type of the Load Balancer. It must be either
+                            of REGIONAL, REGIONAL_NETWORK, or GLOBAL. Defaults to
+                            REGIONAL.
                           type: string
                       type: object
                     type: array
                   targetLoadBalancerIds:
                     description: |-
                       A list of Load Balancer IDs to be attached behind a Global Load Balancer.
-                      NOTE: this is a closed beta feature and not available for public use.
                       list of load balancer IDs to put behind a global load balancer
                     items:
                       type: string
                     type: array
                     x-kubernetes-list-type: set
+                  tlsCipherPolicy:
+                    description: |-
+                      The tls cipher policy controls the cipher suites to be used by the load balancer. It must be either of DEFAULT or STRONG. Defaults to DEFAULT.
+                      The tls cipher policy to be used for the load balancer. Enum: 'DEFAULT' 'STRONG'
+                    type: string
                   type:
                     description: |-
-                      The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
-                      NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
-                      the type of the load balancer (GLOBAL or REGIONAL)
+                      The type of the Load Balancer. It must be either of REGIONAL, REGIONAL_NETWORK, or GLOBAL. Defaults to REGIONAL.
+                      the type of the load balancer (GLOBAL, REGIONAL, or REGIONAL_NETWORK)
                     type: string
                   vpcUuid:
                     description: The ID of the VPC where the load balancer will be
@@ -680,7 +685,6 @@ spec:
                   domains:
                     description: |-
                       A list of domains required to ingress traffic to a Global Load Balancer. The domains block is documented below.
-                      NOTE: this is a closed beta feature and not available for public use.
                       the list of domains required to ingress traffic to global load balancer
                     items:
                       properties:
@@ -831,7 +835,7 @@ spec:
                       properties:
                         certificateId:
                           description: Deprecated The ID of the TLS certificate to
-                            be used for SSL termination.
+                            be used for SSL termination. Use certificate_name instead.
                           type: string
                         certificateName:
                           description: The unique name of the TLS certificate to be
@@ -941,7 +945,6 @@ spec:
                   glbSettings:
                     description: |-
                       A block containing glb_settings required to define target rules for a Global Load Balancer. The glb_settings block is documented below.
-                      NOTE: this is a closed beta feature and not available for public use.
                       configuration options for global load balancer
                     items:
                       properties:
@@ -1031,8 +1034,12 @@ spec:
                   network:
                     description: |-
                       The type of network the Load Balancer is accessible from. It must be either of INTERNAL or EXTERNAL. Defaults to EXTERNAL.
-                      NOTE: non-EXTERNAL type may be part of closed beta feature and not available for public use.
                       the type of network the load balancer is accessible from (EXTERNAL or INTERNAL)
+                    type: string
+                  networkStack:
+                    description: |-
+                      The network stack determines the allocation of ipv4/ipv6 addresses to the load balancer. It must be either of IPV4 or DUALSTACK. Defaults to IPV4.
+                      The network stack determines the allocation of ipv4/ipv6 addresses to the load balancer. Enum: 'IPV4' 'DUALSTACK'
                     type: string
                   projectId:
                     description: The ID of the project that the load balancer is associated
@@ -1129,7 +1136,7 @@ spec:
                     type: string
                   sizeUnit:
                     description: The size of the Load Balancer. It must be in the
-                      range (1, 100). Defaults to 1. Only one of size or size_unit
+                      range (1, 200). Defaults to 1. Only one of size or size_unit
                       may be provided.
                     type: number
                   stickySessions:
@@ -1149,26 +1156,29 @@ spec:
                             when using cookies for the sticky sessions type.
                           type: number
                         type:
-                          description: |-
-                            The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
-                            NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
+                          description: The type of the Load Balancer. It must be either
+                            of REGIONAL, REGIONAL_NETWORK, or GLOBAL. Defaults to
+                            REGIONAL.
                           type: string
                       type: object
                     type: array
                   targetLoadBalancerIds:
                     description: |-
                       A list of Load Balancer IDs to be attached behind a Global Load Balancer.
-                      NOTE: this is a closed beta feature and not available for public use.
                       list of load balancer IDs to put behind a global load balancer
                     items:
                       type: string
                     type: array
                     x-kubernetes-list-type: set
+                  tlsCipherPolicy:
+                    description: |-
+                      The tls cipher policy controls the cipher suites to be used by the load balancer. It must be either of DEFAULT or STRONG. Defaults to DEFAULT.
+                      The tls cipher policy to be used for the load balancer. Enum: 'DEFAULT' 'STRONG'
+                    type: string
                   type:
                     description: |-
-                      The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
-                      NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
-                      the type of the load balancer (GLOBAL or REGIONAL)
+                      The type of the Load Balancer. It must be either of REGIONAL, REGIONAL_NETWORK, or GLOBAL. Defaults to REGIONAL.
+                      the type of the load balancer (GLOBAL, REGIONAL, or REGIONAL_NETWORK)
                     type: string
                   vpcUuid:
                     description: The ID of the VPC where the load balancer will be
@@ -1439,10 +1449,14 @@ spec:
                   domains:
                     description: |-
                       A list of domains required to ingress traffic to a Global Load Balancer. The domains block is documented below.
-                      NOTE: this is a closed beta feature and not available for public use.
                       the list of domains required to ingress traffic to global load balancer
                     items:
                       properties:
+                        certificateId:
+                          description: |-
+                            Deprecated The ID of the TLS certificate to be used for SSL termination. Use certificate_name instead.
+                            certificate ID for TLS handshaking
+                          type: string
                         certificateName:
                           description: |-
                             The unique name of the TLS certificate to be used for SSL termination.
@@ -1522,7 +1536,7 @@ spec:
                       properties:
                         certificateId:
                           description: Deprecated The ID of the TLS certificate to
-                            be used for SSL termination.
+                            be used for SSL termination. Use certificate_name instead.
                           type: string
                         certificateName:
                           description: The unique name of the TLS certificate to be
@@ -1556,7 +1570,6 @@ spec:
                   glbSettings:
                     description: |-
                       A block containing glb_settings required to define target rules for a Global Load Balancer. The glb_settings block is documented below.
-                      NOTE: this is a closed beta feature and not available for public use.
                       configuration options for global load balancer
                     items:
                       properties:
@@ -1646,14 +1659,20 @@ spec:
                   ip:
                     description: The ip of the Load Balancer
                     type: string
+                  ipv6:
+                    type: string
                   name:
                     description: The Load Balancer name
                     type: string
                   network:
                     description: |-
                       The type of network the Load Balancer is accessible from. It must be either of INTERNAL or EXTERNAL. Defaults to EXTERNAL.
-                      NOTE: non-EXTERNAL type may be part of closed beta feature and not available for public use.
                       the type of network the load balancer is accessible from (EXTERNAL or INTERNAL)
+                    type: string
+                  networkStack:
+                    description: |-
+                      The network stack determines the allocation of ipv4/ipv6 addresses to the load balancer. It must be either of IPV4 or DUALSTACK. Defaults to IPV4.
+                      The network stack determines the allocation of ipv4/ipv6 addresses to the load balancer. Enum: 'IPV4' 'DUALSTACK'
                     type: string
                   projectId:
                     description: The ID of the project that the load balancer is associated
@@ -1676,7 +1695,7 @@ spec:
                     type: string
                   sizeUnit:
                     description: The size of the Load Balancer. It must be in the
-                      range (1, 100). Defaults to 1. Only one of size or size_unit
+                      range (1, 200). Defaults to 1. Only one of size or size_unit
                       may be provided.
                     type: number
                   status:
@@ -1698,26 +1717,29 @@ spec:
                             when using cookies for the sticky sessions type.
                           type: number
                         type:
-                          description: |-
-                            The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
-                            NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
+                          description: The type of the Load Balancer. It must be either
+                            of REGIONAL, REGIONAL_NETWORK, or GLOBAL. Defaults to
+                            REGIONAL.
                           type: string
                       type: object
                     type: array
                   targetLoadBalancerIds:
                     description: |-
                       A list of Load Balancer IDs to be attached behind a Global Load Balancer.
-                      NOTE: this is a closed beta feature and not available for public use.
                       list of load balancer IDs to put behind a global load balancer
                     items:
                       type: string
                     type: array
                     x-kubernetes-list-type: set
+                  tlsCipherPolicy:
+                    description: |-
+                      The tls cipher policy controls the cipher suites to be used by the load balancer. It must be either of DEFAULT or STRONG. Defaults to DEFAULT.
+                      The tls cipher policy to be used for the load balancer. Enum: 'DEFAULT' 'STRONG'
+                    type: string
                   type:
                     description: |-
-                      The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
-                      NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
-                      the type of the load balancer (GLOBAL or REGIONAL)
+                      The type of the Load Balancer. It must be either of REGIONAL, REGIONAL_NETWORK, or GLOBAL. Defaults to REGIONAL.
+                      the type of the load balancer (GLOBAL, REGIONAL, or REGIONAL_NETWORK)
                     type: string
                   urn:
                     description: |-
