@@ -16,6 +16,7 @@ import (
 	v1alpha1digitalocean "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1"
 	v1alpha1dns "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/dns/v1alpha1"
 	v1alpha1droplet "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/droplet/v1alpha1"
+	v1alpha1gradientai "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/gradientai/v1alpha1"
 	v1alpha1kubernetes "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/kubernetes/v1alpha1"
 	v1alpha1monitor "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/monitor/v1alpha1"
 	v1alpha1networking "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/networking/v1alpha1"
@@ -39,6 +40,7 @@ func init() {
 		v1alpha1digitalocean.SchemeBuilder.AddToScheme,
 		v1alpha1dns.SchemeBuilder.AddToScheme,
 		v1alpha1droplet.SchemeBuilder.AddToScheme,
+		v1alpha1gradientai.SchemeBuilder.AddToScheme,
 		v1alpha1kubernetes.SchemeBuilder.AddToScheme,
 		v1alpha1monitor.SchemeBuilder.AddToScheme,
 		v1alpha1networking.SchemeBuilder.AddToScheme,
