@@ -30,7 +30,7 @@ spec:
             }
           ]
         })}
-    region: nyc3
+    region: ${digitalocean_spaces_bucket.foobar.region}
 
 ---
 

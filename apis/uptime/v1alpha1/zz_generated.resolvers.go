@@ -9,6 +9,7 @@ import (
 	"context"
 	reference "github.com/crossplane/crossplane-runtime/pkg/reference"
 	errors "github.com/pkg/errors"
+	ptr "k8s.io/utils/ptr"
 	client "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -20,7 +21,7 @@ func (mg *Alert) ResolveReferences(ctx context.Context, c client.Reader) error {
 	var err error
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.CheckID),
+		CurrentValue: ptr.Deref(mg.Spec.ForProvider.CheckID, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.ForProvider.CheckIDRef,
 		Selector:     mg.Spec.ForProvider.CheckIDSelector,
@@ -32,11 +33,11 @@ func (mg *Alert) ResolveReferences(ctx context.Context, c client.Reader) error {
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.ForProvider.CheckID")
 	}
-	mg.Spec.ForProvider.CheckID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.CheckID = ptr.To(rsp.ResolvedValue)
 	mg.Spec.ForProvider.CheckIDRef = rsp.ResolvedReference
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.CheckID),
+		CurrentValue: ptr.Deref(mg.Spec.InitProvider.CheckID, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.InitProvider.CheckIDRef,
 		Selector:     mg.Spec.InitProvider.CheckIDSelector,
@@ -48,7 +49,7 @@ func (mg *Alert) ResolveReferences(ctx context.Context, c client.Reader) error {
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.InitProvider.CheckID")
 	}
-	mg.Spec.InitProvider.CheckID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.CheckID = ptr.To(rsp.ResolvedValue)
 	mg.Spec.InitProvider.CheckIDRef = rsp.ResolvedReference
 
 	return nil

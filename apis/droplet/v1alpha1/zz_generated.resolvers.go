@@ -12,7 +12,9 @@ import (
 	v1alpha11 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/ssh/v1alpha1"
 	v1alpha13 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/vpc/v1alpha1"
 	reference "github.com/crossplane/crossplane-runtime/pkg/reference"
+	convert "github.com/crossplane/crossplane-tools/pkg/convert"
 	errors "github.com/pkg/errors"
+	ptr "k8s.io/utils/ptr"
 	client "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -25,7 +27,7 @@ func (mg *Droplet) ResolveReferences(ctx context.Context, c client.Reader) error
 	var err error
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.Image),
+		CurrentValue: ptr.Deref(mg.Spec.ForProvider.Image, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.ForProvider.ImageRef,
 		Selector:     mg.Spec.ForProvider.ImageSelector,
@@ -37,11 +39,11 @@ func (mg *Droplet) ResolveReferences(ctx context.Context, c client.Reader) error
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.ForProvider.Image")
 	}
-	mg.Spec.ForProvider.Image = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.Image = ptr.To(rsp.ResolvedValue)
 	mg.Spec.ForProvider.ImageRef = rsp.ResolvedReference
 
 	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
-		CurrentValues: reference.FromPtrValues(mg.Spec.ForProvider.SSHKeys),
+		CurrentValues: convert.FromPtrValues(mg.Spec.ForProvider.SSHKeys),
 		Extract:       reference.ExternalName(),
 		References:    mg.Spec.ForProvider.SSHKeysRefs,
 		Selector:      mg.Spec.ForProvider.SSHKeysSelector,
@@ -53,11 +55,11 @@ func (mg *Droplet) ResolveReferences(ctx context.Context, c client.Reader) error
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.ForProvider.SSHKeys")
 	}
-	mg.Spec.ForProvider.SSHKeys = reference.ToPtrValues(mrsp.ResolvedValues)
+	mg.Spec.ForProvider.SSHKeys = convert.ToPtrValues(mrsp.ResolvedValues)
 	mg.Spec.ForProvider.SSHKeysRefs = mrsp.ResolvedReferences
 
 	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
-		CurrentValues: reference.FromPtrValues(mg.Spec.ForProvider.Tags),
+		CurrentValues: convert.FromPtrValues(mg.Spec.ForProvider.Tags),
 		Extract:       reference.ExternalName(),
 		References:    mg.Spec.ForProvider.TagsRefs,
 		Selector:      mg.Spec.ForProvider.TagsSelector,
@@ -69,11 +71,11 @@ func (mg *Droplet) ResolveReferences(ctx context.Context, c client.Reader) error
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.ForProvider.Tags")
 	}
-	mg.Spec.ForProvider.Tags = reference.ToPtrValues(mrsp.ResolvedValues)
+	mg.Spec.ForProvider.Tags = convert.ToPtrValues(mrsp.ResolvedValues)
 	mg.Spec.ForProvider.TagsRefs = mrsp.ResolvedReferences
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.VPCUUID),
+		CurrentValue: ptr.Deref(mg.Spec.ForProvider.VPCUUID, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.ForProvider.VPCUUIDRef,
 		Selector:     mg.Spec.ForProvider.VPCUUIDSelector,
@@ -85,11 +87,11 @@ func (mg *Droplet) ResolveReferences(ctx context.Context, c client.Reader) error
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.ForProvider.VPCUUID")
 	}
-	mg.Spec.ForProvider.VPCUUID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.VPCUUID = ptr.To(rsp.ResolvedValue)
 	mg.Spec.ForProvider.VPCUUIDRef = rsp.ResolvedReference
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.Image),
+		CurrentValue: ptr.Deref(mg.Spec.InitProvider.Image, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.InitProvider.ImageRef,
 		Selector:     mg.Spec.InitProvider.ImageSelector,
@@ -101,11 +103,11 @@ func (mg *Droplet) ResolveReferences(ctx context.Context, c client.Reader) error
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.InitProvider.Image")
 	}
-	mg.Spec.InitProvider.Image = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.Image = ptr.To(rsp.ResolvedValue)
 	mg.Spec.InitProvider.ImageRef = rsp.ResolvedReference
 
 	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
-		CurrentValues: reference.FromPtrValues(mg.Spec.InitProvider.SSHKeys),
+		CurrentValues: convert.FromPtrValues(mg.Spec.InitProvider.SSHKeys),
 		Extract:       reference.ExternalName(),
 		References:    mg.Spec.InitProvider.SSHKeysRefs,
 		Selector:      mg.Spec.InitProvider.SSHKeysSelector,
@@ -117,11 +119,11 @@ func (mg *Droplet) ResolveReferences(ctx context.Context, c client.Reader) error
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.InitProvider.SSHKeys")
 	}
-	mg.Spec.InitProvider.SSHKeys = reference.ToPtrValues(mrsp.ResolvedValues)
+	mg.Spec.InitProvider.SSHKeys = convert.ToPtrValues(mrsp.ResolvedValues)
 	mg.Spec.InitProvider.SSHKeysRefs = mrsp.ResolvedReferences
 
 	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
-		CurrentValues: reference.FromPtrValues(mg.Spec.InitProvider.Tags),
+		CurrentValues: convert.FromPtrValues(mg.Spec.InitProvider.Tags),
 		Extract:       reference.ExternalName(),
 		References:    mg.Spec.InitProvider.TagsRefs,
 		Selector:      mg.Spec.InitProvider.TagsSelector,
@@ -133,11 +135,11 @@ func (mg *Droplet) ResolveReferences(ctx context.Context, c client.Reader) error
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.InitProvider.Tags")
 	}
-	mg.Spec.InitProvider.Tags = reference.ToPtrValues(mrsp.ResolvedValues)
+	mg.Spec.InitProvider.Tags = convert.ToPtrValues(mrsp.ResolvedValues)
 	mg.Spec.InitProvider.TagsRefs = mrsp.ResolvedReferences
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.VPCUUID),
+		CurrentValue: ptr.Deref(mg.Spec.InitProvider.VPCUUID, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.InitProvider.VPCUUIDRef,
 		Selector:     mg.Spec.InitProvider.VPCUUIDSelector,
@@ -149,7 +151,7 @@ func (mg *Droplet) ResolveReferences(ctx context.Context, c client.Reader) error
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.InitProvider.VPCUUID")
 	}
-	mg.Spec.InitProvider.VPCUUID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.VPCUUID = ptr.To(rsp.ResolvedValue)
 	mg.Spec.InitProvider.VPCUUIDRef = rsp.ResolvedReference
 
 	return nil
@@ -163,7 +165,7 @@ func (mg *Snapshot) ResolveReferences(ctx context.Context, c client.Reader) erro
 	var err error
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.DropletID),
+		CurrentValue: ptr.Deref(mg.Spec.ForProvider.DropletID, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.ForProvider.DropletIDRef,
 		Selector:     mg.Spec.ForProvider.DropletIDSelector,
@@ -175,11 +177,11 @@ func (mg *Snapshot) ResolveReferences(ctx context.Context, c client.Reader) erro
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.ForProvider.DropletID")
 	}
-	mg.Spec.ForProvider.DropletID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.DropletID = ptr.To(rsp.ResolvedValue)
 	mg.Spec.ForProvider.DropletIDRef = rsp.ResolvedReference
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.DropletID),
+		CurrentValue: ptr.Deref(mg.Spec.InitProvider.DropletID, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.InitProvider.DropletIDRef,
 		Selector:     mg.Spec.InitProvider.DropletIDSelector,
@@ -191,7 +193,7 @@ func (mg *Snapshot) ResolveReferences(ctx context.Context, c client.Reader) erro
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.InitProvider.DropletID")
 	}
-	mg.Spec.InitProvider.DropletID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.DropletID = ptr.To(rsp.ResolvedValue)
 	mg.Spec.InitProvider.DropletIDRef = rsp.ResolvedReference
 
 	return nil

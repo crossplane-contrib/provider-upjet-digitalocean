@@ -9,6 +9,7 @@ import (
 	"context"
 	v1alpha1 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/droplet/v1alpha1"
 	reference "github.com/crossplane/crossplane-runtime/pkg/reference"
+	convert "github.com/crossplane/crossplane-tools/pkg/convert"
 	errors "github.com/pkg/errors"
 	client "sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -21,7 +22,7 @@ func (mg *Alert) ResolveReferences(ctx context.Context, c client.Reader) error {
 	var err error
 
 	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
-		CurrentValues: reference.FromPtrValues(mg.Spec.ForProvider.Entities),
+		CurrentValues: convert.FromPtrValues(mg.Spec.ForProvider.Entities),
 		Extract:       reference.ExternalName(),
 		References:    mg.Spec.ForProvider.EntitiesRefs,
 		Selector:      mg.Spec.ForProvider.EntitiesSelector,
@@ -33,11 +34,11 @@ func (mg *Alert) ResolveReferences(ctx context.Context, c client.Reader) error {
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.ForProvider.Entities")
 	}
-	mg.Spec.ForProvider.Entities = reference.ToPtrValues(mrsp.ResolvedValues)
+	mg.Spec.ForProvider.Entities = convert.ToPtrValues(mrsp.ResolvedValues)
 	mg.Spec.ForProvider.EntitiesRefs = mrsp.ResolvedReferences
 
 	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
-		CurrentValues: reference.FromPtrValues(mg.Spec.InitProvider.Entities),
+		CurrentValues: convert.FromPtrValues(mg.Spec.InitProvider.Entities),
 		Extract:       reference.ExternalName(),
 		References:    mg.Spec.InitProvider.EntitiesRefs,
 		Selector:      mg.Spec.InitProvider.EntitiesSelector,
@@ -49,7 +50,7 @@ func (mg *Alert) ResolveReferences(ctx context.Context, c client.Reader) error {
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.InitProvider.Entities")
 	}
-	mg.Spec.InitProvider.Entities = reference.ToPtrValues(mrsp.ResolvedValues)
+	mg.Spec.InitProvider.Entities = convert.ToPtrValues(mrsp.ResolvedValues)
 	mg.Spec.InitProvider.EntitiesRefs = mrsp.ResolvedReferences
 
 	return nil

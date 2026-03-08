@@ -10,6 +10,7 @@ import (
 	v1alpha1 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/droplet/v1alpha1"
 	reference "github.com/crossplane/crossplane-runtime/pkg/reference"
 	errors "github.com/pkg/errors"
+	ptr "k8s.io/utils/ptr"
 	client "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -37,7 +38,7 @@ func (mg *Attachment) ResolveReferences(ctx context.Context, c client.Reader) er
 	mg.Spec.ForProvider.DropletIDRef = rsp.ResolvedReference
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.VolumeID),
+		CurrentValue: ptr.Deref(mg.Spec.ForProvider.VolumeID, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.ForProvider.VolumeIDRef,
 		Selector:     mg.Spec.ForProvider.VolumeIDSelector,
@@ -49,7 +50,7 @@ func (mg *Attachment) ResolveReferences(ctx context.Context, c client.Reader) er
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.ForProvider.VolumeID")
 	}
-	mg.Spec.ForProvider.VolumeID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.VolumeID = ptr.To(rsp.ResolvedValue)
 	mg.Spec.ForProvider.VolumeIDRef = rsp.ResolvedReference
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
@@ -69,7 +70,7 @@ func (mg *Attachment) ResolveReferences(ctx context.Context, c client.Reader) er
 	mg.Spec.InitProvider.DropletIDRef = rsp.ResolvedReference
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.VolumeID),
+		CurrentValue: ptr.Deref(mg.Spec.InitProvider.VolumeID, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.InitProvider.VolumeIDRef,
 		Selector:     mg.Spec.InitProvider.VolumeIDSelector,
@@ -81,7 +82,7 @@ func (mg *Attachment) ResolveReferences(ctx context.Context, c client.Reader) er
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.InitProvider.VolumeID")
 	}
-	mg.Spec.InitProvider.VolumeID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.VolumeID = ptr.To(rsp.ResolvedValue)
 	mg.Spec.InitProvider.VolumeIDRef = rsp.ResolvedReference
 
 	return nil
@@ -95,7 +96,7 @@ func (mg *Snapshot) ResolveReferences(ctx context.Context, c client.Reader) erro
 	var err error
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.VolumeID),
+		CurrentValue: ptr.Deref(mg.Spec.ForProvider.VolumeID, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.ForProvider.VolumeIDRef,
 		Selector:     mg.Spec.ForProvider.VolumeIDSelector,
@@ -107,11 +108,11 @@ func (mg *Snapshot) ResolveReferences(ctx context.Context, c client.Reader) erro
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.ForProvider.VolumeID")
 	}
-	mg.Spec.ForProvider.VolumeID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.VolumeID = ptr.To(rsp.ResolvedValue)
 	mg.Spec.ForProvider.VolumeIDRef = rsp.ResolvedReference
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.VolumeID),
+		CurrentValue: ptr.Deref(mg.Spec.InitProvider.VolumeID, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.InitProvider.VolumeIDRef,
 		Selector:     mg.Spec.InitProvider.VolumeIDSelector,
@@ -123,7 +124,7 @@ func (mg *Snapshot) ResolveReferences(ctx context.Context, c client.Reader) erro
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.InitProvider.VolumeID")
 	}
-	mg.Spec.InitProvider.VolumeID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.VolumeID = ptr.To(rsp.ResolvedValue)
 	mg.Spec.InitProvider.VolumeIDRef = rsp.ResolvedReference
 
 	return nil
@@ -137,7 +138,7 @@ func (mg *Volume) ResolveReferences(ctx context.Context, c client.Reader) error 
 	var err error
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.SnapshotID),
+		CurrentValue: ptr.Deref(mg.Spec.ForProvider.SnapshotID, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.ForProvider.SnapshotIDRef,
 		Selector:     mg.Spec.ForProvider.SnapshotIDSelector,
@@ -149,11 +150,11 @@ func (mg *Volume) ResolveReferences(ctx context.Context, c client.Reader) error 
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.ForProvider.SnapshotID")
 	}
-	mg.Spec.ForProvider.SnapshotID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.SnapshotID = ptr.To(rsp.ResolvedValue)
 	mg.Spec.ForProvider.SnapshotIDRef = rsp.ResolvedReference
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.SnapshotID),
+		CurrentValue: ptr.Deref(mg.Spec.InitProvider.SnapshotID, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.InitProvider.SnapshotIDRef,
 		Selector:     mg.Spec.InitProvider.SnapshotIDSelector,
@@ -165,7 +166,7 @@ func (mg *Volume) ResolveReferences(ctx context.Context, c client.Reader) error 
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.InitProvider.SnapshotID")
 	}
-	mg.Spec.InitProvider.SnapshotID = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.SnapshotID = ptr.To(rsp.ResolvedValue)
 	mg.Spec.InitProvider.SnapshotIDRef = rsp.ResolvedReference
 
 	return nil

@@ -12,7 +12,7 @@ TERRAFORM_VERSION_VALID := $(shell [ "$(TERRAFORM_VERSION)" = "`printf "$(TERRAF
 
 export TERRAFORM_PROVIDER_SOURCE ?= digitalocean/digitalocean
 export TERRAFORM_PROVIDER_REPO ?= https://github.com/digitalocean/terraform-provider-digitalocean
-export TERRAFORM_PROVIDER_VERSION ?= 2.43.0
+export TERRAFORM_PROVIDER_VERSION ?= 2.79.0
 export TERRAFORM_PROVIDER_DOWNLOAD_NAME ?= terraform-provider-digitalocean
 export TERRAFORM_PROVIDER_DOWNLOAD_URL_PREFIX ?= https://releases.hashicorp.com/$(TERRAFORM_PROVIDER_DOWNLOAD_NAME)/$(TERRAFORM_PROVIDER_VERSION)
 export TERRAFORM_NATIVE_PROVIDER_BINARY ?= terraform-provider-digitalocean_v$(TERRAFORM_PROVIDER_VERSION)

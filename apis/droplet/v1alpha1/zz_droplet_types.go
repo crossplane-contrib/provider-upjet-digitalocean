@@ -13,7 +13,49 @@ import (
 	v1 "github.com/crossplane/crossplane-runtime/apis/common/v1"
 )
 
+type BackupPolicyInitParameters struct {
+
+	// The hour of the day that the backup window will start (0, 4, 8, 12, 16, 20).
+	Hour *float64 `json:"hour,omitempty" tf:"hour,omitempty"`
+
+	// The backup plan used for the Droplet. The plan can be either daily or weekly.
+	Plan *string `json:"plan,omitempty" tf:"plan,omitempty"`
+
+	// The day of the week on which the backup will occur (SUN, MON, TUE, WED, THU, FRI, SAT).
+	Weekday *string `json:"weekday,omitempty" tf:"weekday,omitempty"`
+}
+
+type BackupPolicyObservation struct {
+
+	// The hour of the day that the backup window will start (0, 4, 8, 12, 16, 20).
+	Hour *float64 `json:"hour,omitempty" tf:"hour,omitempty"`
+
+	// The backup plan used for the Droplet. The plan can be either daily or weekly.
+	Plan *string `json:"plan,omitempty" tf:"plan,omitempty"`
+
+	// The day of the week on which the backup will occur (SUN, MON, TUE, WED, THU, FRI, SAT).
+	Weekday *string `json:"weekday,omitempty" tf:"weekday,omitempty"`
+}
+
+type BackupPolicyParameters struct {
+
+	// The hour of the day that the backup window will start (0, 4, 8, 12, 16, 20).
+	// +kubebuilder:validation:Optional
+	Hour *float64 `json:"hour,omitempty" tf:"hour,omitempty"`
+
+	// The backup plan used for the Droplet. The plan can be either daily or weekly.
+	// +kubebuilder:validation:Optional
+	Plan *string `json:"plan,omitempty" tf:"plan,omitempty"`
+
+	// The day of the week on which the backup will occur (SUN, MON, TUE, WED, THU, FRI, SAT).
+	// +kubebuilder:validation:Optional
+	Weekday *string `json:"weekday,omitempty" tf:"weekday,omitempty"`
+}
+
 type DropletInitParameters struct {
+
+	// An object specifying the backup policy for the Droplet. If omitted and backups is true, the backup plan will default to daily.
+	BackupPolicy []BackupPolicyInitParameters `json:"backupPolicy,omitempty" tf:"backup_policy,omitempty"`
 
 	// Boolean controlling if backups are made. Defaults to
 	// false.
@@ -40,7 +82,7 @@ type DropletInitParameters struct {
 	// The IPv6 address
 	IPv6Address *string `json:"ipv6Address,omitempty" tf:"ipv6_address,omitempty"`
 
-	// The Droplet image ID or slug. This could be either image ID or droplet snapshot ID.
+	// The Droplet image ID or slug. This could be either image ID or droplet snapshot ID. You can find image IDs and slugs using the DigitalOcean API.
 	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/custom/v1alpha1.Image
 	Image *string `json:"image,omitempty" tf:"image,omitempty"`
 
@@ -91,7 +133,7 @@ type DropletInitParameters struct {
 	// +kubebuilder:validation:Optional
 	SSHKeysSelector *v1.Selector `json:"sshKeysSelector,omitempty" tf:"-"`
 
-	// The unique slug that identifies the type of Droplet. You can find a list of available slugs on DigitalOcean API documentation.
+	// The unique slug that identifies the type of Droplet. You may list the available slugs using the DigitalOcean API.
 	Size *string `json:"size,omitempty" tf:"size,omitempty"`
 
 	// A list of the tags to be applied to this Droplet.
@@ -107,7 +149,7 @@ type DropletInitParameters struct {
 	// +kubebuilder:validation:Optional
 	TagsSelector *v1.Selector `json:"tagsSelector,omitempty" tf:"-"`
 
-	// A string of the desired User Data for the Droplet.
+	// A string of the desired User Data provided during Droplet creation. Changing this forces a new resource to be created.
 	UserData *string `json:"userData,omitempty" tf:"user_data,omitempty"`
 
 	// The ID of the VPC where the Droplet will be located.
@@ -128,6 +170,9 @@ type DropletInitParameters struct {
 }
 
 type DropletObservation struct {
+
+	// An object specifying the backup policy for the Droplet. If omitted and backups is true, the backup plan will default to daily.
+	BackupPolicy []BackupPolicyObservation `json:"backupPolicy,omitempty" tf:"backup_policy,omitempty"`
 
 	// Boolean controlling if backups are made. Defaults to
 	// false.
@@ -168,7 +213,7 @@ type DropletObservation struct {
 	// The IPv6 address
 	IPv6Address *string `json:"ipv6Address,omitempty" tf:"ipv6_address,omitempty"`
 
-	// The Droplet image ID or slug. This could be either image ID or droplet snapshot ID.
+	// The Droplet image ID or slug. This could be either image ID or droplet snapshot ID. You can find image IDs and slugs using the DigitalOcean API.
 	Image *string `json:"image,omitempty" tf:"image,omitempty"`
 
 	// Is the Droplet locked
@@ -212,7 +257,7 @@ type DropletObservation struct {
 	// +listType=set
 	SSHKeys []*string `json:"sshKeys,omitempty" tf:"ssh_keys,omitempty"`
 
-	// The unique slug that identifies the type of Droplet. You can find a list of available slugs on DigitalOcean API documentation.
+	// The unique slug that identifies the type of Droplet. You may list the available slugs using the DigitalOcean API.
 	Size *string `json:"size,omitempty" tf:"size,omitempty"`
 
 	// The status of the Droplet
@@ -225,7 +270,7 @@ type DropletObservation struct {
 	// The uniform resource name of the Droplet
 	Urn *string `json:"urn,omitempty" tf:"urn,omitempty"`
 
-	// A string of the desired User Data for the Droplet.
+	// A string of the desired User Data provided during Droplet creation. Changing this forces a new resource to be created.
 	UserData *string `json:"userData,omitempty" tf:"user_data,omitempty"`
 
 	// The ID of the VPC where the Droplet will be located.
@@ -240,6 +285,10 @@ type DropletObservation struct {
 }
 
 type DropletParameters struct {
+
+	// An object specifying the backup policy for the Droplet. If omitted and backups is true, the backup plan will default to daily.
+	// +kubebuilder:validation:Optional
+	BackupPolicy []BackupPolicyParameters `json:"backupPolicy,omitempty" tf:"backup_policy,omitempty"`
 
 	// Boolean controlling if backups are made. Defaults to
 	// false.
@@ -271,7 +320,7 @@ type DropletParameters struct {
 	// +kubebuilder:validation:Optional
 	IPv6Address *string `json:"ipv6Address,omitempty" tf:"ipv6_address,omitempty"`
 
-	// The Droplet image ID or slug. This could be either image ID or droplet snapshot ID.
+	// The Droplet image ID or slug. This could be either image ID or droplet snapshot ID. You can find image IDs and slugs using the DigitalOcean API.
 	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/custom/v1alpha1.Image
 	// +kubebuilder:validation:Optional
 	Image *string `json:"image,omitempty" tf:"image,omitempty"`
@@ -329,7 +378,7 @@ type DropletParameters struct {
 	// +kubebuilder:validation:Optional
 	SSHKeysSelector *v1.Selector `json:"sshKeysSelector,omitempty" tf:"-"`
 
-	// The unique slug that identifies the type of Droplet. You can find a list of available slugs on DigitalOcean API documentation.
+	// The unique slug that identifies the type of Droplet. You may list the available slugs using the DigitalOcean API.
 	// +kubebuilder:validation:Optional
 	Size *string `json:"size,omitempty" tf:"size,omitempty"`
 
@@ -347,7 +396,7 @@ type DropletParameters struct {
 	// +kubebuilder:validation:Optional
 	TagsSelector *v1.Selector `json:"tagsSelector,omitempty" tf:"-"`
 
-	// A string of the desired User Data for the Droplet.
+	// A string of the desired User Data provided during Droplet creation. Changing this forces a new resource to be created.
 	// +kubebuilder:validation:Optional
 	UserData *string `json:"userData,omitempty" tf:"user_data,omitempty"`
 

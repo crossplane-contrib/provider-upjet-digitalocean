@@ -1,7 +1,7 @@
 name: digitalocean/digitalocean
 resources:
     digitalocean_app:
-        subCategory: ""
+        subCategory: App Platform
         name: digitalocean_app
         title: digitalocean_app
         examples:
@@ -58,6 +58,20 @@ resources:
                     {
                       "alert": [
                         {
+                          "destinations": [
+                            {
+                              "emails": [
+                                "team.member1@org.com",
+                                "team.member2@org.com"
+                              ],
+                              "slack_webhooks": [
+                                {
+                                  "channel": "@user1",
+                                  "url": "https://hooks.slack.com/slack-url"
+                                }
+                              ]
+                            }
+                          ],
                           "rule": "DEPLOYMENT_FAILED"
                         }
                       ],
@@ -117,6 +131,20 @@ resources:
                         {
                           "alert": [
                             {
+                              "destinations": [
+                                {
+                                  "emails": [
+                                    "team.member1@org.com",
+                                    "team.member2@org.com"
+                                  ],
+                                  "slack_webhooks": [
+                                    {
+                                      "channel": "@user1",
+                                      "url": "https://hooks.slack.com/slack-url"
+                                    }
+                                  ]
+                                }
+                              ],
                               "operator": "GREATER_THAN",
                               "rule": "CPU_UTILIZATION",
                               "value": 75,
@@ -150,15 +178,20 @@ resources:
                       ],
                       "static_site": [
                         {
-                          "build_command": "npm run build",
-                          "github": [
+                          "bitbucket": [
                             {
                               "branch": "main",
                               "deploy_on_push": true,
                               "repo": "username/repo"
                             }
                           ],
+                          "build_command": "npm run build",
                           "name": "web"
+                        }
+                      ],
+                      "vpc": [
+                        {
+                          "id": "c22d8f48-4bc4-49f5-8ca0-58e7164427ac"
                         }
                       ]
                     }
@@ -203,6 +236,61 @@ resources:
                     }
                   ]
                 }
+            - name: golang-sample
+              manifest: |-
+                {
+                  "spec": [
+                    {
+                      "disable_edge_cache": true,
+                      "disable_email_obfuscation": false,
+                      "enhanced_threat_control_enabled": true,
+                      "name": "golang-sample",
+                      "region": "ams",
+                      "service": [
+                        {
+                          "git": [
+                            {
+                              "branch": "main",
+                              "repo_clone_url": "https://github.com/digitalocean/sample-golang.git"
+                            }
+                          ],
+                          "instance_count": 1,
+                          "instance_size_slug": "apps-s-1vcpu-1gb",
+                          "name": "go-service"
+                        }
+                      ]
+                    }
+                  ]
+                }
+            - name: maintenance-example
+              manifest: |-
+                {
+                  "spec": [
+                    {
+                      "maintenance": [
+                        {
+                          "enabled": true,
+                          "offline_page_url": "https://example.com/maintenance.html"
+                        }
+                      ],
+                      "name": "maintenance-example",
+                      "region": "ams",
+                      "service": [
+                        {
+                          "git": [
+                            {
+                              "branch": "main",
+                              "repo_clone_url": "https://github.com/digitalocean/sample-golang.git"
+                            }
+                          ],
+                          "instance_count": 1,
+                          "instance_size_slug": "apps-s-1vcpu-1gb",
+                          "name": "go-service"
+                        }
+                      ]
+                    }
+                  ]
+                }
         argumentDocs:
             ALIAS: ': A non-primary domain.'
             DEFAULT: ': The default .ondigitalocean.app domain assigned to this app.'
@@ -218,9 +306,11 @@ resources:
             allow_methods: '- The set of allowed HTTP methods. This configures the Access-Control-Allow-Methods header.'
             allow_origins: '- The Access-Control-Allow-Origin can be'
             api_key: '- Datadog API key.'
-            authority: '- The authority/host to redirect to. This can be a hostname or IP address.'
+            archive: '- Indicates whether the app should be archived. Setting this to true implies that enabled is set to true.'
+            authority: '- The authority (domain) to match on.'
             autoscaling: '- Configuration for automatically scaling this component based on metrics.'
             basic_auth: '- OpenSearch basic auth'
+            bitbucket: '- A GitHub repo to use as the component''s source. DigitalOcean App Platform must have access to the repository. Only one of git, github, bitbucket, gitlab, or image may be set.'
             branch: '- The name of the branch to use.'
             build_command: '- An optional build command to run while building this component from source.'
             catchall_document: '- The name of the document to use as the fallback for any requests to documents that are not found when serving this static site.'
@@ -234,27 +324,36 @@ resources:
             db_user: '- The name of the MySQL or PostgreSQL user to configure.'
             default_ingress: '- The default URL to access the app.'
             deploy_on_push: '- Whether to automatically deploy new commits made to the repo.'
-            disabled: '- Determines whether or not the alert is disabled (default: false).'
+            deployment_per_page: '- (Optional) Controls how many deployments are requested per API page when listing deployments during create/update waits. Defaults to 20. Reduce this value (for example 5) if you experience API timeouts when listing deployments.'
+            destinations: '- Specification for alert destination.'
+            digest: '- The image digest. Cannot be specified if tag is provided.'
+            disable_edge_cache: '- A boolean indicating whether to disable the edge cache for this app. Default: false. Available only for non-static sites. Requires custom domains and applies to all the domains of the app.'
+            disable_email_obfuscation: '- A boolean indicating whether to disable email obfuscation for this app. Default: false. Requires custom domains and applies to all the domains of the app.'
+            disabled: '- Determines whether the alert is disabled (default: false).'
             dockerfile_path: '- The path to a Dockerfile relative to the root of the repo. If set, overrides usage of buildpacks.'
             domain: '- Describes a domain where the application will be made available.'
+            drain_seconds: '- The number of seconds to wait between selecting a container instance for termination and issuing the TERM signal. Selecting a container instance for termination begins an asynchronous drain of new requests on upstream load-balancers. Default: 15 seconds, Minimum 1, Maximum 110.'
             egress: '- Specification for app egress configurations.'
-            enabled: '- Whether to automatically deploy images pushed to DOCR.'
+            emails: '- Determines which emails receive alerts. The emails must be team members. If not set, the team''s email is used by default.'
+            enabled: '- Indicates whether maintenance mode should be enabled for the app.'
             endpoint: '- Papertrail syslog endpoint.'
             engine: '- The database engine to use (MYSQL, PG, REDIS, MONGODB, KAFKA, or OPENSEARCH).'
+            enhanced_threat_control_enabled: '- A boolean, when set to true, enables enhanced analyzing of incoming traffic to prevent layer 7 DDoS attacks. Default: false. Requires custom domains and applies to all the domains of the app.'
             env: '- Describes an app-wide environment variable made available to all components.'
             environment_slug: '- An environment slug describing the type of this app.'
             error_document: '- The name of the error document to use when serving this static site.'
-            exact: '- The Access-Control-Allow-Origin header will be set to the client''s origin only if the client''s origin exactly matches the value you provide.'
+            exact: '- Exact match.'
             expose_headers: '- The set of HTTP response headers that browsers are allowed to access. This configures the Access-Control-Expose-Headers header.'
             failure_threshold: '- The number of failed health checks before considered unhealthy.'
             features: '- A list of the features applied to the app. The default buildpack can be overridden here. List of available buildpacks can be found using the doctl CLI'
             git: '- A Git repo to use as the component''s source. The repository must be able to be cloned without authentication. Only one of git, github or gitlab may be set'
             github: '- A GitHub repo to use as the component''s source. DigitalOcean App Platform must have access to the repository. Only one of git, github, gitlab, or image may be set.'
             gitlab: '- A Gitlab repo to use as the component''s source. DigitalOcean App Platform must have access to the repository. Only one of git, github, gitlab, or image may be set.'
+            grace_period_seconds: '- The number of seconds to wait between sending a TERM signal to a container and issuing a KILL which causes immediate shutdown. Default: 120, Minimum 1, Maximum 600.'
             health_check: '- A health check to determine the availability of this component.'
             http_path: '- The route path used for the HTTP health check ping.'
             http_port: '- The internal port on which this service''s run command will listen.'
-            id: '- The ID of the app.'
+            id: ': The ID of the VPC.'
             image: '- An image to use as the component''s source. Only one of git, github, gitlab, or image may be set.'
             index_document: '- The name of the index document to use when serving this static site.'
             index_name: '- The index name to use for the logs. If not set, the default index name is logs.'
@@ -269,12 +368,14 @@ resources:
             live_url: '- The live URL of the app.'
             log_destination: '- Describes a log forwarding destination.'
             logtail: '- Logtail configuration.'
+            maintenance: '- Specification to configure maintenance settings for the app, such as maintenance mode and archiving the app.'
             match: '- The match configuration for the rule'
             max_age: '- An optional duration specifying how long browsers can cache the results of a preflight request. This configures the Access-Control-Max-Age header. Example: 5h30m.'
             max_instance_count: '- The maximum amount of instances for this component. Must be more than min_instance_count.'
             metrics: '- The metrics that the component is scaled on.'
             min_instance_count: '- The minimum amount of instances for this component. Must be less than max_instance_count.'
             name: '- (Required) The name of the app. Must be unique across all apps in the same account.'
+            offline_page_url: '- A custom offline page to display when maintenance mode is enabled or the app is archived.'
             opensearch: '- OpenSearch configuration'
             operator: '- The operator to use. This is either of GREATER_THAN or LESS_THAN.'
             output_dir: '- An optional path to where the built assets will be located, relative to the build context. If not set, App Platform will automatically scan for these directory names: _static, dist, public.'
@@ -300,14 +401,16 @@ resources:
             repository: '- The repository name.'
             rewrite: '- An optional field that will rewrite the path of the component to be what is specified here. This is mutually exclusive with preserve_path_prefix.'
             routes: '- (Deprecated - use ingress) An HTTP paths that should be routed to this component.'
-            rule: '- The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, or DOMAIN_LIVE.'
+            rule: '- The type of the alert to configure. Top-level app alert policies can be: DEPLOYMENT_CANCELLED, DEPLOYMENT_FAILED, DEPLOYMENT_LIVE, DEPLOYMENT_STARTED, DOMAIN_FAILED, DOMAIN_LIVE, AUTOSCALE_FAILED, or AUTOSCALE_SUCCEEDED.'
             run_command: '- An optional run command to override the component''s default.'
             scheme: '- The scheme to redirect to. Supported values are http or https'
             scope: '- The visibility scope of the environment variable. One of RUN_TIME, BUILD_TIME, or RUN_AND_BUILD_TIME (default).'
+            slack_webhooks: '- Determines which slack channels or users receive alerts (optional).'
             source_dir: '- An optional path to the working directory to use for the build.'
             spec: '- (Required) A DigitalOcean App spec describing the app.'
             success_threshold: '- The number of successful health checks before considered healthy.'
             tag: '- The repository tag. Defaults to latest if not provided.'
+            termination: '- Contains a component''s termination parameters.'
             timeout_seconds: '- The number of seconds after which the check times out.'
             token: '- Logtail token.'
             type: '- The domain type, which can be one of the following:'
@@ -317,12 +420,42 @@ resources:
             user: '- Username to authenticate with. Only required when endpoint is set. Defaults to doadmin when cluster_name is set.'
             value: '- The value of the environment variable.'
             version: '- The version of the database engine.'
+            vpc: ': Specification for VPC.'
             wildcard: '- A boolean indicating whether the domain includes all sub-domains, in addition to the given domain.'
             window: '- The time before alerts should be triggered. This is may be one of: FIVE_MINUTES, TEN_MINUTES, THIRTY_MINUTES, ONE_HOUR.'
             zone: '- If the domain uses DigitalOcean DNS and you would like App Platform to automatically manage it for you, set this to the name of the domain on your account.'
         importStatements: []
+    digitalocean_byoip_prefix:
+        subCategory: Networking
+        name: digitalocean_byoip_prefix
+        title: digitalocean_byoip_prefix
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "advertised": false,
+                  "prefix": "192.0.2.0/24",
+                  "region": "nyc3",
+                  "signature": "${var.prefix_signature}"
+                }
+              references:
+                signature: var.prefix_signature
+        argumentDocs:
+            advertised: |-
+                - (Optional) A boolean indicating whether the prefix should be advertised.
+                Defaults to false.
+            failure_reason: ': The reason for failure if the status is "failed".'
+            id: ': The UUID of the BYOIP prefix.'
+            prefix: '- (Required) The CIDR notation of the prefix (e.g., "192.0.2.0/24").'
+            region: '- (Required) The DigitalOcean region where the prefix will be deployed.'
+            signature: |-
+                - (Required) The cryptographic signature proving ownership of the prefix.
+                This is required during creation but can be omitted in subsequent updates.
+            status: ': The current status of the BYOIP prefix (e.g., "verified", "pending", "failed").'
+            uuid: ': The UUID of the BYOIP prefix.'
+        importStatements: []
     digitalocean_cdn:
-        subCategory: ""
+        subCategory: Spaces Object Storage
         name: digitalocean_cdn
         title: digitalocean_cdn
         examples:
@@ -376,7 +509,7 @@ resources:
             ttl: '- (Optional) The time to live for the CDN Endpoint, in seconds. Default is 3600 seconds.'
         importStatements: []
     digitalocean_certificate:
-        subCategory: ""
+        subCategory: Networking
         name: digitalocean_certificate
         title: digitalocean_certificate
         examples:
@@ -448,7 +581,7 @@ resources:
             uuid: '- The UUID of the certificate'
         importStatements: []
     digitalocean_container_registry:
-        subCategory: ""
+        subCategory: Container Registry
         name: digitalocean_container_registry
         title: digitalocean_container_registry
         examples:
@@ -469,7 +602,7 @@ resources:
             subscription_tier_slug: '- (Required) The slug identifier for the subscription tier to use (starter, basic, or professional)'
         importStatements: []
     digitalocean_container_registry_docker_credentials:
-        subCategory: ""
+        subCategory: Container Registry
         name: digitalocean_container_registry_docker_credentials
         title: digitalocean_container_registry_docker_credentials
         examples:
@@ -510,7 +643,7 @@ resources:
             write: '- (Optional) Allow for write access to the container registry. Defaults to false.'
         importStatements: []
     digitalocean_custom_image:
-        subCategory: ""
+        subCategory: Backups & Snapshots
         name: digitalocean_custom_image
         title: digitalocean_custom_image
         examples:
@@ -551,7 +684,7 @@ resources:
             url: '- (Required) A URL from which the custom Linux virtual machine image may be retrieved.'
         importStatements: []
     digitalocean_database_cluster:
-        subCategory: ""
+        subCategory: Databases
         name: digitalocean_database_cluster
         title: digitalocean_database_cluster
         examples:
@@ -575,15 +708,15 @@ resources:
                   "size": "db-s-1vcpu-1gb",
                   "version": "8"
                 }
-            - name: redis-example
+            - name: valkey-example
               manifest: |-
                 {
-                  "engine": "redis",
-                  "name": "example-redis-cluster",
+                  "engine": "valkey",
+                  "name": "example-valkey-cluster",
                   "node_count": 1,
                   "region": "nyc1",
                   "size": "db-s-1vcpu-1gb",
-                  "version": "7"
+                  "version": "8"
                 }
             - name: kafka-example
               manifest: |-
@@ -654,13 +787,14 @@ resources:
             backup_restore: '- (Optional) Create a new database cluster based on a backup of an existing cluster.'
             database: '- Name of the cluster''s default database.'
             database_name: '- (Required) The name of an existing database cluster from which the backup will be restored.'
-            day: '- (Required) The day of the week on which to apply maintenance updates.'
-            engine: '- (Required) Database engine used by the cluster (ex. pg for PostreSQL, mysql for MySQL, redis for Redis, mongodb for MongoDB, or kafka for Kafka).'
-            eviction_policy: '- (Optional) A string specifying the eviction policy for a Redis cluster. Valid values are: noeviction, allkeys_lru, allkeys_random, volatile_lru, volatile_random, or volatile_ttl.'
+            day: '- (Required) The day of the week on which to apply maintenance updates. May be one of monday through sunday.'
+            engine: '- (Required) Database engine used by the cluster (ex. pg for PostreSQL, mysql for MySQL, valkey for Valkey, mongodb for MongoDB, or kafka for Kafka).'
+            eviction_policy: '- (Optional) A string specifying the eviction policy for a Valkey cluster. Valid values are: noeviction, allkeys_lru, allkeys_random, volatile_lru, volatile_random, or volatile_ttl.'
             host: '- Database cluster''s hostname.'
-            hour: '- (Required) The hour in UTC at which maintenance updates will be applied in 24 hour format.'
+            hour: '- (Required) The hour in UTC at which maintenance updates will be applied as a string in 24 hour format, e.g. 13:00.'
             id: '- The ID of the database cluster.'
             maintenance_window: '- (Optional) Defines when the automatic maintenance should be performed for the database cluster.'
+            metrics_endpoints: '- A list of metrics endpoints for the database cluster, providing URLs to access Prometheus-compatible metrics.'
             name: '- (Required) The name of the database cluster.'
             node_count: '- (Required) Number of nodes that will be included in the cluster. For kafka clusters, this must be 3.'
             password: '- Password for the cluster''s default user.'
@@ -670,7 +804,7 @@ resources:
             private_uri: '- Same as uri, but only accessible from resources within the account and in the same region.'
             project_id: '- (Optional) The ID of the project that the database cluster is assigned to. If excluded when creating a new database cluster, it will be assigned to your default project.'
             region: '- (Required) DigitalOcean region where the cluster will reside.'
-            size: '- (Required) Database Droplet size associated with the cluster (ex. db-s-1vcpu-1gb). See here for a list of valid size slugs.'
+            size: '- (Required) Database Droplet size associated with the cluster (ex. db-s-1vcpu-1gb). See the DigitalOcean API for a list of valid size slugs.'
             sql_mode: '- (Optional) A comma separated string specifying the  SQL modes for a MySQL cluster.'
             storage_size_mib: '- (Optional) Defines the disk size, in MiB, allocated to the cluster. This can be adjusted on MySQL and PostreSQL clusters based on predefined ranges for each slug/droplet size.'
             tags: '- (Optional) A list of tag names to be applied to the database cluster.'
@@ -688,7 +822,7 @@ resources:
                 When this value is changed, a call to the Upgrade major Version for a Database API operation is made with the new version.
         importStatements: []
     digitalocean_database_connection_pool:
-        subCategory: ""
+        subCategory: Databases
         name: digitalocean_database_connection_pool
         title: digitalocean_database_connection_pool
         examples:
@@ -730,7 +864,7 @@ resources:
             user: '- (Optional) The name of the database user for use with the connection pool. When excluded, all sessions connect to the database as the inbound user.'
         importStatements: []
     digitalocean_database_db:
-        subCategory: ""
+        subCategory: Databases
         name: digitalocean_database_db
         title: digitalocean_database_db
         examples:
@@ -757,7 +891,7 @@ resources:
             name: '- (Required) The name for the database.'
         importStatements: []
     digitalocean_database_firewall:
-        subCategory: ""
+        subCategory: Databases
         name: digitalocean_database_firewall
         title: digitalocean_database_firewall
         examples:
@@ -858,7 +992,7 @@ resources:
             value: '- (Required) The ID of the specific resource, the name of a tag applied to a group of resources, or the IP address that the firewall rule allows to access the database cluster.'
         importStatements: []
     digitalocean_database_kafka_config:
-        subCategory: ""
+        subCategory: Databases
         name: digitalocean_database_kafka_config
         title: digitalocean_database_kafka_config
         examples:
@@ -916,8 +1050,42 @@ resources:
             log_segment_delete_delay_ms: '- (Optional) The amount of time to wait before deleting a file from the filesystem.'
             message_max_bytes: '- (Optional) The maximum size of message that the server can receive.'
         importStatements: []
+    digitalocean_database_kafka_schema_registry:
+        subCategory: Databases
+        name: digitalocean_database_kafka_schema_registry
+        title: digitalocean_database_kafka_schema_registry
+        examples:
+            - name: schema-01
+              manifest: |-
+                {
+                  "cluster_id": "${digitalocean_database_cluster.kafka-example.id}",
+                  "schema": "{\n  \"type\": \"record\",\n  \"namespace\": \"example\",\n  \"name\": \"TestRecord\",\n  \"fields\": [\n    {\"name\": \"id\", \"type\": \"string\"},\n    {\"name\": \"name\", \"type\": \"string\"},\n    {\"name\": \"value\", \"type\": \"int\"}\n  ]\n}\n",
+                  "schema_type": "avro",
+                  "subject_name": "test-schema"
+                }
+              references:
+                cluster_id: digitalocean_database_cluster.kafka-example.id
+              dependencies:
+                digitalocean_database_cluster.kafka-example: |-
+                    {
+                      "engine": "kafka",
+                      "name": "example-kafka-cluster",
+                      "node_count": 3,
+                      "region": "blr1",
+                      "size": "gd-2vcpu-8gb",
+                      "tags": [
+                        "production"
+                      ],
+                      "version": "3.5"
+                    }
+        argumentDocs:
+            cluster_id: '- (Required) The ID of the target Kafka cluster.'
+            schema: '- (Required) The schema definition as a string.'
+            schema_type: '- (Required) The schema type. Available values are: avro, json, or protobuf.'
+            subject_name: '- (Required) The name of the schema subject.'
+        importStatements: []
     digitalocean_database_kafka_topic:
-        subCategory: ""
+        subCategory: Databases
         name: digitalocean_database_kafka_topic
         title: digitalocean_database_kafka_topic
         examples:
@@ -1007,8 +1175,172 @@ resources:
             segment_ms: '- (Optional) The maximum time, in ms, before the topic log will flush to disk.'
             state: '- The current status of the topic. Possible values are ''active'', ''configuring'', and ''deleting''.'
         importStatements: []
+    digitalocean_database_logsink_opensearch:
+        subCategory: Databases
+        name: digitalocean_database_logsink_opensearch
+        title: digitalocean_database_logsink_opensearch
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "cluster_id": "${digitalocean_database_cluster.postgres-example.id}",
+                  "endpoint": "https://opensearch.example.com:9200",
+                  "index_days_max": 7,
+                  "index_prefix": "db-logs",
+                  "name": "opensearch-logs"
+                }
+              references:
+                cluster_id: digitalocean_database_cluster.postgres-example.id
+              dependencies:
+                digitalocean_database_cluster.postgres-example: |-
+                    {
+                      "engine": "pg",
+                      "name": "example-postgres-cluster",
+                      "node_count": 1,
+                      "region": "nyc1",
+                      "size": "db-s-1vcpu-1gb",
+                      "version": "15"
+                    }
+            - name: example-secure
+              manifest: |-
+                {
+                  "ca_cert": "${file(\"/path/to/ca.pem\")}",
+                  "cluster_id": "${digitalocean_database_cluster.postgres-example.id}",
+                  "endpoint": "https://user:password@opensearch.example.com:9200",
+                  "index_days_max": 14,
+                  "index_prefix": "secure-logs",
+                  "name": "opensearch-secure",
+                  "timeout_seconds": 30
+                }
+              references:
+                cluster_id: digitalocean_database_cluster.postgres-example.id
+            - name: elasticsearch
+              manifest: |-
+                {
+                  "cluster_id": "${digitalocean_database_cluster.postgres-example.id}",
+                  "endpoint": "https://elasticsearch.example.com:9243",
+                  "index_days_max": 30,
+                  "index_prefix": "es-logs",
+                  "name": "elasticsearch-logs"
+                }
+              references:
+                cluster_id: digitalocean_database_cluster.postgres-example.id
+            - name: mysql
+              manifest: |-
+                {
+                  "cluster_id": "${digitalocean_database_cluster.mysql-example.id}",
+                  "endpoint": "https://opensearch.example.com:9200",
+                  "index_days_max": 7,
+                  "index_prefix": "mysql-logs",
+                  "name": "mysql-logs"
+                }
+              references:
+                cluster_id: digitalocean_database_cluster.mysql-example.id
+              dependencies:
+                digitalocean_database_cluster.mysql-example: |-
+                    {
+                      "engine": "mysql",
+                      "name": "example-mysql-cluster",
+                      "node_count": 1,
+                      "region": "nyc1",
+                      "size": "db-s-1vcpu-1gb",
+                      "version": "8"
+                    }
+        argumentDocs:
+            ca_cert: '- (Optional) CA certificate for TLS verification in PEM format. Can be specified using file() function. This field is marked as sensitive.'
+            cluster_id: '- (Required) UUID of the source database cluster that will forward logs.'
+            endpoint: '- (Required) HTTPS URL to the OpenSearch or Elasticsearch cluster (e.g., https://host:port). Note: Only HTTPS URLs are supported.'
+            id: '- The composite ID of the logsink in the format cluster_id,logsink_id.'
+            index_days_max: '- (Optional) Maximum number of days to retain indices. Must be 1 or greater.'
+            index_prefix: '- (Required) Prefix for the indices where logs will be stored.'
+            logsink_id: '- The unique identifier for the logsink as returned by the DigitalOcean API.'
+            name: '- (Required) Display name for the logsink. Note: This is immutable; changing it will force recreation of the resource.'
+            timeout_seconds: '- (Optional) Request timeout for log deliveries in seconds. Must be 1 or greater.'
+        importStatements: []
+    digitalocean_database_logsink_rsyslog:
+        subCategory: Databases
+        name: digitalocean_database_logsink_rsyslog
+        title: digitalocean_database_logsink_rsyslog
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "cluster_id": "${digitalocean_database_cluster.postgres-example.id}",
+                  "format": "rfc5424",
+                  "name": "rsyslog-prod",
+                  "port": 514,
+                  "server": "192.0.2.10"
+                }
+              references:
+                cluster_id: digitalocean_database_cluster.postgres-example.id
+              dependencies:
+                digitalocean_database_cluster.postgres-example: |-
+                    {
+                      "engine": "pg",
+                      "name": "example-postgres-cluster",
+                      "node_count": 1,
+                      "region": "nyc1",
+                      "size": "db-s-1vcpu-1gb",
+                      "version": "15"
+                    }
+            - name: example-tls
+              manifest: |-
+                {
+                  "ca_cert": "${file(\"/path/to/ca.pem\")}",
+                  "cluster_id": "${digitalocean_database_cluster.postgres-example.id}",
+                  "format": "rfc5424",
+                  "name": "rsyslog-secure",
+                  "port": 6514,
+                  "server": "logs.example.com",
+                  "tls": true
+                }
+              references:
+                cluster_id: digitalocean_database_cluster.postgres-example.id
+            - name: example-mtls
+              manifest: |-
+                {
+                  "ca_cert": "${file(\"/path/to/ca.pem\")}",
+                  "client_cert": "${file(\"/path/to/client.crt\")}",
+                  "client_key": "${file(\"/path/to/client.key\")}",
+                  "cluster_id": "${digitalocean_database_cluster.postgres-example.id}",
+                  "format": "rfc5424",
+                  "name": "rsyslog-mtls",
+                  "port": 6514,
+                  "server": "secure-logs.example.com",
+                  "tls": true
+                }
+              references:
+                cluster_id: digitalocean_database_cluster.postgres-example.id
+            - name: example-custom
+              manifest: |-
+                {
+                  "cluster_id": "${digitalocean_database_cluster.postgres-example.id}",
+                  "format": "custom",
+                  "logline": "\u003c%pri%\u003e%timestamp:::date-rfc3339% %HOSTNAME% %app-name% %msg%",
+                  "name": "rsyslog-custom",
+                  "port": 514,
+                  "server": "192.0.2.10",
+                  "structured_data": "[example@41058 iut=\"3\"]"
+                }
+              references:
+                cluster_id: digitalocean_database_cluster.postgres-example.id
+        argumentDocs:
+            ca_cert: '- (Optional) CA certificate for TLS verification in PEM format. Can be specified using file() function.'
+            client_cert: '- (Optional) Client certificate for mutual TLS authentication in PEM format. Note: Requires tls to be true.'
+            client_key: '- (Optional) Client private key for mutual TLS authentication in PEM format. Note: Requires tls to be true. This field is marked as sensitive.'
+            cluster_id: '- (Required) UUID of the source database cluster that will forward logs.'
+            format: '- (Optional) Log format to use. Must be one of rfc5424 (default), rfc3164, or custom.'
+            id: '- The composite ID of the logsink in the format cluster_id,logsink_id.'
+            logline: '- (Optional) Custom logline template. Required when format is set to custom. Supports rsyslog-style templating with the following tokens: %HOSTNAME%, %app-name%, %msg%, %msgid%, %pri%, %procid%, %structured-data%, %timestamp%, and %timestamp:::date-rfc3339%.'
+            logsink_id: '- The unique identifier for the logsink as returned by the DigitalOcean API.'
+            name: '- (Required) Display name for the logsink. Note: This is immutable; changing it will force recreation of the resource.'
+            port: '- (Required) Port number for the rsyslog server. Must be between 1 and 65535.'
+            server: '- (Required) Hostname or IP address of the rsyslog server.'
+            structured_data: '- (Optional) Content of the structured data block for RFC5424 messages.'
+            tls: '- (Optional) Enable TLS encryption for the rsyslog connection. Defaults to false. Note: It is highly recommended to enable TLS as log messages may contain sensitive information.'
+        importStatements: []
     digitalocean_database_mongodb_config:
-        subCategory: ""
+        subCategory: Databases
         name: digitalocean_database_mongodb_config
         title: digitalocean_database_mongodb_config
         examples:
@@ -1043,61 +1375,22 @@ resources:
             verbosity: '- (Optional) The log message verbosity level. The verbosity level determines the amount of Informational and Debug messages MongoDB outputs. 0 includes informational messages while 1...5 increases the level to include debug messages. Changing this parameter will lead to a restart of the MongoDB service. Learn more here.'
         importStatements: []
     digitalocean_database_mysql_config:
-        subCategory: ""
+        subCategory: Databases
         name: digitalocean_database_mysql_config
         title: digitalocean_database_mysql_config
-        examples:
-            - name: example
-              manifest: |-
-                {
-                  "cluster_id": "${digitalocean_database_cluster.example.id}",
-                  "connect_timeout": 10,
-                  "default_time_zone": "UTC"
-                }
-              references:
-                cluster_id: digitalocean_database_cluster.example.id
-              dependencies:
-                digitalocean_database_cluster.example: |-
-                    {
-                      "engine": "mysql",
-                      "name": "example-mysql-cluster",
-                      "node_count": 1,
-                      "region": "nyc1",
-                      "size": "db-s-1vcpu-1gb",
-                      "version": "8"
-                    }
         argumentDocs:
-            backup_hour: '- (Optional) The hour of day (in UTC) when backup for the service starts. New backup only starts if previous backup has already completed.'
-            backup_minute: '- (Optional) The minute of the backup hour when backup for the service starts. New backup only starts if previous backup has already completed.'
-            binlog_retention_period: '- (Optional) The minimum amount of time, in seconds, to keep binlog entries before deletion. This may be extended for services that require binlog entries for longer than the default, for example if using the MySQL Debezium Kafka connector.'
             cluster_id: '- (Required)  The ID of the target MySQL cluster.'
-            connect_timeout: '- (Optional) The number of seconds that the mysqld server waits for a connect packet before responding with bad handshake.'
-            default_time_zone: '- (Optional) Default server time zone, in the form of an offset from UTC (from -12:00 to +12:00), a time zone name (EST), or SYSTEM to use the MySQL server default.'
-            group_concat_max_len: '- (Optional) The maximum permitted result length, in bytes, for the GROUP_CONCAT() function.'
-            information_schema_stats_expiry: '- (Optional) The time, in seconds, before cached statistics expire.'
-            innodb_ft_min_token_size: '- (Optional) The minimum length of words that an InnoDB FULLTEXT index stores.'
-            innodb_ft_server_stopword_table: '- (Optional) The InnoDB FULLTEXT index stopword list for all InnoDB tables.'
-            innodb_lock_wait_timeout: '- (Optional) The time, in seconds, that an InnoDB transaction waits for a row lock. before giving up.'
-            innodb_log_buffer_size: '- (Optional) The size of the buffer, in bytes, that InnoDB uses to write to the log files. on disk.'
-            innodb_online_alter_log_max_size: '- (Optional) The upper limit, in bytes, of the size of the temporary log files used during online DDL operations for InnoDB tables.'
-            innodb_print_all_deadlocks: '- (Optional) When enabled, records information about all deadlocks in InnoDB user transactions in the error log. Disabled by default.'
-            innodb_rollback_on_timeout: '- (Optional) When enabled, transaction timeouts cause InnoDB to abort and roll back the entire transaction.'
-            interactive_timeout: '- (Optional) The time, in seconds, the server waits for activity on an interactive. connection before closing it.'
-            internal_tmp_mem_storage_engine: '- (Optional) The storage engine for in-memory internal temporary tables. Supported values are: TempTable, MEMORY.'
-            long_query_time: '- (Optional) The time, in seconds, for a query to take to execute before being captured by slow_query_logs. Default is 10 seconds.'
-            max_allowed_packet: '- (Optional) The size of the largest message, in bytes, that can be received by the server. Default is 67108864 (64M).'
-            max_heap_table_size: '- (Optional) The maximum size, in bytes, of internal in-memory tables. Also set tmp_table_size. Default is 16777216 (16M)'
-            net_read_timeout: '- (Optional) The time, in seconds, to wait for more data from an existing connection. aborting the read.'
-            net_write_timeout: '- (Optional) The number of seconds to wait for a block to be written to a connection before aborting the write.'
-            slow_query_log: '- (Optional) When enabled, captures slow queries. When disabled, also truncates the mysql.slow_log table. Default is false.'
-            sort_buffer_size: '- (Optional) The sort buffer size, in bytes, for ORDER BY optimization. Default is 262144. (256K).'
-            sql_mode: '- (Optional) Global SQL mode. If empty, uses MySQL server defaults. Must only include uppercase alphabetic characters, underscores, and commas.'
-            sql_require_primary_key: '- (Optional) Require primary key to be defined for new tables or old tables modified with ALTER TABLE and fail if missing. It is recommended to always have primary keys because various functionality may break if any large table is missing them.'
-            tmp_table_size: '- (Optional) The maximum size, in bytes, of internal in-memory tables. Also set max_heap_table_size. Default is 16777216 (16M).'
-            wait_timeout: '- (Optional) The number of seconds the server waits for activity on a noninteractive connection before closing it.'
+            dbname: '- (Required) The name of the default database.'
+            disable_ssl: '- (Optional) When set to true, enables SSL encryption when connecting to the source database.'
+            host: '- (Required) The FQDN pointing to the database cluster''s current primary node.'
+            ignore_dbs: '- (Optional) A list of databases that should be ignored during migration.'
+            password: '- (Required) A randomly generated password for the default user.'
+            port: '- (Required) The port on which the database cluster is listening.'
+            source: '- (Required) Configuration for migration'
+            username: '- (Required) The default user for the database.'
         importStatements: []
     digitalocean_database_opensearch_config:
-        subCategory: ""
+        subCategory: Databases
         name: digitalocean_database_opensearch_config
         title: digitalocean_database_opensearch_config
         examples:
@@ -1159,7 +1452,7 @@ resources:
                       "version": "2"
                     }
         argumentDocs:
-            action_auto_create_index_enabled: '- (Optional) Specifies whether ISM is enabled or not. Default: true'
+            action_auto_create_index_enabled: '- (Optional) Specifices whether to allow automatic creation of indices. Default: true'
             action_destructive_requires_name: '- (Optional) Specifies whether to require explicit index names when deleting indices.'
             cluster_id: '- (Required) The ID of the target Opensearch cluster.'
             cluster_max_shards_per_node: '- (Optional) Maximum number of shards allowed per data node.'
@@ -1200,7 +1493,7 @@ resources:
             thread_pool_write_size: '- (Optional) Number of workers in the write operation thread pool. Do note this may have maximum value depending on CPU count - value is automatically lowered if set to higher than maximum value.'
         importStatements: []
     digitalocean_database_postgresql_config:
-        subCategory: ""
+        subCategory: Databases
         name: digitalocean_database_postgresql_config
         title: digitalocean_database_postgresql_config
         examples:
@@ -1278,7 +1571,7 @@ resources:
             work_mem: '- (Optional)  The maximum amount of memory, in MB, used by a query operation (such as a sort or hash table) before writing to temporary disk files. Default is 1MB + 0.075% of total RAM (up to 32MB).'
         importStatements: []
     digitalocean_database_redis_config:
-        subCategory: ""
+        subCategory: Databases
         name: digitalocean_database_redis_config
         title: digitalocean_database_redis_config
         examples:
@@ -1303,6 +1596,8 @@ resources:
                       "version": "7"
                     }
         argumentDocs:
+            "25060": is opened for non-SSL connections, while port 25061 remains available for SSL connections.
+            "25061": .
             acl_channels_default: '- (Optional) Determines default pub/sub channels'' ACL for new users if an ACL is not supplied. When this option is not defined, allchannels is assumed to keep backward compatibility. This option doesn''t affect Redis'' acl-pubsub-default configuration. Supported values are: allchannels and resetchannels'
             cluster_id: '- (Required)  The ID of the target Redis cluster.'
             io_threads: '- (Optional) The Redis IO thread count.'
@@ -1317,7 +1612,7 @@ resources:
             timeout: '- (Optional) The Redis idle connection timeout in seconds.'
         importStatements: []
     digitalocean_database_replica:
-        subCategory: ""
+        subCategory: Databases
         name: digitalocean_database_replica
         title: digitalocean_database_replica
         examples:
@@ -1370,7 +1665,7 @@ resources:
             uuid: '- The UUID of the database replica. The uuid can be used to reference the database replica as the target database cluster in other resources. See example  "Create firewall rule for database replica" above.'
         importStatements: []
     digitalocean_database_user:
-        subCategory: ""
+        subCategory: Databases
         name: digitalocean_database_user
         title: digitalocean_database_user
         examples:
@@ -1474,8 +1769,53 @@ resources:
                 The settings block is documented below.
             topic: '- (Required) A regex for matching the topic(s) that this ACL should apply to. The regex can assume one of 3 patterns: "", "", or "". "" is a special value indicating a wildcard that matches on all topics. "" defines a regex that matches all topics with the prefix. "" performs an exact match on a topic name and only applies to that topic.'
         importStatements: []
+    digitalocean_database_valkey_config:
+        subCategory: Databases
+        name: digitalocean_database_valkey_config
+        title: digitalocean_database_valkey_config
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "cluster_id": "${digitalocean_database_cluster.example.id}",
+                  "notify_keyspace_events": "KEA",
+                  "timeout": 90,
+                  "valkey_maxmemory_policy": "allkeys-random"
+                }
+              references:
+                cluster_id: digitalocean_database_cluster.example.id
+              dependencies:
+                digitalocean_database_cluster.example: |-
+                    {
+                      "engine": "valkey",
+                      "name": "example-valkey-cluster",
+                      "node_count": 1,
+                      "region": "nyc1",
+                      "size": "db-s-1vcpu-1gb",
+                      "version": "8"
+                    }
+        argumentDocs:
+            acl_channels_default: '- (Optional) Determines default pub/sub channels'' ACL for new users if an ACL is not supplied. When this option is not defined, allchannels is assumed to keep backward compatibility. This option doesn''t affect Valkey'' acl-pubsub-default configuration. Supported values are: allchannels and resetchannels'
+            allkeys-lru: ': Evict any key, least recently used (LRU) first.'
+            allkeys-random: ': Evict keys in a random order.'
+            cluster_id: '- (Required)  The ID of the target Valkey cluster.'
+            io_threads: '- (Optional) The Valkey IO thread count.'
+            lfu_decay_time: '- (Optional) The LFU maxmemory policy counter decay time in minutes.'
+            lfu_log_factor: '- (Optional) The counter logarithm factor for volatile-lfu and allkeys-lfu maxmemory policies.'
+            noeviction: ': Don''t evict any data, returns error when memory limit is reached.'
+            notify_keyspace_events: '- (Optional) The notify-keyspace-events option. Requires at least K or E.'
+            number_of_databases: '- (Optional) The number of Valkey databases. Changing this will cause a restart of Valkey service.'
+            persistence: '- (Optional) When persistence is ''rdb'', Valkey does RDB dumps each 10 minutes if any key is changed. Also RDB dumps are done according to backup schedule for backup purposes. When persistence is ''off'', no RDB dumps and backups are done, so data can be lost at any moment if service is restarted for any reason, or if service is powered off. Also service can''t be forked.'
+            pubsub_client_output_buffer_limit: '- (Optional) The output buffer limit for pub/sub clients in MB. The value is the hard limit, the soft limit is 1/4 of the hard limit. When setting the limit, be mindful of the available memory in the selected service plan.'
+            ssl: '- (Optional) A boolean indicating whether to require SSL to access Valkey.'
+            timeout: '- (Optional) The Valkey idle connection timeout in seconds.'
+            valkey_maxmemory_policy: '- (Optional) Eviction policy model'
+            volatile-lru: ': Evict keys with expiration only, least recently used (LRU) first.'
+            volatile-random: ': Evict keys with expiration only in a random order.'
+            volatile-ttl: ': Evict keys with expiration only, shortest time-to-live (TTL) first.'
+        importStatements: []
     digitalocean_domain:
-        subCategory: ""
+        subCategory: Networking
         name: digitalocean_domain
         title: digitalocean_domain
         examples:
@@ -1497,19 +1837,28 @@ resources:
             urn: '- The uniform resource name of the domain'
         importStatements: []
     digitalocean_droplet:
-        subCategory: ""
+        subCategory: Droplets
         name: digitalocean_droplet
         title: digitalocean_droplet
         examples:
             - name: web
               manifest: |-
                 {
+                  "backup_policy": [
+                    {
+                      "hour": 8,
+                      "plan": "weekly",
+                      "weekday": "TUE"
+                    }
+                  ],
+                  "backups": true,
                   "image": "ubuntu-20-04-x64",
                   "name": "web-1",
                   "region": "nyc2",
                   "size": "s-1vcpu-1gb"
                 }
         argumentDocs:
+            backup_policy: '- (Optional) An object specifying the backup policy for the Droplet. If omitted and backups is true, the backup plan will default to daily.'
             backups: |-
                 - (Optional) Boolean controlling if backups are made. Defaults to
                 false.
@@ -1524,8 +1873,9 @@ resources:
             graceful_shutdown: |-
                 (Optional) - A boolean indicating whether the droplet
                 should be gracefully shut down before it is deleted.
+            hour: '- The hour of the day that the backup window will start (0, 4, 8, 12, 16, 20).'
             id: '- The ID of the Droplet'
-            image: '- (Required) The Droplet image ID or slug. This could be either image ID or droplet snapshot ID.'
+            image: '- (Required) The Droplet image ID or slug. This could be either image ID or droplet snapshot ID. You can find image IDs and slugs using the DigitalOcean API.'
             ipv4_address: '- The IPv4 address'
             ipv4_address_private: '- The private networking IPv4 address'
             ipv6: |-
@@ -1540,6 +1890,7 @@ resources:
                 Defaults to false. If set to true, you can configure monitor alert policies
                 monitor alert resource
             name: '- (Required) The Droplet name.'
+            plan: '- The backup plan used for the Droplet. The plan can be either daily or weekly.'
             price_hourly: '- Droplet hourly price'
             price_monthly: '- Droplet monthly price'
             private_networking: |-
@@ -1551,7 +1902,7 @@ resources:
                 size when resizing a Droplet. It defaults to true. When set to false,
                 only the Droplet's RAM and CPU will be resized. Increasing a Droplet's disk
                 size is a permanent change. Increasing only RAM and CPU is reversible.
-            size: '- (Required) The unique slug that identifies the type of Droplet. You can find a list of available slugs on DigitalOcean API documentation.'
+            size: '- (Required) The unique slug that identifies the type of Droplet. You may list the available slugs using the DigitalOcean API.'
             ssh_keys: |-
                 - (Optional) A list of SSH key IDs or fingerprints to enable in
                 the format [12345, 123456]. To retrieve this info, use the
@@ -1562,13 +1913,106 @@ resources:
             status: '- The status of the Droplet'
             tags: '- (Optional) A list of the tags to be applied to this Droplet.'
             urn: '- The uniform resource name of the Droplet'
-            user_data: (Optional) - A string of the desired User Data for the Droplet.
+            user_data: (Optional) - A string of the desired User Data provided during Droplet creation. Changing this forces a new resource to be created.
             vcpus: '- The number of the instance''s virtual CPUs'
             volume_ids: (Optional) - A list of the IDs of each block storage volume to be attached to the Droplet.
             vpc_uuid: '- (Optional) The ID of the VPC where the Droplet will be located.'
+            weekday: '- The day of the week on which the backup will occur (SUN, MON, TUE, WED, THU, FRI, SAT).'
+        importStatements: []
+    digitalocean_droplet_autoscale:
+        subCategory: Droplets
+        name: digitalocean_droplet_autoscale
+        title: digitalocean_droplet_autoscale
+        examples:
+            - name: my-autoscale-pool
+              manifest: |-
+                {
+                  "config": [
+                    {
+                      "cooldown_minutes": 5,
+                      "max_instances": 50,
+                      "min_instances": 10,
+                      "target_cpu_utilization": 0.5,
+                      "target_memory_utilization": 0.5
+                    }
+                  ],
+                  "droplet_template": [
+                    {
+                      "image": "ubuntu-24-04-x64",
+                      "ipv6": true,
+                      "region": "nyc3",
+                      "size": "c-2",
+                      "ssh_keys": [
+                        "${digitalocean_ssh_key.my-ssh-key.id}"
+                      ],
+                      "tags": [
+                        "${digitalocean_tag.my-tag.id}"
+                      ],
+                      "user_data": "\n#cloud-config\nruncmd:\n- apt-get update\n- apt-get install -y stress-ng\n",
+                      "with_droplet_agent": true
+                    }
+                  ],
+                  "name": "terraform-example"
+                }
+              references:
+                droplet_template.ssh_keys: digitalocean_ssh_key.my-ssh-key.id
+                droplet_template.tags: digitalocean_tag.my-tag.id
+              dependencies:
+                digitalocean_ssh_key.my-ssh-key: |-
+                    {
+                      "name": "terraform-example",
+                      "public_key": "${file(\"/Users/terraform/.ssh/id_rsa.pub\")}"
+                    }
+                digitalocean_tag.my-tag: |-
+                    {
+                      "name": "terraform-example"
+                    }
+        argumentDocs:
+            config: |-
+                - (Required) The configuration parameters for Droplet Autoscale pool, the supported arguments are
+                documented below.
+            cooldown_minutes: '- The cooldown duration between scaling events for the Droplet Autoscale pool.'
+            created_at: '- Created at timestamp for the Droplet Autoscale pool.'
+            current_utilization: |-
+                - The current average resource utilization of the Droplet Autoscale pool, this attribute further
+                embeds memory and cpu attributes to respectively report utilization data.
+            droplet_template: |-
+                - (Required) The droplet template parameters for Droplet Autoscale pool, the supported arguments
+                are documented below.
+            id: '- The ID of the Droplet Autoscale pool.'
+            image: '- (Required) Image slug of the Droplet Autoscale pool underlying resource(s).'
+            ipv6: '- Boolean flag to enable IPv6 networking on the Droplet Autoscale pool underlying resource(s).'
+            max_instances: '- The maximum number of instances to maintain in the Droplet Autoscale pool.'
+            min_instances: '- The minimum number of instances to maintain in the Droplet Autoscale pool.'
+            name: '- (Required) The name of the Droplet Autoscale pool.'
+            project_id: '- Project UUID to create the Droplet Autoscale pool underlying resource(s).'
+            region: '- (Required) Region slug of the Droplet Autoscale pool underlying resource(s).'
+            size: '- (Required) Size slug of the Droplet Autoscale pool underlying resource(s).'
+            ssh_keys: '- (Required) SSH fingerprints to add to the Droplet Autoscale pool underlying resource(s).'
+            status: |-
+                - Droplet Autoscale pool health status; this reflects if the pool is currently healthy and ready to accept
+                traffic, or in an error state and needs user intervention.
+            tags: '- List of tags to add to the Droplet Autoscale pool underlying resource(s).'
+            target_cpu_utilization: '- The target average CPU load (in range [0, 1]) to maintain in the Droplet Autoscale pool.'
+            target_memory_utilization: |-
+                - The target average Memory load (in range [0, 1]) to maintain in the Droplet Autoscale
+                pool.
+            target_number_instances: |-
+                - The static number of instances to maintain in the pool Droplet Autoscale pool. This
+                argument cannot be used with any other config options.
+            updated_at: '- Updated at timestamp for the Droplet Autoscale pool.'
+            user_data: |-
+                - Custom user data that can be added to the Droplet Autoscale pool underlying resource(s). This can be a
+                cloud init script that user may configure to setup their application workload.
+            vpc_uuid: |-
+                - VPC UUID to create the Droplet Autoscale pool underlying resource(s). If not provided, this is inferred
+                from the specified region (default VPC).
+            with_droplet_agent: |-
+                - Boolean flag to enable metric agent on the Droplet Autoscale pool underlying resource(s). The
+                metric agent enables collecting resource utilization metrics, which allows making resource based scaling decisions.
         importStatements: []
     digitalocean_droplet_snapshot:
-        subCategory: ""
+        subCategory: Backups & Snapshots
         name: digitalocean_droplet_snapshot
         title: digitalocean_droplet_snapshot
         examples:
@@ -1605,7 +2049,7 @@ resources:
             size: '- The billable size of the Droplet snapshot in gigabytes.'
         importStatements: []
     digitalocean_firewall:
-        subCategory: ""
+        subCategory: Networking
         name: digitalocean_firewall
         title: digitalocean_firewall
         examples:
@@ -1675,6 +2119,8 @@ resources:
                     }
                   ]
                 }
+              references:
+                droplet_ids: digitalocean_droplet.web.id
               dependencies:
                 digitalocean_droplet.web: |-
                     {
@@ -1706,7 +2152,8 @@ resources:
                 be allowed.
             droplet_ids: |-
                 (Optional) - The list of the IDs of the Droplets assigned
-                to the Firewall.
+                to the Firewall (max. 10). If you want to assign more droplets to the
+                Firewall, add Tags to them and use the tags argument below.
             id: '- A unique ID that can be used to identify and reference a Firewall.'
             inbound_rule: |-
                 - (Optional) The inbound access rule block for the Firewall.
@@ -1748,10 +2195,10 @@ resources:
             status: |-
                 - A status string indicating the current state of the Firewall.
                 This can be "waiting", "succeeded", or "failed".
-            tags: (Optional) - The names of the Tags assigned to the Firewall.
+            tags: (Optional) - The names of the Tags assigned to the Firewall (max. 5).
         importStatements: []
     digitalocean_floating_ip:
-        subCategory: ""
+        subCategory: Networking
         name: digitalocean_floating_ip
         title: digitalocean_floating_ip
         examples:
@@ -1781,7 +2228,7 @@ resources:
             urn: '- The uniform resource name of the floating ip'
         importStatements: []
     digitalocean_floating_ip_assignment:
-        subCategory: ""
+        subCategory: Networking
         name: digitalocean_floating_ip_assignment
         title: digitalocean_floating_ip_assignment
         examples:
@@ -1812,8 +2259,59 @@ resources:
             droplet_id: '- (Optional) The ID of Droplet that the Floating IP will be assigned to.'
             ip_address: '- (Required) The Floating IP to assign to the Droplet.'
         importStatements: []
+    digitalocean_gradientai_agent:
+        subCategory: GradientAI
+        name: digitalocean_gradientai_agent
+        title: digitalocean_gradientai
+        examples:
+            - name: terraform-testing
+              manifest: |-
+                {
+                  "deployment": [
+                    {
+                      "visibility": "VISIBILITY_PRIVATE"
+                    }
+                  ],
+                  "description": "Agent for testing update and delete functionality.",
+                  "instruction": "You are DigitalOcean's Solutions Architect Assistant, designed to help users find the perfect solution for their technical needs.",
+                  "model_uuid": "d754f2d7-d1f0-11ef-bf8f-4e013e2ddde4",
+                  "name": "terraform-testing",
+                  "project_id": "84e1e297-ee40-41ac-95ff-1067cf2206e9",
+                  "region": "tor1",
+                  "tags": [
+                    "marketplace-agent-terraform"
+                  ]
+                }
+            - name: with_guardrail
+              manifest: |-
+                {
+                  "agent_guardrail": [
+                    {
+                      "default_response": "example string.",
+                      "description": "example string",
+                      "guardrail_uuid": "12345678-1234-1234-1234-123456789012",
+                      "is_default": true,
+                      "name": "My Guardrail",
+                      "priority": 123,
+                      "type": "GUARDRAIL_TYPE_UNKNOWN"
+                    }
+                  ],
+                  "deployment": [
+                    {
+                      "visibility": "VISIBILITY_PRIVATE"
+                    }
+                  ]
+                }
+        argumentDocs:
+            digitalocean_gradientai_agent_knowledge_base_attachment: resource.
+            digitalocean_gradientai_indexing_job: to monitor job status before and after cancellation.
+            digitalocean_gradientai_knowledge_base_data_source: resource.
+            reason: field is useful for maintaining an audit trail of why indexing jobs were cancelled.
+            uuid: ).
+            visibility: 'argument must be set inside this block. Valid values for visibility are: VISIBILITY_PRIVATE, VISIBILITY_PUBLIC, VISIBILITY_PLAYGROUND, VISIBILITY_DISABLED, or VISIBILITY_UNKNOWN.'
+        importStatements: []
     digitalocean_kubernetes_cluster:
-        subCategory: ""
+        subCategory: Kubernetes
         name: digitalocean_kubernetes_cluster
         title: digitalocean_kubernetes_cluster
         examples:
@@ -1836,7 +2334,7 @@ resources:
                     }
                   ],
                   "region": "nyc1",
-                  "version": "1.22.8-do.1"
+                  "version": "latest"
                 }
             - name: foo
               manifest: |-
@@ -1879,18 +2377,24 @@ resources:
                 version: data.digitalocean_kubernetes_versions.example.latest_version
         argumentDocs:
             actual_node_count: '- A computed field representing the actual number of nodes in the node pool, which is especially useful when auto-scaling is enabled.'
+            allowed_addresses: '- (Required) A list of addresses allowed (CIDR notation).'
+            amd_gpu_device_metrics_exporter_plugin: '- Block containing options for the AMD GPU device metrics exporter component.'
+            amd_gpu_device_plugin: '- (Optional) Block containing options for the AMD GPU device plugin component. If not specified, the component will be enabled by default for clusters with AMD GPU nodes.'
             auto_scale: '- (Optional) Enable auto-scaling of the number of nodes in the node pool within the given min/max range.'
             auto_upgrade: '- (Optional) A boolean value indicating whether the cluster will be automatically upgraded to new patch releases during its maintenance window.'
             client_certificate: '- The base64 encoded public certificate used by clients to access the cluster. Only available if token authentication is not supported on your cluster.'
             client_key: '- The base64 encoded private key used by clients to access the cluster. Only available if token authentication is not supported on your cluster.'
+            cluster_autoscaler_configuration: '- (Optional) Block containing options for cluster auto-scaling.'
             cluster_ca_certificate: '- The base64 encoded public certificate for the cluster''s certificate authority.'
             cluster_subnet: '- (Optional) The range of IP addresses in the overlay network of the Kubernetes cluster. For more information, see here.'
+            control_plane_firewall: '- (Optional) A block representing the cluster''s control plane firewall'
             created_at: '- The date and time when the Kubernetes cluster was created.'
             day: '- (Required) The day of the maintenance window policy. May be one of "monday" through "sunday", or "any" to indicate an arbitrary week day.'
             destroy_all_associated_resources: '- (Optional) Use with caution. When set to true, all associated DigitalOcean resources created via the Kubernetes API (load balancers, volumes, and volume snapshots) will be destroyed along with the cluster when it is destroyed.'
             droplet_id: '- The id of the node''s droplet'
             duration: A string denoting the duration of the service window, e.g., "04:00".
             effect: '- How the node reacts to pods that it won''t tolerate. Available effect values are: "NoSchedule", "PreferNoSchedule", "NoExecute".'
+            enabled: '- (Required) Boolean flag whether the firewall should be enabled or not.'
             endpoint: '- The base URL of the API server on the Kubernetes master node.'
             expires_at: '- The date and time when the credentials will expire and need to be regenerated.'
             ha: '- (Optional) Enable/disable the high availability control plane for a cluster. Once enabled for a cluster, high availability cannot be disabled. Default: false'
@@ -1899,6 +2403,7 @@ resources:
             ipv4_address: '- The public IPv4 address of the Kubernetes master node. This will not be set if high availability is configured on the cluster (v1.21+)'
             key: '- An arbitrary string. The "key" and "value" fields of the "taint" object form a key-value pair.'
             kube_config.0: '- A representation of the Kubernetes cluster''s kubeconfig with the following attributes:'
+            kubeconfig_expire_seconds: '- (Optional) The duration in seconds that the returned Kubernetes credentials will be valid. If not set or 0, the credentials will have a 7 day expiry.'
             labels: '- (Optional) A map of key/value pairs to apply to nodes in the pool. The labels are exposed in the Kubernetes API as labels in the metadata of the corresponding Node resources.'
             maintenance_policy: '- (Optional) A block representing the cluster''s maintenance window. Updates will be applied within this window. If not specified, a default maintenance window will be chosen. auto_upgrade must be set to true for this to have an effect.'
             max_nodes: '- (Optional) If auto-scaling is enabled, this represents the maximum number of nodes that the node pool can be scaled up to.'
@@ -1907,9 +2412,13 @@ resources:
             node_count: '- (Optional) The number of Droplet instances in the node pool. If auto-scaling is enabled, this should only be set if the desired result is to explicitly reset the number of nodes to this value. If auto-scaling is enabled, and the node count is outside of the given min/max range, it will use the min nodes value.'
             node_pool: '- (Required) A block representing the cluster''s default node pool. Additional node pools may be added to the cluster using the digitalocean_kubernetes_node_pool resource. The following arguments may be specified:'
             nodes: '- A list of nodes in the pool. Each node exports the following attributes:'
+            nvidia_gpu_device_plugin: '- (Optional) Block containing options for the NVIDIA GPU device plugin component. If not specified, the component will be enabled by default for clusters with NVIDIA GPU nodes.'
             raw_config: '- The full contents of the Kubernetes cluster''s kubeconfig file.'
             region: '- (Required) The slug identifier for the region where the Kubernetes cluster will be created.'
             registry_integration: '- (optional) Enables or disables the DigitalOcean container registry integration for the cluster. This requires that a container registry has first been created for the account. Default: false'
+            routing_agent: '- (Optional) Block containing options for the routing-agent component. If not specified, the routing-agent component will not be installed in the cluster.'
+            scale_down_unneeded_time: '- (Optional) String setting how long a node should be unneeded before it''s eligible for scale down.'
+            scale_down_utilization_threshold: '- (Optional) Float setting the Node utilization level, defined as sum of requested resources divided by capacity, in which a node can be considered for scale down.'
             service_subnet: '- (Optional) The range of assignable IP addresses for services running in the Kubernetes cluster. For more information, see here.'
             size: '- (Required) The slug identifier for the type of Droplet to be used as workers in the node pool.'
             start_time: (Required) The start time in UTC of the maintenance window policy in 24-hour clock format / HH:MM notation (e.g., 15:00).
@@ -1925,7 +2434,7 @@ resources:
             vpc_uuid: '- (Optional) The ID of the VPC where the Kubernetes cluster will be located.'
         importStatements: []
     digitalocean_kubernetes_node_pool:
-        subCategory: ""
+        subCategory: Kubernetes
         name: digitalocean_kubernetes_node_pool
         title: digitalocean_kubernetes_node_pool
         examples:
@@ -2002,7 +2511,7 @@ resources:
             value: '- An arbitrary string. The "key" and "value" fields of the "taint" object form a key-value pair.'
         importStatements: []
     digitalocean_loadbalancer:
-        subCategory: ""
+        subCategory: Networking
         name: digitalocean_loadbalancer
         title: digitalocean_loadbalancer
         examples:
@@ -2029,6 +2538,8 @@ resources:
                   "name": "loadbalancer-1",
                   "region": "nyc3"
                 }
+              references:
+                droplet_ids: digitalocean_droplet.web.id
               dependencies:
                 digitalocean_droplet.web: |-
                     {
@@ -2062,6 +2573,7 @@ resources:
                   "region": "nyc3"
                 }
               references:
+                droplet_ids: digitalocean_droplet.web.id
                 forwarding_rule.certificate_name: digitalocean_certificate.cert.name
               dependencies:
                 digitalocean_certificate.cert: |-
@@ -2088,7 +2600,7 @@ resources:
                 or least_connections. The default value is round_robin.
             allow: '- (Optional) A list of strings describing allow rules. Must be colon delimited strings of the form {type}:{source}'
             cdn: '- (Optional) CDN configuration supporting the following:'
-            certificate_id: '- (Optional) Deprecated The ID of the TLS certificate to be used for SSL termination.'
+            certificate_id: '- (Optional) Deprecated The ID of the TLS certificate to be used for SSL termination. Use certificate_name instead.'
             certificate_name: '- (Optional) The unique name of the TLS certificate to be used for SSL termination.'
             check_interval_seconds: '- (Optional) The number of seconds between two consecutive health checks. If not specified, the default value is 10.'
             cookie_name: '- (Optional) The name to be used for the cookie sent to the client. This attribute is required when using cookies for the sticky sessions type.'
@@ -2096,9 +2608,7 @@ resources:
             deny: '- (Optional) A list of strings describing deny rules. Must be colon delimited strings of the form {type}:{source}'
             deny = ["cidr:1.2.0.0/16", "ip:2.3.4.5"]: or allow = ["ip:1.2.3.4", "cidr:2.3.4.0/24"]
             disable_lets_encrypt_dns_records: '- (Optional) A boolean value indicating whether to disable automatic DNS record creation for Let''s Encrypt certificates that are added to the load balancer. Default value is false.'
-            domains: |-
-                (Optional) - A list of domains required to ingress traffic to a Global Load Balancer. The domains block is documented below.
-                NOTE: this is a closed beta feature and not available for public use.
+            domains: (Optional) - A list of domains required to ingress traffic to a Global Load Balancer. The domains block is documented below.
             droplet_ids: (Optional) - A list of the IDs of each droplet to be attached to the Load Balancer.
             droplet_tag: (Optional) - The name of a Droplet tag corresponding to Droplets to be assigned to the Load Balancer.
             enable_backend_keepalive: '- (Optional) A boolean value indicating whether HTTP keepalive connections are maintained to target Droplets. Default value is false.'
@@ -2112,9 +2622,7 @@ resources:
             forwarding_rule: |-
                 - (Required) A list of forwarding_rule to be assigned to the
                 Load Balancer. The forwarding_rule block is documented below.
-            glb_settings: |-
-                (Optional) - A block containing glb_settings required to define target rules for a Global Load Balancer. The glb_settings block is documented below.
-                NOTE: this is a closed beta feature and not available for public use.
+            glb_settings: (Optional) - A block containing glb_settings required to define target rules for a Global Load Balancer. The glb_settings block is documented below.
             healthcheck: |-
                 - (Optional) A healthcheck block to be assigned to the
                 Load Balancer. The healthcheck block is documented below. Only 1 healthcheck is allowed.
@@ -2125,9 +2633,8 @@ resources:
             is_enabled: '- (Optional) Control flag to specify if caching is enabled.'
             is_managed: '- (Optional) Control flag to specify whether the domain is managed by DigitalOcean.'
             name: '- (Required) The Load Balancer name'
-            network: |-
-                - (Optional) The type of network the Load Balancer is accessible from. It must be either of INTERNAL or EXTERNAL. Defaults to EXTERNAL.
-                NOTE: non-EXTERNAL type may be part of closed beta feature and not available for public use.
+            network: '- (Optional) The type of network the Load Balancer is accessible from. It must be either of INTERNAL or EXTERNAL. Defaults to EXTERNAL.'
+            network_stack: '- (Optional) The network stack determines the allocation of ipv4/ipv6 addresses to the load balancer. It must be either of IPV4 or DUALSTACK. Defaults to IPV4.'
             path: '- (Optional) The path on the backend Droplets to which the Load Balancer instance will send a request.'
             port: '- (Optional) An integer representing the port on the backend Droplets on which the health check will attempt a connection.'
             project_id: '- (Optional) The ID of the project that the load balancer is associated with. If no ID is provided at creation, the load balancer associates with the user''s default project.'
@@ -2139,25 +2646,22 @@ resources:
             region: '- (Required) The region to start in'
             response_timeout_seconds: '- (Optional) The number of seconds the Load Balancer instance will wait for a response until marking a health check as failed. If not specified, the default value is 5.'
             size: '- (Optional) The size of the Load Balancer. It must be either lb-small, lb-medium, or lb-large. Defaults to lb-small. Only one of size or size_unit may be provided.'
-            size_unit: '- (Optional) The size of the Load Balancer. It must be in the range (1, 100). Defaults to 1. Only one of size or size_unit may be provided.'
+            size_unit: '- (Optional) The size of the Load Balancer. It must be in the range (1, 200). Defaults to 1. Only one of size or size_unit may be provided.'
             sticky_sessions: |-
                 - (Optional) A sticky_sessions block to be assigned to the
                 Load Balancer. The sticky_sessions block is documented below. Only 1 sticky_sessions block is allowed.
-            target_load_balancer_ids: |-
-                (Optional) - A list of Load Balancer IDs to be attached behind a Global Load Balancer.
-                NOTE: this is a closed beta feature and not available for public use.
+            target_load_balancer_ids: (Optional) - A list of Load Balancer IDs to be attached behind a Global Load Balancer.
             target_port: '- (Required) An integer representing the port on the backend Droplets to which the Load Balancer will send traffic.'
             target_protocol: '- (Required) The protocol used for traffic from the Load Balancer to the backend Droplets. The possible values are: http, https, http2, tcp, or udp.'
+            tls_cipher_policy: '- (Optional) The tls cipher policy controls the cipher suites to be used by the load balancer. It must be either of DEFAULT or STRONG. Defaults to DEFAULT.'
             tls_passthrough: '- (Optional) A boolean value indicating whether SSL encrypted traffic will be passed through to the backend Droplets. The default value is false.'
-            type: |-
-                - (Optional) The type of the Load Balancer. It must be either of REGIONAL or GLOBAL. Defaults to REGIONAL.
-                NOTE: non-REGIONAL type may be part of closed beta feature and not available for public use.
+            type: '- (Optional) The type of the Load Balancer. It must be either of REGIONAL, REGIONAL_NETWORK, or GLOBAL. Defaults to REGIONAL.'
             unhealthy_threshold: '- (Optional) The number of times a health check must fail for a backend Droplet to be marked "unhealthy" and be removed from the pool. If not specified, the default value is 3.'
             urn: '- The uniform resource name for the Load Balancer'
             vpc_uuid: '- (Optional) The ID of the VPC where the load balancer will be located.'
         importStatements: []
     digitalocean_monitor_alert:
-        subCategory: ""
+        subCategory: Monitoring
         name: digitalocean_monitor_alert
         title: digitalocean_monitor_alert
         examples:
@@ -2187,6 +2691,8 @@ resources:
                   "value": 95,
                   "window": "5m"
                 }
+              references:
+                entities: digitalocean_droplet.web.id
               dependencies:
                 digitalocean_droplet.web: |-
                     {
@@ -2229,8 +2735,156 @@ resources:
             window: '- (Required) The time frame of the alert. Either 5m, 10m, 30m, or 1h.'
         importStatements:
             - terraform import digitalocean_monitor_alert.cpu_alert b8ecd2ab-2267-4a5e-8692-cbf1d32583e3
+    digitalocean_nfs:
+        subCategory: NFS Storage
+        name: digitalocean_nfs
+        title: digitalocean_nfs
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "name": "example-nfs",
+                  "performance_tier": "high",
+                  "region": "nyc1",
+                  "size": 50,
+                  "vpc_id": "${digitalocean_vpc.example.id}"
+                }
+              references:
+                vpc_id: digitalocean_vpc.example.id
+              dependencies:
+                digitalocean_vpc.example: |-
+                    {
+                      "name": "example-vpc",
+                      "region": "nyc1"
+                    }
+        argumentDocs:
+            created_at: '- The date and time when the NFS share was created.'
+            host: '- The host IP of the NFS server accessible from the associated VPC.'
+            id: '- The unique identifier for the NFS share.'
+            mount_path: '- The mount path for accessing the NFS share.'
+            name: '- (Required) A name for the NFS share. Must be lowercase and composed only of numbers, letters, and "-", up to a limit of 64 characters. The name must begin with a letter.'
+            performance_tier: '- (Optional) The performance tier for the NFS share. Can be standard or high. Defaults to high. Changing this will cause the performance tier to be switched.'
+            region: '- (Required) The region where the NFS share will be created.'
+            size: '- (Required) The size of the NFS share in GiB. Minimum size is 50 GiB.'
+            status: '- The current status of the NFS share.'
+            vpc_id: '- (Required) The ID of the VPC where the NFS share will be created.'
+        importStatements: []
+    digitalocean_nfs_attachment:
+        subCategory: NFS Storage
+        name: digitalocean_nfs_attachment
+        title: digitalocean_nfs_attachment
+        examples:
+            - name: foobar
+              manifest: |-
+                {
+                  "share_id": "${digitalocean_nfs.foobar.id}",
+                  "vpc_id": "${digitalocean_vpc.foobar.id}"
+                }
+              references:
+                share_id: digitalocean_nfs.foobar.id
+                vpc_id: digitalocean_vpc.foobar.id
+              dependencies:
+                digitalocean_nfs.foobar: |-
+                    {
+                      "name": "example-nfs",
+                      "performance_tier": "high",
+                      "region": "atl1",
+                      "size": 50,
+                      "vpc_id": "${digitalocean_vpc.foobar.id}"
+                    }
+                digitalocean_vpc.foobar: |-
+                    {
+                      "name": "example-vpc",
+                      "region": "atl1"
+                    }
+        argumentDocs:
+            id: '- The unique identifier for the NFS attachment.'
+            share_id: '- (Required) The ID of the NFS share to attach.'
+            vpc_id: '- (Required) The ID of the vpc to attach the NFS share to.'
+        importStatements: []
+    digitalocean_nfs_snapshot:
+        subCategory: NFS Storage
+        name: digitalocean_nfs_snapshot
+        title: digitalocean_nfs_snapshot
+        examples:
+            - name: foobar
+              manifest: |-
+                {
+                  "name": "example-snapshot",
+                  "region": "nyc1",
+                  "share_id": "${digitalocean_nfs.foobar.id}"
+                }
+              references:
+                share_id: digitalocean_nfs.foobar.id
+              dependencies:
+                digitalocean_nfs.foobar: |-
+                    {
+                      "name": "example-nfs",
+                      "performance_tier": "high",
+                      "region": "nyc1",
+                      "size": 50,
+                      "vpc_id": "${digitalocean_vpc.foobar.id}"
+                    }
+                digitalocean_vpc.foobar: |-
+                    {
+                      "name": "example-vpc",
+                      "region": "nyc1"
+                    }
+        argumentDocs:
+            created_at: '- The date and time when the snapshot was created.'
+            id: '- The unique identifier for the NFS snapshot.'
+            name: '- (Required) A name for the NFS snapshot. Must be lowercase and composed only of numbers, letters, and "-", up to a limit of 64 characters.'
+            performance_tier: '- (Optional) The performance tier for the NFS share. Can be standard or high. Defaults to high. Changing this will cause the performance tier to be switched.'
+            region: '- (Required) The region where the NFS snapshot will be created.'
+            share_id: '- (Required) The ID of the NFS share to snapshot.'
+            size: '- The size of the snapshot in GiB.'
+        importStatements: []
+    digitalocean_partner_attachment:
+        subCategory: Networking
+        name: digitalocean_partner_attachment
+        title: digitalocean_partner_attachment
+        examples:
+            - name: foobar
+              manifest: |-
+                {
+                  "bgp": [
+                    {
+                      "auth_key": "BGPAu7hK3y!",
+                      "local_router_ip": "169.254.100.1/29",
+                      "peer_router_asn": 133937,
+                      "peer_router_ip": "169.254.100.6/29"
+                    }
+                  ],
+                  "connection_bandwidth_in_mbps": 1000,
+                  "naas_provider": "MEGAPORT",
+                  "name": "example-partner-attachment",
+                  "region": "nyc",
+                  "vpc_ids": [
+                    "${digitalocean_vpc.vpc1.id}",
+                    "${digitalocean_vpc.vpc2.id}"
+                  ]
+                }
+              references:
+                vpc_ids: digitalocean_vpc.vpc1.id
+        argumentDocs:
+            auth_key: '- The authentication key for the BGP session.'
+            bgp: '- (Optional) The BGP configuration for the Partner Attachment.'
+            connection_bandwidth_in_mbps: '- (Required) The bandwidth in megabits per second of the connection.'
+            created_at: '- The date and time of when the Partner Attachment was created.'
+            id: '- The unique identifier of an existing Partner Attachment.'
+            local_router_ip: '- The local router IP address in CIDR notation.'
+            naas_provider: '- (Required) The network as a service provider for the Partner Attachment.'
+            name: '- (Required) The name of an existing Partner Attachment.'
+            parent_uuid: '- (Optional) The UUID of the parent Partner Attachment HA.'
+            peer_router_asn: '- The peer autonomous system number.'
+            peer_router_ip: '- The peer router IP address in CIDR notation.'
+            redundancy_zone: '- (Optional) The redundancy zone of the Partner Attachment.'
+            region: '- (Required) The region where the Partner Attachment is located.'
+            state: '- The state of the Partner Attachment.'
+            vpc_ids: '- (Required) The list of VPC IDs involved in the Partner Attachment.'
+        importStatements: []
     digitalocean_project:
-        subCategory: ""
+        subCategory: Account
         name: digitalocean_project
         title: digitalocean_project
         examples:
@@ -2253,6 +2907,8 @@ resources:
                     "${digitalocean_droplet.foobar.urn}"
                   ]
                 }
+              references:
+                resources: digitalocean_droplet.foobar.urn
               dependencies:
                 digitalocean_droplet.foobar: |-
                     {
@@ -2275,7 +2931,7 @@ resources:
             updated_at: '- the date and time when the project was last updated, (ISO8601)'
         importStatements: []
     digitalocean_project_resources:
-        subCategory: ""
+        subCategory: Account
         name: digitalocean_project_resources
         title: digitalocean_project_resources
         examples:
@@ -2289,6 +2945,7 @@ resources:
                 }
               references:
                 project: data.digitalocean_project.playground.id
+                resources: digitalocean_droplet.foobar.urn
               dependencies:
                 digitalocean_droplet.foobar: |-
                     {
@@ -2302,7 +2959,7 @@ resources:
             resources: '- (Required) a list of uniform resource names (URNs) for the resources associated with the project'
         importStatements: []
     digitalocean_record:
-        subCategory: ""
+        subCategory: Networking
         name: digitalocean_record
         title: digitalocean_record
         examples:
@@ -2352,7 +3009,7 @@ resources:
             weight: '- (Optional) The weight of the record. Only valid when type is SRV.  Must be between 0 and 65535.'
         importStatements: []
     digitalocean_reserved_ip:
-        subCategory: ""
+        subCategory: Networking
         name: digitalocean_reserved_ip
         title: digitalocean_reserved_ip
         examples:
@@ -2382,7 +3039,7 @@ resources:
             urn: '- The uniform resource name of the reserved ip'
         importStatements: []
     digitalocean_reserved_ip_assignment:
-        subCategory: ""
+        subCategory: Networking
         name: digitalocean_reserved_ip_assignment
         title: digitalocean_reserved_ip_assignment
         examples:
@@ -2413,11 +3070,62 @@ resources:
             droplet_id: '- (Optional) The ID of Droplet that the reserved IP will be assigned to.'
             ip_address: '- (Required) The reserved IP to assign to the Droplet.'
         importStatements: []
+    digitalocean_reserved_ipv6:
+        subCategory: Networking
+        name: digitalocean_reserved_ipv6
+        title: digitalocean_reserved_ipv6
+        examples:
+            - name: foobar
+              manifest: |-
+                {
+                  "region_slug": "nyc3"
+                }
+        argumentDocs:
+            region_slug: '- (Required) The region that the reserved IPv6 needs to be reserved to.'
+        importStatements: []
+    digitalocean_reserved_ipv6_assignment:
+        subCategory: Networking
+        name: digitalocean_reserved_ipv6_assignment
+        title: digitalocean_reserved_ipv6_assignment
+        examples:
+            - name: foobar
+              manifest: |-
+                {
+                  "droplet_id": "${digitalocean_droplet.foobar.id}",
+                  "ip": "${digitalocean_reserved_ipv6.foobar.ip}",
+                  "lifecycle": [
+                    {
+                      "create_before_destroy": true
+                    }
+                  ]
+                }
+              references:
+                droplet_id: digitalocean_droplet.foobar.id
+                ip: digitalocean_reserved_ipv6.foobar.ip
+              dependencies:
+                digitalocean_droplet.foobar: |-
+                    {
+                      "image": "ubuntu-22-04-x64",
+                      "ipv6": true,
+                      "name": "tf-acc-test-01",
+                      "region": "nyc3",
+                      "size": "s-1vcpu-1gb"
+                    }
+                digitalocean_reserved_ipv6.foobar: |-
+                    {
+                      "region_slug": "nyc3"
+                    }
+        argumentDocs:
+            droplet_id: '- (Required) The ID of Droplet that the reserved IPv6 will be assigned to.'
+            ip: '- (Required) The reserved IPv6 to assign to the Droplet.'
+        importStatements: []
     digitalocean_spaces_bucket:
-        subCategory: ""
+        subCategory: Spaces Object Storage
         name: digitalocean_spaces_bucket
         title: digitalocean_spaces_bucket
         examples:
+            - name: static-assets
+              manifest: '{}'
             - name: foobar
               manifest: |-
                 {
@@ -2490,7 +3198,7 @@ resources:
             versioning: '- (Optional) A state of versioning (documented below)'
         importStatements: []
     digitalocean_spaces_bucket_cors_configuration:
-        subCategory: ""
+        subCategory: Spaces Object Storage
         name: digitalocean_spaces_bucket_cors_configuration
         title: digitalocean_spaces_bucket_cors_configuration
         examples:
@@ -2537,8 +3245,41 @@ resources:
             max_age_seconds: '- (Optional) Time in seconds that your browser is to cache the preflight response for the specified resource.'
             region: '- (Required) The region where the bucket resides.'
         importStatements: []
+    digitalocean_spaces_bucket_logging:
+        subCategory: Spaces Object Storage
+        name: digitalocean_spaces_bucket_logging
+        title: digitalocean_spaces_bucket_logging
+        examples:
+            - name: example
+              manifest: |-
+                {
+                  "bucket": "${digitalocean_spaces_bucket.assets.id}",
+                  "region": "%s",
+                  "target_bucket": "${digitalocean_spaces_bucket.logs.id}",
+                  "target_prefix": "access-logs/"
+                }
+              references:
+                bucket: digitalocean_spaces_bucket.assets.id
+                target_bucket: digitalocean_spaces_bucket.logs.id
+              dependencies:
+                digitalocean_spaces_bucket.assets: |-
+                    {
+                      "name": "assets",
+                      "region": "nyc3"
+                    }
+                digitalocean_spaces_bucket.logs: |-
+                    {
+                      "name": "logs",
+                      "region": "nyc3"
+                    }
+        argumentDocs:
+            bucket: '- (Required) The name of the bucket which will be logged.'
+            region: '- (Required) The region where the bucket resides.'
+            target_bucket: '- (Required) The name of the bucket which will store the logs.'
+            target_prefix: '- (Required) The prefix for the log files.'
+        importStatements: []
     digitalocean_spaces_bucket_object:
-        subCategory: ""
+        subCategory: Spaces Object Storage
         name: digitalocean_spaces_bucket_object
         title: digitalocean_spaces_bucket_object
         examples:
@@ -2582,7 +3323,7 @@ resources:
             website_redirect: '- (Optional) Specifies a target URL for website redirect.'
         importStatements: []
     digitalocean_spaces_bucket_policy:
-        subCategory: ""
+        subCategory: Spaces Object Storage
         name: digitalocean_spaces_bucket_policy
         title: digitalocean_spaces_bucket_policy
         examples:
@@ -2607,8 +3348,49 @@ resources:
             policy: '- (Required) The text of the policy.'
             region: '- (Required) The region where the bucket resides.'
         importStatements: []
+    digitalocean_spaces_key:
+        subCategory: Spaces Object Storage
+        name: digitalocean_spaces_key
+        title: digitalocean_spaces_key
+        examples:
+            - name: foobar
+              manifest: |-
+                {
+                  "name": "foobar"
+                }
+            - name: foobar
+              manifest: |-
+                {
+                  "grant": [
+                    {
+                      "bucket": "my-bucket",
+                      "permission": "read"
+                    }
+                  ],
+                  "name": "foobar"
+                }
+            - name: foobar
+              manifest: |-
+                {
+                  "grant": [
+                    {
+                      "bucket": "",
+                      "permission": "fullaccess"
+                    }
+                  ],
+                  "name": "foobar"
+                }
+        argumentDocs:
+            access_key: '- The access key ID of the key'
+            bucket: '- (Required) Name of the bucket associated with this grant. In case of a fullaccess permission, this value should be an empty string.'
+            created_at: '- The creation time of the key'
+            grant: '- (Optional) A grant for the key (documented below).'
+            name: '- (Required) The name of the key'
+            permission: '- (Required) Permission associated with this grant. Values can be read, readwrite, fullaccess.'
+            secret_key: '- The access key secret of the key'
+        importStatements: []
     digitalocean_ssh_key:
-        subCategory: ""
+        subCategory: Account
         name: digitalocean_ssh_key
         title: digitalocean_ssh_key
         examples:
@@ -2638,7 +3420,7 @@ resources:
                 can be read using the file interpolation function
         importStatements: []
     digitalocean_tag:
-        subCategory: ""
+        subCategory: Account
         name: digitalocean_tag
         title: digitalocean_tag
         examples:
@@ -2669,7 +3451,7 @@ resources:
             volumes_count: '- A count of the volumes that the tag is applied to.'
         importStatements: []
     digitalocean_uptime_alert:
-        subCategory: ""
+        subCategory: Monitoring
         name: digitalocean_uptime_alert
         title: digitalocean_uptime_alert
         examples:
@@ -2723,7 +3505,7 @@ resources:
         importStatements:
             - terraform import digitalocean_uptime_alert.target 94a7d216-d821-11ee-a327-33d3239ffc4b,5a4981aa-9653-4bd1-bef5-d6bff52042e4
     digitalocean_uptime_check:
-        subCategory: ""
+        subCategory: Monitoring
         name: digitalocean_uptime_check
         title: digitalocean_uptime_check
         examples:
@@ -2746,7 +3528,7 @@ resources:
         importStatements:
             - terraform import digitalocean_uptime_check.target 5a4981aa-9653-4bd1-bef5-d6bff52042e4
     digitalocean_volume:
-        subCategory: ""
+        subCategory: Volumes Block Storage
         name: digitalocean_volume
         title: digitalocean_volume
         examples:
@@ -2799,7 +3581,7 @@ resources:
             urn: '- The uniform resource name for the volume.'
         importStatements: []
     digitalocean_volume_attachment:
-        subCategory: ""
+        subCategory: Volumes Block Storage
         name: digitalocean_volume_attachment
         title: digitalocean_volume_attachment
         examples:
@@ -2834,7 +3616,7 @@ resources:
             volume_id: '- (Required) ID of the Volume to be attached to the Droplet.'
         importStatements: []
     digitalocean_volume_snapshot:
-        subCategory: ""
+        subCategory: Backups & Snapshots
         name: digitalocean_volume_snapshot
         title: digitalocean_volume_snapshot
         examples:
@@ -2865,7 +3647,7 @@ resources:
             volume_id: '- (Required) The ID of the volume from which the volume snapshot originated.'
         importStatements: []
     digitalocean_vpc:
-        subCategory: ""
+        subCategory: Networking
         name: digitalocean_vpc
         title: digitalocean_vpc
         examples:
@@ -2901,8 +3683,58 @@ resources:
             region: '- (Required) The DigitalOcean region slug for the VPC''s location.'
             urn: '- The uniform resource name (URN) for the VPC.'
         importStatements: []
+    digitalocean_vpc_nat_gateway:
+        subCategory: Networking
+        name: digitalocean_vpc_nat_gateway
+        title: digitalocean_vpc_nat_gateway
+        examples:
+            - name: my-vpc-nat-gateway
+              manifest: |-
+                {
+                  "icmp_timeout_seconds": 30,
+                  "name": "terraform-example",
+                  "region": "nyc3",
+                  "size": "1",
+                  "tcp_timeout_seconds": 30,
+                  "type": "PUBLIC",
+                  "udp_timeout_seconds": 30,
+                  "vpcs": [
+                    {
+                      "vpc_uuid": "${digitalocean_vpc.my-vpc.id}"
+                    }
+                  ]
+                }
+              references:
+                vpcs.vpc_uuid: digitalocean_vpc.my-vpc.id
+              dependencies:
+                digitalocean_vpc.my-vpc: |-
+                    {
+                      "name": "terraform-example",
+                      "region": "nyc3"
+                    }
+        argumentDocs:
+            created_at: '- Created at timestamp for the VPC NAT Gateway.'
+            default_gateway: '- Boolean flag indicating if this should be the default gateway in this VPC'
+            egresses: |-
+                - Embeds the list of public egresses assigned to the VPC NAT Gateway: resolves as list of
+                public_gateways embedding the reserved ipv4 addresses.
+            gateway_ip: '- (Read-only) The private IP of the VPC NAT Gateway'
+            icmp_timeout_seconds: '- The egress timeout value for ICMP connections of the VPC NAT Gateway.'
+            id: '- The ID of the VPC NAT Gateway.'
+            name: '- (Required) The name of the VPC NAT Gateway.'
+            region: '- (Required) The region for the VPC NAT Gateway.'
+            size: '- (Required) The size of the VPC NAT Gateway.'
+            tcp_timeout_seconds: '- The egress timeout value for TCP connections of the VPC NAT Gateway.'
+            type: '- (Required) The type of the VPC NAT Gateway.'
+            udp_timeout_seconds: '- The egress timeout value for UDP connections of the VPC NAT Gateway.'
+            updated_at: '- Updated at timestamp for the VPC NAT Gateway.'
+            vpc_uuid: '- The ID of the ingress VPC'
+            vpcs: |-
+                - (Required) The ingress VPC configuration of the VPC NAT Gateway, the supported arguments are
+                documented below.
+        importStatements: []
     digitalocean_vpc_peering:
-        subCategory: ""
+        subCategory: Networking
         name: digitalocean_vpc_peering
         title: digitalocean_vpc_peering
         examples:
@@ -2915,6 +3747,8 @@ resources:
                     "${digitalocean_vpc.vpc2.id}"
                   ]
                 }
+              references:
+                vpc_ids: digitalocean_vpc.vpc1.id
             - name: example
               manifest: |-
                 {
@@ -2924,6 +3758,8 @@ resources:
                     "${digitalocean_vpc.vpc2.id}"
                   ]
                 }
+              references:
+                vpc_ids: digitalocean_vpc.vpc1.id
               dependencies:
                 digitalocean_droplet.example1: |-
                     {

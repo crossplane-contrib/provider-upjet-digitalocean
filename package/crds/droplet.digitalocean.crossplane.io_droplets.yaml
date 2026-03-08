@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.14.0
+    controller-gen.kubebuilder.io/version: v0.16.5
   name: droplets.droplet.digitalocean.crossplane.io
 spec:
   group: droplet.digitalocean.crossplane.io
@@ -72,6 +72,26 @@ spec:
                 type: string
               forProvider:
                 properties:
+                  backupPolicy:
+                    description: An object specifying the backup policy for the Droplet.
+                      If omitted and backups is true, the backup plan will default
+                      to daily.
+                    items:
+                      properties:
+                        hour:
+                          description: The hour of the day that the backup window
+                            will start (0, 4, 8, 12, 16, 20).
+                          type: number
+                        plan:
+                          description: The backup plan used for the Droplet. The plan
+                            can be either daily or weekly.
+                          type: string
+                        weekday:
+                          description: The day of the week on which the backup will
+                            occur (SUN, MON, TUE, WED, THU, FRI, SAT).
+                          type: string
+                      type: object
+                    type: array
                   backups:
                     description: |-
                       Boolean controlling if backups are made. Defaults to
@@ -93,7 +113,8 @@ spec:
                     type: boolean
                   image:
                     description: The Droplet image ID or slug. This could be either
-                      image ID or droplet snapshot ID.
+                      image ID or droplet snapshot ID. You can find image IDs and
+                      slugs using the DigitalOcean API.
                     type: string
                   imageRef:
                     description: Reference to a Image in custom to populate image.
@@ -205,7 +226,7 @@ spec:
                     type: boolean
                   size:
                     description: The unique slug that identifies the type of Droplet.
-                      You can find a list of available slugs on DigitalOcean API documentation.
+                      You may list the available slugs using the DigitalOcean API.
                     type: string
                   sshKeys:
                     description: |-
@@ -381,7 +402,9 @@ spec:
                         type: object
                     type: object
                   userData:
-                    description: A string of the desired User Data for the Droplet.
+                    description: A string of the desired User Data provided during
+                      Droplet creation. Changing this forces a new resource to be
+                      created.
                     type: string
                   volumeIds:
                     description: A list of the IDs of each block storage volume to
@@ -481,6 +504,26 @@ spec:
                   for example because of an external controller is managing them, like an
                   autoscaler.
                 properties:
+                  backupPolicy:
+                    description: An object specifying the backup policy for the Droplet.
+                      If omitted and backups is true, the backup plan will default
+                      to daily.
+                    items:
+                      properties:
+                        hour:
+                          description: The hour of the day that the backup window
+                            will start (0, 4, 8, 12, 16, 20).
+                          type: number
+                        plan:
+                          description: The backup plan used for the Droplet. The plan
+                            can be either daily or weekly.
+                          type: string
+                        weekday:
+                          description: The day of the week on which the backup will
+                            occur (SUN, MON, TUE, WED, THU, FRI, SAT).
+                          type: string
+                      type: object
+                    type: array
                   backups:
                     description: |-
                       Boolean controlling if backups are made. Defaults to
@@ -502,7 +545,8 @@ spec:
                     type: boolean
                   image:
                     description: The Droplet image ID or slug. This could be either
-                      image ID or droplet snapshot ID.
+                      image ID or droplet snapshot ID. You can find image IDs and
+                      slugs using the DigitalOcean API.
                     type: string
                   imageRef:
                     description: Reference to a Image in custom to populate image.
@@ -614,7 +658,7 @@ spec:
                     type: boolean
                   size:
                     description: The unique slug that identifies the type of Droplet.
-                      You can find a list of available slugs on DigitalOcean API documentation.
+                      You may list the available slugs using the DigitalOcean API.
                     type: string
                   sshKeys:
                     description: |-
@@ -790,7 +834,9 @@ spec:
                         type: object
                     type: object
                   userData:
-                    description: A string of the desired User Data for the Droplet.
+                    description: A string of the desired User Data provided during
+                      Droplet creation. Changing this forces a new resource to be
+                      created.
                     type: string
                   volumeIds:
                     description: A list of the IDs of each block storage volume to
@@ -1058,6 +1104,26 @@ spec:
             properties:
               atProvider:
                 properties:
+                  backupPolicy:
+                    description: An object specifying the backup policy for the Droplet.
+                      If omitted and backups is true, the backup plan will default
+                      to daily.
+                    items:
+                      properties:
+                        hour:
+                          description: The hour of the day that the backup window
+                            will start (0, 4, 8, 12, 16, 20).
+                          type: number
+                        plan:
+                          description: The backup plan used for the Droplet. The plan
+                            can be either daily or weekly.
+                          type: string
+                        weekday:
+                          description: The day of the week on which the backup will
+                            occur (SUN, MON, TUE, WED, THU, FRI, SAT).
+                          type: string
+                      type: object
+                    type: array
                   backups:
                     description: |-
                       Boolean controlling if backups are made. Defaults to
@@ -1087,7 +1153,8 @@ spec:
                     type: string
                   image:
                     description: The Droplet image ID or slug. This could be either
-                      image ID or droplet snapshot ID.
+                      image ID or droplet snapshot ID. You can find image IDs and
+                      slugs using the DigitalOcean API.
                     type: string
                   ipv4Address:
                     description: The IPv4 address
@@ -1142,7 +1209,7 @@ spec:
                     type: boolean
                   size:
                     description: The unique slug that identifies the type of Droplet.
-                      You can find a list of available slugs on DigitalOcean API documentation.
+                      You may list the available slugs using the DigitalOcean API.
                     type: string
                   sshKeys:
                     description: |-
@@ -1169,7 +1236,9 @@ spec:
                     description: The uniform resource name of the Droplet
                     type: string
                   userData:
-                    description: A string of the desired User Data for the Droplet.
+                    description: A string of the desired User Data provided during
+                      Droplet creation. Changing this forces a new resource to be
+                      created.
                     type: string
                   vcpus:
                     description: The number of the instance's virtual CPUs

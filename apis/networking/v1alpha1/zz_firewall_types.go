@@ -16,7 +16,8 @@ import (
 type FirewallInitParameters struct {
 
 	// The list of the IDs of the Droplets assigned
-	// to the Firewall.
+	// to the Firewall (max. 10). If you want to assign more droplets to the
+	// Firewall, add Tags to them and use the tags argument below.
 	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/droplet/v1alpha1.Droplet
 	// +listType=set
 	DropletIds []*float64 `json:"dropletIds,omitempty" tf:"droplet_ids,omitempty"`
@@ -40,7 +41,7 @@ type FirewallInitParameters struct {
 	// The outbound_rule block is documented below.
 	OutboundRule []OutboundRuleInitParameters `json:"outboundRule,omitempty" tf:"outbound_rule,omitempty"`
 
-	// The names of the Tags assigned to the Firewall.
+	// The names of the Tags assigned to the Firewall (max. 5).
 	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 }
@@ -52,7 +53,8 @@ type FirewallObservation struct {
 	CreatedAt *string `json:"createdAt,omitempty" tf:"created_at,omitempty"`
 
 	// The list of the IDs of the Droplets assigned
-	// to the Firewall.
+	// to the Firewall (max. 10). If you want to assign more droplets to the
+	// Firewall, add Tags to them and use the tags argument below.
 	// +listType=set
 	DropletIds []*float64 `json:"dropletIds,omitempty" tf:"droplet_ids,omitempty"`
 
@@ -80,7 +82,7 @@ type FirewallObservation struct {
 	// This can be "waiting", "succeeded", or "failed".
 	Status *string `json:"status,omitempty" tf:"status,omitempty"`
 
-	// The names of the Tags assigned to the Firewall.
+	// The names of the Tags assigned to the Firewall (max. 5).
 	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
 }
@@ -88,7 +90,8 @@ type FirewallObservation struct {
 type FirewallParameters struct {
 
 	// The list of the IDs of the Droplets assigned
-	// to the Firewall.
+	// to the Firewall (max. 10). If you want to assign more droplets to the
+	// Firewall, add Tags to them and use the tags argument below.
 	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/droplet/v1alpha1.Droplet
 	// +kubebuilder:validation:Optional
 	// +listType=set
@@ -116,7 +119,7 @@ type FirewallParameters struct {
 	// +kubebuilder:validation:Optional
 	OutboundRule []OutboundRuleParameters `json:"outboundRule,omitempty" tf:"outbound_rule,omitempty"`
 
-	// The names of the Tags assigned to the Firewall.
+	// The names of the Tags assigned to the Firewall (max. 5).
 	// +kubebuilder:validation:Optional
 	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`

@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.14.0
+    controller-gen.kubebuilder.io/version: v0.16.5
   name: clusters.database.digitalocean.crossplane.io
 spec:
   group: database.digitalocean.crossplane.io
@@ -90,11 +90,11 @@ spec:
                     type: array
                   engine:
                     description: Database engine used by the cluster (ex. pg for PostreSQL,
-                      mysql for MySQL, redis for Redis, mongodb for MongoDB, or kafka
-                      for Kafka).
+                      mysql for MySQL, valkey for Valkey, mongodb for MongoDB, or
+                      kafka for Kafka).
                     type: string
                   evictionPolicy:
-                    description: 'A string specifying the eviction policy for a Redis
+                    description: 'A string specifying the eviction policy for a Valkey
                       cluster. Valid values are: noeviction, allkeys_lru, allkeys_random,
                       volatile_lru, volatile_random, or volatile_ttl.'
                     type: string
@@ -105,11 +105,11 @@ spec:
                       properties:
                         day:
                           description: The day of the week on which to apply maintenance
-                            updates.
+                            updates. May be one of monday through sunday.
                           type: string
                         hour:
                           description: The hour in UTC at which maintenance updates
-                            will be applied in 24 hour format.
+                            will be applied as a string in 24 hour format, e.g. 13:00.
                           type: string
                       type: object
                     type: array
@@ -282,7 +282,8 @@ spec:
                     type: string
                   size:
                     description: Database Droplet size associated with the cluster
-                      (ex. db-s-1vcpu-1gb). See here for a list of valid size slugs.
+                      (ex. db-s-1vcpu-1gb). See the DigitalOcean API for a list of
+                      valid size slugs.
                     type: string
                   sqlMode:
                     description: A comma separated string specifying the  SQL modes
@@ -337,11 +338,11 @@ spec:
                     type: array
                   engine:
                     description: Database engine used by the cluster (ex. pg for PostreSQL,
-                      mysql for MySQL, redis for Redis, mongodb for MongoDB, or kafka
-                      for Kafka).
+                      mysql for MySQL, valkey for Valkey, mongodb for MongoDB, or
+                      kafka for Kafka).
                     type: string
                   evictionPolicy:
-                    description: 'A string specifying the eviction policy for a Redis
+                    description: 'A string specifying the eviction policy for a Valkey
                       cluster. Valid values are: noeviction, allkeys_lru, allkeys_random,
                       volatile_lru, volatile_random, or volatile_ttl.'
                     type: string
@@ -352,11 +353,11 @@ spec:
                       properties:
                         day:
                           description: The day of the week on which to apply maintenance
-                            updates.
+                            updates. May be one of monday through sunday.
                           type: string
                         hour:
                           description: The hour in UTC at which maintenance updates
-                            will be applied in 24 hour format.
+                            will be applied as a string in 24 hour format, e.g. 13:00.
                           type: string
                       type: object
                     type: array
@@ -529,7 +530,8 @@ spec:
                     type: string
                   size:
                     description: Database Droplet size associated with the cluster
-                      (ex. db-s-1vcpu-1gb). See here for a list of valid size slugs.
+                      (ex. db-s-1vcpu-1gb). See the DigitalOcean API for a list of
+                      valid size slugs.
                     type: string
                   sqlMode:
                     description: A comma separated string specifying the  SQL modes
@@ -767,11 +769,11 @@ spec:
                     type: string
                   engine:
                     description: Database engine used by the cluster (ex. pg for PostreSQL,
-                      mysql for MySQL, redis for Redis, mongodb for MongoDB, or kafka
-                      for Kafka).
+                      mysql for MySQL, valkey for Valkey, mongodb for MongoDB, or
+                      kafka for Kafka).
                     type: string
                   evictionPolicy:
-                    description: 'A string specifying the eviction policy for a Redis
+                    description: 'A string specifying the eviction policy for a Valkey
                       cluster. Valid values are: noeviction, allkeys_lru, allkeys_random,
                       volatile_lru, volatile_random, or volatile_ttl.'
                     type: string
@@ -788,13 +790,19 @@ spec:
                       properties:
                         day:
                           description: The day of the week on which to apply maintenance
-                            updates.
+                            updates. May be one of monday through sunday.
                           type: string
                         hour:
                           description: The hour in UTC at which maintenance updates
-                            will be applied in 24 hour format.
+                            will be applied as a string in 24 hour format, e.g. 13:00.
                           type: string
                       type: object
+                    type: array
+                  metricsEndpoints:
+                    description: A list of metrics endpoints for the database cluster,
+                      providing URLs to access Prometheus-compatible metrics.
+                    items:
+                      type: string
                     type: array
                   name:
                     description: The name of the database cluster.
@@ -825,7 +833,8 @@ spec:
                     type: string
                   size:
                     description: Database Droplet size associated with the cluster
-                      (ex. db-s-1vcpu-1gb). See here for a list of valid size slugs.
+                      (ex. db-s-1vcpu-1gb). See the DigitalOcean API for a list of
+                      valid size slugs.
                     type: string
                   sqlMode:
                     description: A comma separated string specifying the  SQL modes

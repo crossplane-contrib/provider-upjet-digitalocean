@@ -30,6 +30,11 @@ Copyright 2021 Upbound Inc.
 // Generate crossplane-runtime methodsets (resource.Claim, etc)
 //go:generate go run -tags generate github.com/crossplane/crossplane-tools/cmd/angryjet generate-methodsets --header-file=../hack/boilerplate.go.txt ./...
 
+// Workaround: fix angryjet bug where *float64 single-resolution fields are emitted
+// using ptr.FromFloatPtrValue/ptr.ToFloatPtrValue (k8s.io/utils/ptr) instead of
+// reference.FromFloatPtrValue/reference.ToFloatPtrValue (crossplane-runtime/pkg/reference).
+//go:generate bash ../hack/fix-angryjet-float.sh
+
 package apis
 
 import (

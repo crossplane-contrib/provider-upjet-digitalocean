@@ -11,6 +11,7 @@ import (
 	v1alpha1 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/networking/v1alpha1"
 	reference "github.com/crossplane/crossplane-runtime/pkg/reference"
 	errors "github.com/pkg/errors"
+	ptr "k8s.io/utils/ptr"
 	client "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -22,7 +23,7 @@ func (mg *Cdn) ResolveReferences(ctx context.Context, c client.Reader) error {
 	var err error
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.CertificateName),
+		CurrentValue: ptr.Deref(mg.Spec.ForProvider.CertificateName, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.ForProvider.CertificateNameRef,
 		Selector:     mg.Spec.ForProvider.Name,
@@ -34,11 +35,11 @@ func (mg *Cdn) ResolveReferences(ctx context.Context, c client.Reader) error {
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.ForProvider.CertificateName")
 	}
-	mg.Spec.ForProvider.CertificateName = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.CertificateName = ptr.To(rsp.ResolvedValue)
 	mg.Spec.ForProvider.CertificateNameRef = rsp.ResolvedReference
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.CustomDomain),
+		CurrentValue: ptr.Deref(mg.Spec.ForProvider.CustomDomain, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.ForProvider.CustomDomainRef,
 		Selector:     mg.Spec.ForProvider.ID,
@@ -50,11 +51,11 @@ func (mg *Cdn) ResolveReferences(ctx context.Context, c client.Reader) error {
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.ForProvider.CustomDomain")
 	}
-	mg.Spec.ForProvider.CustomDomain = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.CustomDomain = ptr.To(rsp.ResolvedValue)
 	mg.Spec.ForProvider.CustomDomainRef = rsp.ResolvedReference
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.Origin),
+		CurrentValue: ptr.Deref(mg.Spec.ForProvider.Origin, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.ForProvider.OriginRef,
 		Selector:     mg.Spec.ForProvider.BucketDomainName,
@@ -66,11 +67,11 @@ func (mg *Cdn) ResolveReferences(ctx context.Context, c client.Reader) error {
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.ForProvider.Origin")
 	}
-	mg.Spec.ForProvider.Origin = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.Origin = ptr.To(rsp.ResolvedValue)
 	mg.Spec.ForProvider.OriginRef = rsp.ResolvedReference
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.CertificateName),
+		CurrentValue: ptr.Deref(mg.Spec.InitProvider.CertificateName, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.InitProvider.CertificateNameRef,
 		Selector:     mg.Spec.InitProvider.Name,
@@ -82,11 +83,11 @@ func (mg *Cdn) ResolveReferences(ctx context.Context, c client.Reader) error {
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.InitProvider.CertificateName")
 	}
-	mg.Spec.InitProvider.CertificateName = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.CertificateName = ptr.To(rsp.ResolvedValue)
 	mg.Spec.InitProvider.CertificateNameRef = rsp.ResolvedReference
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.CustomDomain),
+		CurrentValue: ptr.Deref(mg.Spec.InitProvider.CustomDomain, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.InitProvider.CustomDomainRef,
 		Selector:     mg.Spec.InitProvider.ID,
@@ -98,11 +99,11 @@ func (mg *Cdn) ResolveReferences(ctx context.Context, c client.Reader) error {
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.InitProvider.CustomDomain")
 	}
-	mg.Spec.InitProvider.CustomDomain = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.CustomDomain = ptr.To(rsp.ResolvedValue)
 	mg.Spec.InitProvider.CustomDomainRef = rsp.ResolvedReference
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.InitProvider.Origin),
+		CurrentValue: ptr.Deref(mg.Spec.InitProvider.Origin, ""),
 		Extract:      reference.ExternalName(),
 		Reference:    mg.Spec.InitProvider.OriginRef,
 		Selector:     mg.Spec.InitProvider.BucketDomainName,
@@ -114,7 +115,7 @@ func (mg *Cdn) ResolveReferences(ctx context.Context, c client.Reader) error {
 	if err != nil {
 		return errors.Wrap(err, "mg.Spec.InitProvider.Origin")
 	}
-	mg.Spec.InitProvider.Origin = reference.ToPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.Origin = ptr.To(rsp.ResolvedValue)
 	mg.Spec.InitProvider.OriginRef = rsp.ResolvedReference
 
 	return nil
