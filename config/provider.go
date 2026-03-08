@@ -403,6 +403,9 @@ func GetProvider() *ujconfig.Provider {
 	})
 	pc.AddResourceConfigurator("digitalocean_vpc_nat_gateway", func(r *ujconfig.Resource) {
 		r.ShortGroup = "vpc"
+		r.References["project_id"] = ujconfig.Reference{
+			TerraformName: "digitalocean_project",
+		}
 	})
 	pc.AddResourceConfigurator("digitalocean_nfs", func(r *ujconfig.Resource) {
 		r.Kind = "NFSShare"
