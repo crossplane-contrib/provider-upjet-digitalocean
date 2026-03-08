@@ -9,6 +9,7 @@ import (
 
 	"github.com/crossplane/upjet/pkg/controller"
 
+	registries "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/container/registries"
 	registry "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/container/registry"
 	registrydockercredentials "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/container/registrydockercredentials"
 	image "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/custom/image"
@@ -23,6 +24,7 @@ import (
 	logsinkrsyslog "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/logsinkrsyslog"
 	mongodbconfig "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/mongodbconfig"
 	mysqlconfig "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/mysqlconfig"
+	onlinemigration "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/onlinemigration"
 	opensearchconfig "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/opensearchconfig"
 	postgresqlconfig "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/postgresqlconfig"
 	redisconfig "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/redisconfig"
@@ -33,11 +35,13 @@ import (
 	tag "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/digitalocean/tag"
 	domain "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/dns/domain"
 	record "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/dns/record"
+	autoscalepool "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/droplet/autoscalepool"
 	droplet "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/droplet/droplet"
 	snapshot "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/droplet/snapshot"
 	clusterkubernetes "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/kubernetes/cluster"
 	nodepool "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/kubernetes/nodepool"
 	alert "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/monitor/alert"
+	byoipprefix "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/networking/byoipprefix"
 	certificate "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/networking/certificate"
 	firewallnetworking "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/networking/firewall"
 	ip "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/networking/ip"
@@ -73,6 +77,7 @@ import (
 // the supplied manager.
 func Setup(mgr ctrl.Manager, o controller.Options) error {
 	for _, setup := range []func(ctrl.Manager, controller.Options) error{
+		registries.Setup,
 		registry.Setup,
 		registrydockercredentials.Setup,
 		image.Setup,
@@ -87,6 +92,7 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		logsinkrsyslog.Setup,
 		mongodbconfig.Setup,
 		mysqlconfig.Setup,
+		onlinemigration.Setup,
 		opensearchconfig.Setup,
 		postgresqlconfig.Setup,
 		redisconfig.Setup,
@@ -97,11 +103,13 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		tag.Setup,
 		domain.Setup,
 		record.Setup,
+		autoscalepool.Setup,
 		droplet.Setup,
 		snapshot.Setup,
 		clusterkubernetes.Setup,
 		nodepool.Setup,
 		alert.Setup,
+		byoipprefix.Setup,
 		certificate.Setup,
 		firewallnetworking.Setup,
 		ip.Setup,
