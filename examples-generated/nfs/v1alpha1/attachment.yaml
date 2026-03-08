@@ -1,0 +1,51 @@
+apiVersion: nfs.digitalocean.crossplane.io/v1alpha1
+kind: Attachment
+metadata:
+  annotations:
+    meta.upbound.io/example-id: nfs/v1alpha1/attachment
+  labels:
+    testing.upbound.io/example-name: foobar
+  name: foobar
+spec:
+  forProvider:
+    shareIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: foobar
+    vpcIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: foobar
+
+---
+
+apiVersion: nfs.digitalocean.crossplane.io/v1alpha1
+kind: NFSShare
+metadata:
+  annotations:
+    meta.upbound.io/example-id: nfs/v1alpha1/attachment
+  labels:
+    testing.upbound.io/example-name: foobar
+  name: foobar
+spec:
+  forProvider:
+    name: example-nfs
+    performanceTier: high
+    region: atl1
+    size: 50
+    vpcIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: foobar
+
+---
+
+apiVersion: vpc.digitalocean.crossplane.io/v1alpha1
+kind: VPC
+metadata:
+  annotations:
+    meta.upbound.io/example-id: nfs/v1alpha1/attachment
+  labels:
+    testing.upbound.io/example-name: foobar
+  name: foobar
+spec:
+  forProvider:
+    name: example-vpc
+    region: atl1

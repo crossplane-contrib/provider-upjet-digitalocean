@@ -70,6 +70,24 @@ func (l *KafkaTopicList) GetItems() []resource.Managed {
 	return items
 }
 
+// GetItems of this LogSinkOpenSearchList.
+func (l *LogSinkOpenSearchList) GetItems() []resource.Managed {
+	items := make([]resource.Managed, len(l.Items))
+	for i := range l.Items {
+		items[i] = &l.Items[i]
+	}
+	return items
+}
+
+// GetItems of this LogSinkRsyslogList.
+func (l *LogSinkRsyslogList) GetItems() []resource.Managed {
+	items := make([]resource.Managed, len(l.Items))
+	for i := range l.Items {
+		items[i] = &l.Items[i]
+	}
+	return items
+}
+
 // GetItems of this MongoDBConfigList.
 func (l *MongoDBConfigList) GetItems() []resource.Managed {
 	items := make([]resource.Managed, len(l.Items))

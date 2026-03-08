@@ -7,10 +7,10 @@ Copyright 2022 Upbound Inc.
 package v1alpha1
 
 // Hub marks this type as a conversion hub.
-func (tr *NATGateway) Hub() {}
+func (tr *Attachment) Hub() {}
 
 // Hub marks this type as a conversion hub.
-func (tr *Peering) Hub() {}
+func (tr *NFSShare) Hub() {}
 
 // Hub marks this type as a conversion hub.
-func (tr *VPC) Hub() {}
+func (tr *Snapshot) Hub() {}

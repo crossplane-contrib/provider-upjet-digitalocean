@@ -77,6 +77,17 @@ var ExternalNameConfigs = map[string]ujconfig.ExternalName{
 	"digitalocean_database_valkey_config":                ujconfig.IdentifierFromProvider,
 	"digitalocean_reserved_ipv6":                         ujconfig.IdentifierFromProvider,
 	"digitalocean_reserved_ipv6_assignment":              ujconfig.IdentifierFromProvider,
+	// digitalocean_floating_ip and digitalocean_floating_ip_assignment are
+	// deprecated aliases for reserved_ip/reserved_ip_assignment and produce
+	// an empty schema after upjet parsing; skipped intentionally.
+
+	"digitalocean_vpc_peering":                 ujconfig.IdentifierFromProvider,
+	"digitalocean_vpc_nat_gateway":             ujconfig.IdentifierFromProvider,
+	"digitalocean_nfs":                         ujconfig.IdentifierFromProvider,
+	"digitalocean_nfs_attachment":              ujconfig.IdentifierFromProvider,
+	"digitalocean_nfs_snapshot":                ujconfig.IdentifierFromProvider,
+	"digitalocean_database_logsink_opensearch": ujconfig.IdentifierFromProvider,
+	"digitalocean_database_logsink_rsyslog":    ujconfig.IdentifierFromProvider,
 }
 
 // GetProvider returns provider configuration
@@ -364,6 +375,49 @@ func GetProvider() *ujconfig.Provider {
 		}
 		r.References["ip"] = ujconfig.Reference{
 			TerraformName: "digitalocean_reserved_ipv6",
+		}
+	})
+	pc.AddResourceConfigurator("digitalocean_vpc_peering", func(r *ujconfig.Resource) {
+		r.ShortGroup = "vpc"
+		r.References["vpc_ids"] = ujconfig.Reference{
+			TerraformName: "digitalocean_vpc",
+		}
+	})
+	pc.AddResourceConfigurator("digitalocean_vpc_nat_gateway", func(r *ujconfig.Resource) {
+		r.ShortGroup = "vpc"
+	})
+	pc.AddResourceConfigurator("digitalocean_nfs", func(r *ujconfig.Resource) {
+		r.Kind = "NFSShare"
+		r.ShortGroup = "nfs"
+		r.References["vpc_id"] = ujconfig.Reference{
+			TerraformName: "digitalocean_vpc",
+		}
+	})
+	pc.AddResourceConfigurator("digitalocean_nfs_attachment", func(r *ujconfig.Resource) {
+		r.ShortGroup = "nfs"
+		r.References["share_id"] = ujconfig.Reference{
+			TerraformName: "digitalocean_nfs",
+		}
+		r.References["vpc_id"] = ujconfig.Reference{
+			TerraformName: "digitalocean_vpc",
+		}
+	})
+	pc.AddResourceConfigurator("digitalocean_nfs_snapshot", func(r *ujconfig.Resource) {
+		r.ShortGroup = "nfs"
+		r.References["share_id"] = ujconfig.Reference{
+			TerraformName: "digitalocean_nfs",
+		}
+	})
+	pc.AddResourceConfigurator("digitalocean_database_logsink_opensearch", func(r *ujconfig.Resource) {
+		r.Kind = "LogSinkOpenSearch"
+		r.References["cluster_id"] = ujconfig.Reference{
+			TerraformName: "digitalocean_database_cluster",
+		}
+	})
+	pc.AddResourceConfigurator("digitalocean_database_logsink_rsyslog", func(r *ujconfig.Resource) {
+		r.Kind = "LogSinkRsyslog"
+		r.References["cluster_id"] = ujconfig.Reference{
+			TerraformName: "digitalocean_database_cluster",
 		}
 	})
 

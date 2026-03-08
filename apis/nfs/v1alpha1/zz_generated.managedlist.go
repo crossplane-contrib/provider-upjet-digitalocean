@@ -7,8 +7,8 @@ package v1alpha1
 
 import resource "github.com/crossplane/crossplane-runtime/pkg/resource"
 
-// GetItems of this NATGatewayList.
-func (l *NATGatewayList) GetItems() []resource.Managed {
+// GetItems of this AttachmentList.
+func (l *AttachmentList) GetItems() []resource.Managed {
 	items := make([]resource.Managed, len(l.Items))
 	for i := range l.Items {
 		items[i] = &l.Items[i]
@@ -16,8 +16,8 @@ func (l *NATGatewayList) GetItems() []resource.Managed {
 	return items
 }
 
-// GetItems of this PeeringList.
-func (l *PeeringList) GetItems() []resource.Managed {
+// GetItems of this NFSShareList.
+func (l *NFSShareList) GetItems() []resource.Managed {
 	items := make([]resource.Managed, len(l.Items))
 	for i := range l.Items {
 		items[i] = &l.Items[i]
@@ -25,8 +25,8 @@ func (l *PeeringList) GetItems() []resource.Managed {
 	return items
 }
 
-// GetItems of this VPCList.
-func (l *VPCList) GetItems() []resource.Managed {
+// GetItems of this SnapshotList.
+func (l *SnapshotList) GetItems() []resource.Managed {
 	items := make([]resource.Managed, len(l.Items))
 	for i := range l.Items {
 		items[i] = &l.Items[i]
