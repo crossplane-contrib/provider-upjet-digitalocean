@@ -215,6 +215,90 @@ func (mg *Firewall) ResolveReferences(ctx context.Context, c client.Reader) erro
 	return nil
 }
 
+// ResolveReferences of this KafkaConfig.
+func (mg *KafkaConfig) ResolveReferences(ctx context.Context, c client.Reader) error {
+	r := reference.NewAPIResolver(c, mg)
+
+	var rsp reference.ResolutionResponse
+	var err error
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: ptr.Deref(mg.Spec.ForProvider.ClusterID, ""),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.ForProvider.ClusterIDRef,
+		Selector:     mg.Spec.ForProvider.ClusterIDSelector,
+		To: reference.To{
+			List:    &ClusterList{},
+			Managed: &Cluster{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.ClusterID")
+	}
+	mg.Spec.ForProvider.ClusterID = ptr.To(rsp.ResolvedValue)
+	mg.Spec.ForProvider.ClusterIDRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: ptr.Deref(mg.Spec.InitProvider.ClusterID, ""),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.ClusterIDRef,
+		Selector:     mg.Spec.InitProvider.ClusterIDSelector,
+		To: reference.To{
+			List:    &ClusterList{},
+			Managed: &Cluster{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.ClusterID")
+	}
+	mg.Spec.InitProvider.ClusterID = ptr.To(rsp.ResolvedValue)
+	mg.Spec.InitProvider.ClusterIDRef = rsp.ResolvedReference
+
+	return nil
+}
+
+// ResolveReferences of this KafkaSchemaRegistry.
+func (mg *KafkaSchemaRegistry) ResolveReferences(ctx context.Context, c client.Reader) error {
+	r := reference.NewAPIResolver(c, mg)
+
+	var rsp reference.ResolutionResponse
+	var err error
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: ptr.Deref(mg.Spec.ForProvider.ClusterID, ""),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.ForProvider.ClusterIDRef,
+		Selector:     mg.Spec.ForProvider.ClusterIDSelector,
+		To: reference.To{
+			List:    &ClusterList{},
+			Managed: &Cluster{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.ClusterID")
+	}
+	mg.Spec.ForProvider.ClusterID = ptr.To(rsp.ResolvedValue)
+	mg.Spec.ForProvider.ClusterIDRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: ptr.Deref(mg.Spec.InitProvider.ClusterID, ""),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.ClusterIDRef,
+		Selector:     mg.Spec.InitProvider.ClusterIDSelector,
+		To: reference.To{
+			List:    &ClusterList{},
+			Managed: &Cluster{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.ClusterID")
+	}
+	mg.Spec.InitProvider.ClusterID = ptr.To(rsp.ResolvedValue)
+	mg.Spec.InitProvider.ClusterIDRef = rsp.ResolvedReference
+
+	return nil
+}
+
 // ResolveReferences of this KafkaTopic.
 func (mg *KafkaTopic) ResolveReferences(ctx context.Context, c client.Reader) error {
 	r := reference.NewAPIResolver(c, mg)
@@ -257,8 +341,134 @@ func (mg *KafkaTopic) ResolveReferences(ctx context.Context, c client.Reader) er
 	return nil
 }
 
+// ResolveReferences of this MongoDBConfig.
+func (mg *MongoDBConfig) ResolveReferences(ctx context.Context, c client.Reader) error {
+	r := reference.NewAPIResolver(c, mg)
+
+	var rsp reference.ResolutionResponse
+	var err error
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: ptr.Deref(mg.Spec.ForProvider.ClusterID, ""),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.ForProvider.ClusterIDRef,
+		Selector:     mg.Spec.ForProvider.ClusterIDSelector,
+		To: reference.To{
+			List:    &ClusterList{},
+			Managed: &Cluster{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.ClusterID")
+	}
+	mg.Spec.ForProvider.ClusterID = ptr.To(rsp.ResolvedValue)
+	mg.Spec.ForProvider.ClusterIDRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: ptr.Deref(mg.Spec.InitProvider.ClusterID, ""),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.ClusterIDRef,
+		Selector:     mg.Spec.InitProvider.ClusterIDSelector,
+		To: reference.To{
+			List:    &ClusterList{},
+			Managed: &Cluster{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.ClusterID")
+	}
+	mg.Spec.InitProvider.ClusterID = ptr.To(rsp.ResolvedValue)
+	mg.Spec.InitProvider.ClusterIDRef = rsp.ResolvedReference
+
+	return nil
+}
+
 // ResolveReferences of this MySQLConfig.
 func (mg *MySQLConfig) ResolveReferences(ctx context.Context, c client.Reader) error {
+	r := reference.NewAPIResolver(c, mg)
+
+	var rsp reference.ResolutionResponse
+	var err error
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: ptr.Deref(mg.Spec.ForProvider.ClusterID, ""),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.ForProvider.ClusterIDRef,
+		Selector:     mg.Spec.ForProvider.ClusterIDSelector,
+		To: reference.To{
+			List:    &ClusterList{},
+			Managed: &Cluster{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.ClusterID")
+	}
+	mg.Spec.ForProvider.ClusterID = ptr.To(rsp.ResolvedValue)
+	mg.Spec.ForProvider.ClusterIDRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: ptr.Deref(mg.Spec.InitProvider.ClusterID, ""),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.ClusterIDRef,
+		Selector:     mg.Spec.InitProvider.ClusterIDSelector,
+		To: reference.To{
+			List:    &ClusterList{},
+			Managed: &Cluster{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.ClusterID")
+	}
+	mg.Spec.InitProvider.ClusterID = ptr.To(rsp.ResolvedValue)
+	mg.Spec.InitProvider.ClusterIDRef = rsp.ResolvedReference
+
+	return nil
+}
+
+// ResolveReferences of this OpenSearchConfig.
+func (mg *OpenSearchConfig) ResolveReferences(ctx context.Context, c client.Reader) error {
+	r := reference.NewAPIResolver(c, mg)
+
+	var rsp reference.ResolutionResponse
+	var err error
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: ptr.Deref(mg.Spec.ForProvider.ClusterID, ""),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.ForProvider.ClusterIDRef,
+		Selector:     mg.Spec.ForProvider.ClusterIDSelector,
+		To: reference.To{
+			List:    &ClusterList{},
+			Managed: &Cluster{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.ClusterID")
+	}
+	mg.Spec.ForProvider.ClusterID = ptr.To(rsp.ResolvedValue)
+	mg.Spec.ForProvider.ClusterIDRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: ptr.Deref(mg.Spec.InitProvider.ClusterID, ""),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.ClusterIDRef,
+		Selector:     mg.Spec.InitProvider.ClusterIDSelector,
+		To: reference.To{
+			List:    &ClusterList{},
+			Managed: &Cluster{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.ClusterID")
+	}
+	mg.Spec.InitProvider.ClusterID = ptr.To(rsp.ResolvedValue)
+	mg.Spec.InitProvider.ClusterIDRef = rsp.ResolvedReference
+
+	return nil
+}
+
+// ResolveReferences of this PostgreSQLConfig.
+func (mg *PostgreSQLConfig) ResolveReferences(ctx context.Context, c client.Reader) error {
 	r := reference.NewAPIResolver(c, mg)
 
 	var rsp reference.ResolutionResponse
@@ -417,6 +627,48 @@ func (mg *Replica) ResolveReferences(ctx context.Context, c client.Reader) error
 
 // ResolveReferences of this User.
 func (mg *User) ResolveReferences(ctx context.Context, c client.Reader) error {
+	r := reference.NewAPIResolver(c, mg)
+
+	var rsp reference.ResolutionResponse
+	var err error
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: ptr.Deref(mg.Spec.ForProvider.ClusterID, ""),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.ForProvider.ClusterIDRef,
+		Selector:     mg.Spec.ForProvider.ClusterIDSelector,
+		To: reference.To{
+			List:    &ClusterList{},
+			Managed: &Cluster{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.ClusterID")
+	}
+	mg.Spec.ForProvider.ClusterID = ptr.To(rsp.ResolvedValue)
+	mg.Spec.ForProvider.ClusterIDRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: ptr.Deref(mg.Spec.InitProvider.ClusterID, ""),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.ClusterIDRef,
+		Selector:     mg.Spec.InitProvider.ClusterIDSelector,
+		To: reference.To{
+			List:    &ClusterList{},
+			Managed: &Cluster{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.ClusterID")
+	}
+	mg.Spec.InitProvider.ClusterID = ptr.To(rsp.ResolvedValue)
+	mg.Spec.InitProvider.ClusterIDRef = rsp.ResolvedReference
+
+	return nil
+}
+
+// ResolveReferences of this ValkeyConfig.
+func (mg *ValkeyConfig) ResolveReferences(ctx context.Context, c client.Reader) error {
 	r := reference.NewAPIResolver(c, mg)
 
 	var rsp reference.ResolutionResponse

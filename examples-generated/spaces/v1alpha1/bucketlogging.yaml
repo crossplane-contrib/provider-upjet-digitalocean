@@ -1,0 +1,46 @@
+apiVersion: spaces.digitalocean.crossplane.io/v1alpha1
+kind: BucketLogging
+metadata:
+  annotations:
+    meta.upbound.io/example-id: spaces/v1alpha1/bucketlogging
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    bucketSelector:
+      matchLabels:
+        testing.upbound.io/example-name: assets
+    region: '%s'
+    targetBucketSelector:
+      matchLabels:
+        testing.upbound.io/example-name: logs
+    targetPrefix: access-logs/
+
+---
+
+apiVersion: spaces.digitalocean.crossplane.io/v1alpha1
+kind: Bucket
+metadata:
+  annotations:
+    meta.upbound.io/example-id: spaces/v1alpha1/bucketlogging
+  labels:
+    testing.upbound.io/example-name: assets
+  name: assets
+spec:
+  forProvider:
+    region: nyc3
+
+---
+
+apiVersion: spaces.digitalocean.crossplane.io/v1alpha1
+kind: Bucket
+metadata:
+  annotations:
+    meta.upbound.io/example-id: spaces/v1alpha1/bucketlogging
+  labels:
+    testing.upbound.io/example-name: logs
+  name: logs
+spec:
+  forProvider:
+    region: nyc3

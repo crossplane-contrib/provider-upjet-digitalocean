@@ -218,6 +218,122 @@ func (mg *IPAssignment) ResolveReferences(ctx context.Context, c client.Reader) 
 	return nil
 }
 
+// ResolveReferences of this IPv6.
+func (mg *IPv6) ResolveReferences(ctx context.Context, c client.Reader) error {
+	r := reference.NewAPIResolver(c, mg)
+
+	var rsp reference.ResolutionResponse
+	var err error
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromFloatPtrValue(mg.Spec.ForProvider.DropletID),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.ForProvider.DropletIDRef,
+		Selector:     mg.Spec.ForProvider.DropletIDSelector,
+		To: reference.To{
+			List:    &v1alpha11.DropletList{},
+			Managed: &v1alpha11.Droplet{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.DropletID")
+	}
+	mg.Spec.ForProvider.DropletID = reference.ToFloatPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.DropletIDRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromFloatPtrValue(mg.Spec.InitProvider.DropletID),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.DropletIDRef,
+		Selector:     mg.Spec.InitProvider.DropletIDSelector,
+		To: reference.To{
+			List:    &v1alpha11.DropletList{},
+			Managed: &v1alpha11.Droplet{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.DropletID")
+	}
+	mg.Spec.InitProvider.DropletID = reference.ToFloatPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.DropletIDRef = rsp.ResolvedReference
+
+	return nil
+}
+
+// ResolveReferences of this IPv6Assignment.
+func (mg *IPv6Assignment) ResolveReferences(ctx context.Context, c client.Reader) error {
+	r := reference.NewAPIResolver(c, mg)
+
+	var rsp reference.ResolutionResponse
+	var err error
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromFloatPtrValue(mg.Spec.ForProvider.DropletID),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.ForProvider.DropletIDRef,
+		Selector:     mg.Spec.ForProvider.DropletIDSelector,
+		To: reference.To{
+			List:    &v1alpha11.DropletList{},
+			Managed: &v1alpha11.Droplet{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.DropletID")
+	}
+	mg.Spec.ForProvider.DropletID = reference.ToFloatPtrValue(rsp.ResolvedValue)
+	mg.Spec.ForProvider.DropletIDRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: ptr.Deref(mg.Spec.ForProvider.IP, ""),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.ForProvider.IPRef,
+		Selector:     mg.Spec.ForProvider.IPSelector,
+		To: reference.To{
+			List:    &IPv6List{},
+			Managed: &IPv6{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.IP")
+	}
+	mg.Spec.ForProvider.IP = ptr.To(rsp.ResolvedValue)
+	mg.Spec.ForProvider.IPRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: reference.FromFloatPtrValue(mg.Spec.InitProvider.DropletID),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.DropletIDRef,
+		Selector:     mg.Spec.InitProvider.DropletIDSelector,
+		To: reference.To{
+			List:    &v1alpha11.DropletList{},
+			Managed: &v1alpha11.Droplet{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.DropletID")
+	}
+	mg.Spec.InitProvider.DropletID = reference.ToFloatPtrValue(rsp.ResolvedValue)
+	mg.Spec.InitProvider.DropletIDRef = rsp.ResolvedReference
+
+	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+		CurrentValue: ptr.Deref(mg.Spec.InitProvider.IP, ""),
+		Extract:      reference.ExternalName(),
+		Reference:    mg.Spec.InitProvider.IPRef,
+		Selector:     mg.Spec.InitProvider.IPSelector,
+		To: reference.To{
+			List:    &IPv6List{},
+			Managed: &IPv6{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.IP")
+	}
+	mg.Spec.InitProvider.IP = ptr.To(rsp.ResolvedValue)
+	mg.Spec.InitProvider.IPRef = rsp.ResolvedReference
+
+	return nil
+}
+
 // ResolveReferences of this Loadbalancer.
 func (mg *Loadbalancer) ResolveReferences(ctx context.Context, c client.Reader) error {
 	r := reference.NewAPIResolver(c, mg)

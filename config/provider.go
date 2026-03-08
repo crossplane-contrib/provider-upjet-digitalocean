@@ -68,6 +68,15 @@ var ExternalNameConfigs = map[string]ujconfig.ExternalName{
 	"digitalocean_database_firewall":                     ujconfig.IdentifierFromProvider,
 	"digitalocean_project_resources":                     ujconfig.IdentifierFromProvider,
 	"digitalocean_spaces_key":                            ujconfig.NameAsIdentifier,
+	"digitalocean_spaces_bucket_logging":                 ujconfig.IdentifierFromProvider,
+	"digitalocean_database_kafka_config":                 ujconfig.IdentifierFromProvider,
+	"digitalocean_database_kafka_schema_registry":        ujconfig.IdentifierFromProvider,
+	"digitalocean_database_mongodb_config":               ujconfig.IdentifierFromProvider,
+	"digitalocean_database_opensearch_config":            ujconfig.IdentifierFromProvider,
+	"digitalocean_database_postgresql_config":            ujconfig.IdentifierFromProvider,
+	"digitalocean_database_valkey_config":                ujconfig.IdentifierFromProvider,
+	"digitalocean_reserved_ipv6":                         ujconfig.IdentifierFromProvider,
+	"digitalocean_reserved_ipv6_assignment":              ujconfig.IdentifierFromProvider,
 }
 
 // GetProvider returns provider configuration
@@ -298,6 +307,63 @@ func GetProvider() *ujconfig.Provider {
 		r.ShortGroup = "spaces"
 		r.References["grant.bucket"] = ujconfig.Reference{
 			TerraformName: "digitalocean_spaces_bucket",
+		}
+	})
+	pc.AddResourceConfigurator("digitalocean_spaces_bucket_logging", func(r *ujconfig.Resource) {
+		r.ShortGroup = "spaces"
+		r.References["bucket"] = ujconfig.Reference{
+			TerraformName: "digitalocean_spaces_bucket",
+		}
+		r.References["target_bucket"] = ujconfig.Reference{
+			TerraformName: "digitalocean_spaces_bucket",
+		}
+	})
+	pc.AddResourceConfigurator("digitalocean_database_kafka_config", func(r *ujconfig.Resource) {
+		r.References["cluster_id"] = ujconfig.Reference{
+			TerraformName: "digitalocean_database_cluster",
+		}
+	})
+	pc.AddResourceConfigurator("digitalocean_database_kafka_schema_registry", func(r *ujconfig.Resource) {
+		r.References["cluster_id"] = ujconfig.Reference{
+			TerraformName: "digitalocean_database_cluster",
+		}
+	})
+	pc.AddResourceConfigurator("digitalocean_database_mongodb_config", func(r *ujconfig.Resource) {
+		r.Kind = "MongoDBConfig"
+		r.References["cluster_id"] = ujconfig.Reference{
+			TerraformName: "digitalocean_database_cluster",
+		}
+	})
+	pc.AddResourceConfigurator("digitalocean_database_opensearch_config", func(r *ujconfig.Resource) {
+		r.Kind = "OpenSearchConfig"
+		r.References["cluster_id"] = ujconfig.Reference{
+			TerraformName: "digitalocean_database_cluster",
+		}
+	})
+	pc.AddResourceConfigurator("digitalocean_database_postgresql_config", func(r *ujconfig.Resource) {
+		r.Kind = "PostgreSQLConfig"
+		r.References["cluster_id"] = ujconfig.Reference{
+			TerraformName: "digitalocean_database_cluster",
+		}
+	})
+	pc.AddResourceConfigurator("digitalocean_database_valkey_config", func(r *ujconfig.Resource) {
+		r.References["cluster_id"] = ujconfig.Reference{
+			TerraformName: "digitalocean_database_cluster",
+		}
+	})
+	pc.AddResourceConfigurator("digitalocean_reserved_ipv6", func(r *ujconfig.Resource) {
+		r.ShortGroup = networkingShortGroup
+		r.References["droplet_id"] = ujconfig.Reference{
+			TerraformName: "digitalocean_droplet",
+		}
+	})
+	pc.AddResourceConfigurator("digitalocean_reserved_ipv6_assignment", func(r *ujconfig.Resource) {
+		r.ShortGroup = networkingShortGroup
+		r.References["droplet_id"] = ujconfig.Reference{
+			TerraformName: "digitalocean_droplet",
+		}
+		r.References["ip"] = ujconfig.Reference{
+			TerraformName: "digitalocean_reserved_ipv6",
 		}
 	})
 

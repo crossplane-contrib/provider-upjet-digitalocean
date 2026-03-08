@@ -1,0 +1,71 @@
+apiVersion: database.digitalocean.crossplane.io/v1alpha1
+kind: OpenSearchConfig
+metadata:
+  annotations:
+    meta.upbound.io/example-id: database/v1alpha1/opensearchconfig
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    actionAutoCreateIndexEnabled: true
+    actionDestructiveRequiresName: false
+    clusterIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example
+    clusterMaxShardsPerNode: 100
+    clusterRoutingAllocationNodeConcurrentRecoveries: 2
+    enableSecurityAudit: false
+    httpMaxContentLengthBytes: 100000000
+    httpMaxHeaderSizeBytes: 8192
+    httpMaxInitialLineLengthBytes: 4096
+    indicesFielddataCacheSizePercentage: 3
+    indicesMemoryIndexBufferSizePercentage: 10
+    indicesMemoryMaxIndexBufferSizeMb: 3
+    indicesMemoryMinIndexBufferSizeMb: 48
+    indicesQueriesCacheSizePercentage: 10
+    indicesQueryBoolMaxClauseCount: 1024
+    indicesRecoveryMaxConcurrentFileChunks: 2
+    indicesRecoveryMaxMbPerSec: 40
+    ismEnabled: true
+    ismHistoryEnabled: true
+    ismHistoryMaxAgeHours: 24
+    ismHistoryMaxDocs: 2500000
+    ismHistoryRolloverCheckPeriodHours: 8
+    ismHistoryRolloverRetentionPeriodDays: 30
+    overrideMainResponseVersion: false
+    pluginsAlertingFilterByBackendRolesEnabled: false
+    reindexRemoteWhitelist:
+    - cloud.digitalocean.com:8080
+    scriptMaxCompilationsRate: use-context
+    searchMaxBuckets: 10000
+    threadPoolAnalyzeQueueSize: 10
+    threadPoolAnalyzeSize: 1
+    threadPoolForceMergeSize: 1
+    threadPoolGetQueueSize: 10
+    threadPoolGetSize: 1
+    threadPoolSearchQueueSize: 10
+    threadPoolSearchSize: 1
+    threadPoolSearchThrottledQueueSize: 10
+    threadPoolSearchThrottledSize: 1
+    threadPoolWriteQueueSize: 10
+    threadPoolWriteSize: 1
+
+---
+
+apiVersion: database.digitalocean.crossplane.io/v1alpha1
+kind: Cluster
+metadata:
+  annotations:
+    meta.upbound.io/example-id: database/v1alpha1/opensearchconfig
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    engine: opensearch
+    name: example-opensearch-cluster
+    nodeCount: 1
+    region: nyc3
+    size: db-s-1vcpu-2gb
+    version: "2"

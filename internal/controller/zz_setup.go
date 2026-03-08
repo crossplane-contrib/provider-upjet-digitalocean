@@ -16,11 +16,17 @@ import (
 	connectionpool "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/connectionpool"
 	db "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/db"
 	firewall "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/firewall"
+	kafkaconfig "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/kafkaconfig"
+	kafkaschemaregistry "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/kafkaschemaregistry"
 	kafkatopic "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/kafkatopic"
+	mongodbconfig "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/mongodbconfig"
 	mysqlconfig "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/mysqlconfig"
+	opensearchconfig "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/opensearchconfig"
+	postgresqlconfig "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/postgresqlconfig"
 	redisconfig "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/redisconfig"
 	replica "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/replica"
 	user "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/user"
+	valkeyconfig "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/valkeyconfig"
 	app "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/digitalocean/app"
 	tag "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/digitalocean/tag"
 	domain "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/dns/domain"
@@ -34,12 +40,15 @@ import (
 	firewallnetworking "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/networking/firewall"
 	ip "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/networking/ip"
 	ipassignment "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/networking/ipassignment"
+	ipv6 "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/networking/ipv6"
+	ipv6assignment "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/networking/ipv6assignment"
 	loadbalancer "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/networking/loadbalancer"
 	project "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/project/project"
 	resources "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/project/resources"
 	providerconfig "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/providerconfig"
 	bucket "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/spaces/bucket"
 	bucketcorsconfiguration "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/spaces/bucketcorsconfiguration"
+	bucketlogging "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/spaces/bucketlogging"
 	bucketobject "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/spaces/bucketobject"
 	bucketpolicy "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/spaces/bucketpolicy"
 	cdn "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/spaces/cdn"
@@ -64,11 +73,17 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		connectionpool.Setup,
 		db.Setup,
 		firewall.Setup,
+		kafkaconfig.Setup,
+		kafkaschemaregistry.Setup,
 		kafkatopic.Setup,
+		mongodbconfig.Setup,
 		mysqlconfig.Setup,
+		opensearchconfig.Setup,
+		postgresqlconfig.Setup,
 		redisconfig.Setup,
 		replica.Setup,
 		user.Setup,
+		valkeyconfig.Setup,
 		app.Setup,
 		tag.Setup,
 		domain.Setup,
@@ -82,12 +97,15 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		firewallnetworking.Setup,
 		ip.Setup,
 		ipassignment.Setup,
+		ipv6.Setup,
+		ipv6assignment.Setup,
 		loadbalancer.Setup,
 		project.Setup,
 		resources.Setup,
 		providerconfig.Setup,
 		bucket.Setup,
 		bucketcorsconfiguration.Setup,
+		bucketlogging.Setup,
 		bucketobject.Setup,
 		bucketpolicy.Setup,
 		cdn.Setup,
