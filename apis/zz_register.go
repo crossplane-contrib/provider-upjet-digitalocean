@@ -19,6 +19,7 @@ import (
 	v1alpha1kubernetes "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/kubernetes/v1alpha1"
 	v1alpha1monitor "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/monitor/v1alpha1"
 	v1alpha1networking "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/networking/v1alpha1"
+	v1alpha1nfs "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/nfs/v1alpha1"
 	v1alpha1project "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/project/v1alpha1"
 	v1alpha1spaces "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/spaces/v1alpha1"
 	v1alpha1ssh "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/ssh/v1alpha1"
@@ -41,6 +42,7 @@ func init() {
 		v1alpha1kubernetes.SchemeBuilder.AddToScheme,
 		v1alpha1monitor.SchemeBuilder.AddToScheme,
 		v1alpha1networking.SchemeBuilder.AddToScheme,
+		v1alpha1nfs.SchemeBuilder.AddToScheme,
 		v1alpha1project.SchemeBuilder.AddToScheme,
 		v1alpha1spaces.SchemeBuilder.AddToScheme,
 		v1alpha1ssh.SchemeBuilder.AddToScheme,

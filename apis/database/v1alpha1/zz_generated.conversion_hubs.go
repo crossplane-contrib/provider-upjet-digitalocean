@@ -28,6 +28,12 @@ func (tr *KafkaSchemaRegistry) Hub() {}
 func (tr *KafkaTopic) Hub() {}
 
 // Hub marks this type as a conversion hub.
+func (tr *LogSinkOpenSearch) Hub() {}
+
+// Hub marks this type as a conversion hub.
+func (tr *LogSinkRsyslog) Hub() {}
+
+// Hub marks this type as a conversion hub.
 func (tr *MongoDBConfig) Hub() {}
 
 // Hub marks this type as a conversion hub.

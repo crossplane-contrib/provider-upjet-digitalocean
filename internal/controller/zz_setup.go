@@ -19,6 +19,8 @@ import (
 	kafkaconfig "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/kafkaconfig"
 	kafkaschemaregistry "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/kafkaschemaregistry"
 	kafkatopic "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/kafkatopic"
+	logsinkopensearch "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/logsinkopensearch"
+	logsinkrsyslog "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/logsinkrsyslog"
 	mongodbconfig "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/mongodbconfig"
 	mysqlconfig "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/mysqlconfig"
 	opensearchconfig "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/database/opensearchconfig"
@@ -43,6 +45,9 @@ import (
 	ipv6 "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/networking/ipv6"
 	ipv6assignment "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/networking/ipv6assignment"
 	loadbalancer "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/networking/loadbalancer"
+	attachment "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/nfs/attachment"
+	nfsshare "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/nfs/nfsshare"
+	snapshotnfs "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/nfs/snapshot"
 	project "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/project/project"
 	resources "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/project/resources"
 	providerconfig "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/providerconfig"
@@ -56,9 +61,11 @@ import (
 	keyssh "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/ssh/key"
 	alertuptime "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/uptime/alert"
 	check "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/uptime/check"
-	attachment "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/volume/attachment"
+	attachmentvolume "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/volume/attachment"
 	snapshotvolume "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/volume/snapshot"
 	volume "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/volume/volume"
+	natgateway "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/vpc/natgateway"
+	peering "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/vpc/peering"
 	vpc "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/vpc/vpc"
 )
 
@@ -76,6 +83,8 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		kafkaconfig.Setup,
 		kafkaschemaregistry.Setup,
 		kafkatopic.Setup,
+		logsinkopensearch.Setup,
+		logsinkrsyslog.Setup,
 		mongodbconfig.Setup,
 		mysqlconfig.Setup,
 		opensearchconfig.Setup,
@@ -100,6 +109,9 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		ipv6.Setup,
 		ipv6assignment.Setup,
 		loadbalancer.Setup,
+		attachment.Setup,
+		nfsshare.Setup,
+		snapshotnfs.Setup,
 		project.Setup,
 		resources.Setup,
 		providerconfig.Setup,
@@ -113,9 +125,11 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 		keyssh.Setup,
 		alertuptime.Setup,
 		check.Setup,
-		attachment.Setup,
+		attachmentvolume.Setup,
 		snapshotvolume.Setup,
 		volume.Setup,
+		natgateway.Setup,
+		peering.Setup,
 		vpc.Setup,
 	} {
 		if err := setup(mgr, o); err != nil {

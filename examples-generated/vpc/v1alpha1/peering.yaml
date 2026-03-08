@@ -1,0 +1,14 @@
+apiVersion: vpc.digitalocean.crossplane.io/v1alpha1
+kind: Peering
+metadata:
+  annotations:
+    meta.upbound.io/example-id: vpc/v1alpha1/peering
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+spec:
+  forProvider:
+    name: example-peering
+    vpcIdsRefs:
+    - name: vpc1
+    - name: vpc2
