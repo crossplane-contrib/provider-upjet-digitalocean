@@ -99,6 +99,18 @@ func (in *AlertInitParameters) DeepCopyInto(out *AlertInitParameters) {
 			}
 		}
 	}
+	if in.TagsRefs != nil {
+		in, out := &in.TagsRefs, &out.TagsRefs
+		*out = make([]v1.Reference, len(*in))
+		for i := range *in {
+			(*in)[i].DeepCopyInto(&(*out)[i])
+		}
+	}
+	if in.TagsSelector != nil {
+		in, out := &in.TagsSelector, &out.TagsSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
+	}
 	if in.Type != nil {
 		in, out := &in.Type, &out.Type
 		*out = new(string)
@@ -300,6 +312,18 @@ func (in *AlertParameters) DeepCopyInto(out *AlertParameters) {
 				**out = **in
 			}
 		}
+	}
+	if in.TagsRefs != nil {
+		in, out := &in.TagsRefs, &out.TagsRefs
+		*out = make([]v1.Reference, len(*in))
+		for i := range *in {
+			(*in)[i].DeepCopyInto(&(*out)[i])
+		}
+	}
+	if in.TagsSelector != nil {
+		in, out := &in.TagsSelector, &out.TagsSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
 	}
 	if in.Type != nil {
 		in, out := &in.Type, &out.Type

@@ -395,6 +395,18 @@ func (in *ClusterInitParameters) DeepCopyInto(out *ClusterInitParameters) {
 			}
 		}
 	}
+	if in.TagsRefs != nil {
+		in, out := &in.TagsRefs, &out.TagsRefs
+		*out = make([]v1.Reference, len(*in))
+		for i := range *in {
+			(*in)[i].DeepCopyInto(&(*out)[i])
+		}
+	}
+	if in.TagsSelector != nil {
+		in, out := &in.TagsSelector, &out.TagsSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
+	}
 	if in.VPCUUID != nil {
 		in, out := &in.VPCUUID, &out.VPCUUID
 		*out = new(string)
@@ -769,6 +781,18 @@ func (in *ClusterParameters) DeepCopyInto(out *ClusterParameters) {
 				**out = **in
 			}
 		}
+	}
+	if in.TagsRefs != nil {
+		in, out := &in.TagsRefs, &out.TagsRefs
+		*out = make([]v1.Reference, len(*in))
+		for i := range *in {
+			(*in)[i].DeepCopyInto(&(*out)[i])
+		}
+	}
+	if in.TagsSelector != nil {
+		in, out := &in.TagsSelector, &out.TagsSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
 	}
 	if in.VPCUUID != nil {
 		in, out := &in.VPCUUID, &out.VPCUUID
@@ -1271,6 +1295,18 @@ func (in *NodePoolInitParameters_2) DeepCopyInto(out *NodePoolInitParameters_2) 
 			}
 		}
 	}
+	if in.TagsRefs != nil {
+		in, out := &in.TagsRefs, &out.TagsRefs
+		*out = make([]v1.Reference, len(*in))
+		for i := range *in {
+			(*in)[i].DeepCopyInto(&(*out)[i])
+		}
+	}
+	if in.TagsSelector != nil {
+		in, out := &in.TagsSelector, &out.TagsSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
+	}
 	if in.Taint != nil {
 		in, out := &in.Taint, &out.Taint
 		*out = make([]NodePoolTaintInitParameters, len(*in))
@@ -1747,6 +1783,18 @@ func (in *NodePoolParameters_2) DeepCopyInto(out *NodePoolParameters_2) {
 				**out = **in
 			}
 		}
+	}
+	if in.TagsRefs != nil {
+		in, out := &in.TagsRefs, &out.TagsRefs
+		*out = make([]v1.Reference, len(*in))
+		for i := range *in {
+			(*in)[i].DeepCopyInto(&(*out)[i])
+		}
+	}
+	if in.TagsSelector != nil {
+		in, out := &in.TagsSelector, &out.TagsSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
 	}
 	if in.Taint != nil {
 		in, out := &in.Taint, &out.Taint

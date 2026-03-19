@@ -144,8 +144,17 @@ type ClusterInitParameters struct {
 	SurgeUpgrade *bool `json:"surgeUpgrade,omitempty" tf:"surge_upgrade,omitempty"`
 
 	// A list of tag names applied to the node pool.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1.Tag
 	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
+
+	// References to Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsRefs []v1.Reference `json:"tagsRefs,omitempty" tf:"-"`
+
+	// Selector for a list of Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsSelector *v1.Selector `json:"tagsSelector,omitempty" tf:"-"`
 
 	// The ID of the VPC where the Kubernetes cluster will be located.
 	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/vpc/v1alpha1.VPC
@@ -331,9 +340,18 @@ type ClusterParameters struct {
 	SurgeUpgrade *bool `json:"surgeUpgrade,omitempty" tf:"surge_upgrade,omitempty"`
 
 	// A list of tag names applied to the node pool.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1.Tag
 	// +kubebuilder:validation:Optional
 	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
+
+	// References to Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsRefs []v1.Reference `json:"tagsRefs,omitempty" tf:"-"`
+
+	// Selector for a list of Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsSelector *v1.Selector `json:"tagsSelector,omitempty" tf:"-"`
 
 	// The ID of the VPC where the Kubernetes cluster will be located.
 	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/vpc/v1alpha1.VPC

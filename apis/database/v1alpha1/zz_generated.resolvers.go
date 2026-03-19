@@ -7,9 +7,11 @@ package v1alpha1
 
 import (
 	"context"
+	v1alpha12 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1"
 	v1alpha11 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/project/v1alpha1"
 	v1alpha1 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/vpc/v1alpha1"
 	reference "github.com/crossplane/crossplane-runtime/pkg/reference"
+	convert "github.com/crossplane/crossplane-tools/pkg/convert"
 	errors "github.com/pkg/errors"
 	ptr "k8s.io/utils/ptr"
 	client "sigs.k8s.io/controller-runtime/pkg/client"
@@ -20,6 +22,7 @@ func (mg *Cluster) ResolveReferences(ctx context.Context, c client.Reader) error
 	r := reference.NewAPIResolver(c, mg)
 
 	var rsp reference.ResolutionResponse
+	var mrsp reference.MultiResolutionResponse
 	var err error
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
@@ -54,6 +57,22 @@ func (mg *Cluster) ResolveReferences(ctx context.Context, c client.Reader) error
 	mg.Spec.ForProvider.ProjectID = ptr.To(rsp.ResolvedValue)
 	mg.Spec.ForProvider.ProjectIDRef = rsp.ResolvedReference
 
+	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
+		CurrentValues: convert.FromPtrValues(mg.Spec.ForProvider.Tags),
+		Extract:       reference.ExternalName(),
+		References:    mg.Spec.ForProvider.TagsRefs,
+		Selector:      mg.Spec.ForProvider.TagsSelector,
+		To: reference.To{
+			List:    &v1alpha12.TagList{},
+			Managed: &v1alpha12.Tag{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.Tags")
+	}
+	mg.Spec.ForProvider.Tags = convert.ToPtrValues(mrsp.ResolvedValues)
+	mg.Spec.ForProvider.TagsRefs = mrsp.ResolvedReferences
+
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
 		CurrentValue: ptr.Deref(mg.Spec.InitProvider.PrivateNetworkUUID, ""),
 		Extract:      reference.ExternalName(),
@@ -85,6 +104,22 @@ func (mg *Cluster) ResolveReferences(ctx context.Context, c client.Reader) error
 	}
 	mg.Spec.InitProvider.ProjectID = ptr.To(rsp.ResolvedValue)
 	mg.Spec.InitProvider.ProjectIDRef = rsp.ResolvedReference
+
+	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
+		CurrentValues: convert.FromPtrValues(mg.Spec.InitProvider.Tags),
+		Extract:       reference.ExternalName(),
+		References:    mg.Spec.InitProvider.TagsRefs,
+		Selector:      mg.Spec.InitProvider.TagsSelector,
+		To: reference.To{
+			List:    &v1alpha12.TagList{},
+			Managed: &v1alpha12.Tag{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.Tags")
+	}
+	mg.Spec.InitProvider.Tags = convert.ToPtrValues(mrsp.ResolvedValues)
+	mg.Spec.InitProvider.TagsRefs = mrsp.ResolvedReferences
 
 	return nil
 }
@@ -682,6 +717,7 @@ func (mg *Replica) ResolveReferences(ctx context.Context, c client.Reader) error
 	r := reference.NewAPIResolver(c, mg)
 
 	var rsp reference.ResolutionResponse
+	var mrsp reference.MultiResolutionResponse
 	var err error
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
@@ -716,6 +752,22 @@ func (mg *Replica) ResolveReferences(ctx context.Context, c client.Reader) error
 	mg.Spec.ForProvider.PrivateNetworkUUID = ptr.To(rsp.ResolvedValue)
 	mg.Spec.ForProvider.PrivateNetworkUUIDRef = rsp.ResolvedReference
 
+	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
+		CurrentValues: convert.FromPtrValues(mg.Spec.ForProvider.Tags),
+		Extract:       reference.ExternalName(),
+		References:    mg.Spec.ForProvider.TagsRefs,
+		Selector:      mg.Spec.ForProvider.TagsSelector,
+		To: reference.To{
+			List:    &v1alpha12.TagList{},
+			Managed: &v1alpha12.Tag{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.Tags")
+	}
+	mg.Spec.ForProvider.Tags = convert.ToPtrValues(mrsp.ResolvedValues)
+	mg.Spec.ForProvider.TagsRefs = mrsp.ResolvedReferences
+
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
 		CurrentValue: ptr.Deref(mg.Spec.InitProvider.ClusterID, ""),
 		Extract:      reference.ExternalName(),
@@ -747,6 +799,22 @@ func (mg *Replica) ResolveReferences(ctx context.Context, c client.Reader) error
 	}
 	mg.Spec.InitProvider.PrivateNetworkUUID = ptr.To(rsp.ResolvedValue)
 	mg.Spec.InitProvider.PrivateNetworkUUIDRef = rsp.ResolvedReference
+
+	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
+		CurrentValues: convert.FromPtrValues(mg.Spec.InitProvider.Tags),
+		Extract:       reference.ExternalName(),
+		References:    mg.Spec.InitProvider.TagsRefs,
+		Selector:      mg.Spec.InitProvider.TagsSelector,
+		To: reference.To{
+			List:    &v1alpha12.TagList{},
+			Managed: &v1alpha12.Tag{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.Tags")
+	}
+	mg.Spec.InitProvider.Tags = convert.ToPtrValues(mrsp.ResolvedValues)
+	mg.Spec.InitProvider.TagsRefs = mrsp.ResolvedReferences
 
 	return nil
 }

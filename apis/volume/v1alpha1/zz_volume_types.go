@@ -49,8 +49,17 @@ type VolumeInitParameters struct {
 	SnapshotIDSelector *v1.Selector `json:"snapshotIdSelector,omitempty" tf:"-"`
 
 	// A list of the tags to be applied to this Volume.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1.Tag
 	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
+
+	// References to Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsRefs []v1.Reference `json:"tagsRefs,omitempty" tf:"-"`
+
+	// Selector for a list of Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsSelector *v1.Selector `json:"tagsSelector,omitempty" tf:"-"`
 }
 
 type VolumeObservation struct {
@@ -142,9 +151,18 @@ type VolumeParameters struct {
 	SnapshotIDSelector *v1.Selector `json:"snapshotIdSelector,omitempty" tf:"-"`
 
 	// A list of the tags to be applied to this Volume.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1.Tag
 	// +kubebuilder:validation:Optional
 	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
+
+	// References to Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsRefs []v1.Reference `json:"tagsRefs,omitempty" tf:"-"`
+
+	// Selector for a list of Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsSelector *v1.Selector `json:"tagsSelector,omitempty" tf:"-"`
 }
 
 // VolumeSpec defines the desired state of Volume
