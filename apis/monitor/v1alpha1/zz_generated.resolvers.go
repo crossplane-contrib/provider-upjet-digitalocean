@@ -7,6 +7,7 @@ package v1alpha1
 
 import (
 	"context"
+	v1alpha11 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1"
 	v1alpha1 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/droplet/v1alpha1"
 	reference "github.com/crossplane/crossplane-runtime/pkg/reference"
 	convert "github.com/crossplane/crossplane-tools/pkg/convert"
@@ -38,6 +39,22 @@ func (mg *Alert) ResolveReferences(ctx context.Context, c client.Reader) error {
 	mg.Spec.ForProvider.EntitiesRefs = mrsp.ResolvedReferences
 
 	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
+		CurrentValues: convert.FromPtrValues(mg.Spec.ForProvider.Tags),
+		Extract:       reference.ExternalName(),
+		References:    mg.Spec.ForProvider.TagsRefs,
+		Selector:      mg.Spec.ForProvider.TagsSelector,
+		To: reference.To{
+			List:    &v1alpha11.TagList{},
+			Managed: &v1alpha11.Tag{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.Tags")
+	}
+	mg.Spec.ForProvider.Tags = convert.ToPtrValues(mrsp.ResolvedValues)
+	mg.Spec.ForProvider.TagsRefs = mrsp.ResolvedReferences
+
+	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
 		CurrentValues: convert.FromPtrValues(mg.Spec.InitProvider.Entities),
 		Extract:       reference.ExternalName(),
 		References:    mg.Spec.InitProvider.EntitiesRefs,
@@ -52,6 +69,22 @@ func (mg *Alert) ResolveReferences(ctx context.Context, c client.Reader) error {
 	}
 	mg.Spec.InitProvider.Entities = convert.ToPtrValues(mrsp.ResolvedValues)
 	mg.Spec.InitProvider.EntitiesRefs = mrsp.ResolvedReferences
+
+	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
+		CurrentValues: convert.FromPtrValues(mg.Spec.InitProvider.Tags),
+		Extract:       reference.ExternalName(),
+		References:    mg.Spec.InitProvider.TagsRefs,
+		Selector:      mg.Spec.InitProvider.TagsSelector,
+		To: reference.To{
+			List:    &v1alpha11.TagList{},
+			Managed: &v1alpha11.Tag{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.Tags")
+	}
+	mg.Spec.InitProvider.Tags = convert.ToPtrValues(mrsp.ResolvedValues)
+	mg.Spec.InitProvider.TagsRefs = mrsp.ResolvedReferences
 
 	return nil
 }

@@ -9,6 +9,7 @@ Copyright 2022 Upbound Inc.
 package v1alpha1
 
 import (
+	"github.com/crossplane/crossplane-runtime/apis/common/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 )
 
@@ -78,6 +79,18 @@ func (in *ImageInitParameters) DeepCopyInto(out *ImageInitParameters) {
 				**out = **in
 			}
 		}
+	}
+	if in.TagsRefs != nil {
+		in, out := &in.TagsRefs, &out.TagsRefs
+		*out = make([]v1.Reference, len(*in))
+		for i := range *in {
+			(*in)[i].DeepCopyInto(&(*out)[i])
+		}
+	}
+	if in.TagsSelector != nil {
+		in, out := &in.TagsSelector, &out.TagsSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
 	}
 	if in.URL != nil {
 		in, out := &in.URL, &out.URL
@@ -269,6 +282,18 @@ func (in *ImageParameters) DeepCopyInto(out *ImageParameters) {
 				**out = **in
 			}
 		}
+	}
+	if in.TagsRefs != nil {
+		in, out := &in.TagsRefs, &out.TagsRefs
+		*out = make([]v1.Reference, len(*in))
+		for i := range *in {
+			(*in)[i].DeepCopyInto(&(*out)[i])
+		}
+	}
+	if in.TagsSelector != nil {
+		in, out := &in.TagsSelector, &out.TagsSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
 	}
 	if in.URL != nil {
 		in, out := &in.URL, &out.URL

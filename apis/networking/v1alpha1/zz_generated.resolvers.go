@@ -7,10 +7,11 @@ package v1alpha1
 
 import (
 	"context"
+	v1alpha12 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1"
 	v1alpha1 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/dns/v1alpha1"
 	v1alpha11 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/droplet/v1alpha1"
-	v1alpha12 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/project/v1alpha1"
-	v1alpha13 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/vpc/v1alpha1"
+	v1alpha13 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/project/v1alpha1"
+	v1alpha14 "github.com/crossplane-contrib/provider-upjet-digitalocean/apis/vpc/v1alpha1"
 	reference "github.com/crossplane/crossplane-runtime/pkg/reference"
 	convert "github.com/crossplane/crossplane-tools/pkg/convert"
 	errors "github.com/pkg/errors"
@@ -83,6 +84,58 @@ func (mg *Firewall) ResolveReferences(ctx context.Context, c client.Reader) erro
 	mg.Spec.ForProvider.DropletIds = convert.ToFloatPtrValues(mrsp.ResolvedValues)
 	mg.Spec.ForProvider.DropletIdsRefs = mrsp.ResolvedReferences
 
+	for i3 := 0; i3 < len(mg.Spec.ForProvider.InboundRule); i3++ {
+		mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
+			CurrentValues: convert.FromPtrValues(mg.Spec.ForProvider.InboundRule[i3].SourceTags),
+			Extract:       reference.ExternalName(),
+			References:    mg.Spec.ForProvider.InboundRule[i3].SourceTagsRefs,
+			Selector:      mg.Spec.ForProvider.InboundRule[i3].SourceTagsSelector,
+			To: reference.To{
+				List:    &v1alpha12.TagList{},
+				Managed: &v1alpha12.Tag{},
+			},
+		})
+		if err != nil {
+			return errors.Wrap(err, "mg.Spec.ForProvider.InboundRule[i3].SourceTags")
+		}
+		mg.Spec.ForProvider.InboundRule[i3].SourceTags = convert.ToPtrValues(mrsp.ResolvedValues)
+		mg.Spec.ForProvider.InboundRule[i3].SourceTagsRefs = mrsp.ResolvedReferences
+
+	}
+	for i3 := 0; i3 < len(mg.Spec.ForProvider.OutboundRule); i3++ {
+		mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
+			CurrentValues: convert.FromPtrValues(mg.Spec.ForProvider.OutboundRule[i3].DestinationTags),
+			Extract:       reference.ExternalName(),
+			References:    mg.Spec.ForProvider.OutboundRule[i3].DestinationTagsRefs,
+			Selector:      mg.Spec.ForProvider.OutboundRule[i3].DestinationTagsSelector,
+			To: reference.To{
+				List:    &v1alpha12.TagList{},
+				Managed: &v1alpha12.Tag{},
+			},
+		})
+		if err != nil {
+			return errors.Wrap(err, "mg.Spec.ForProvider.OutboundRule[i3].DestinationTags")
+		}
+		mg.Spec.ForProvider.OutboundRule[i3].DestinationTags = convert.ToPtrValues(mrsp.ResolvedValues)
+		mg.Spec.ForProvider.OutboundRule[i3].DestinationTagsRefs = mrsp.ResolvedReferences
+
+	}
+	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
+		CurrentValues: convert.FromPtrValues(mg.Spec.ForProvider.Tags),
+		Extract:       reference.ExternalName(),
+		References:    mg.Spec.ForProvider.TagsRefs,
+		Selector:      mg.Spec.ForProvider.TagsSelector,
+		To: reference.To{
+			List:    &v1alpha12.TagList{},
+			Managed: &v1alpha12.Tag{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.ForProvider.Tags")
+	}
+	mg.Spec.ForProvider.Tags = convert.ToPtrValues(mrsp.ResolvedValues)
+	mg.Spec.ForProvider.TagsRefs = mrsp.ResolvedReferences
+
 	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
 		CurrentValues: convert.FromFloatPtrValues(mg.Spec.InitProvider.DropletIds),
 		Extract:       reference.ExternalName(),
@@ -98,6 +151,58 @@ func (mg *Firewall) ResolveReferences(ctx context.Context, c client.Reader) erro
 	}
 	mg.Spec.InitProvider.DropletIds = convert.ToFloatPtrValues(mrsp.ResolvedValues)
 	mg.Spec.InitProvider.DropletIdsRefs = mrsp.ResolvedReferences
+
+	for i3 := 0; i3 < len(mg.Spec.InitProvider.InboundRule); i3++ {
+		mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
+			CurrentValues: convert.FromPtrValues(mg.Spec.InitProvider.InboundRule[i3].SourceTags),
+			Extract:       reference.ExternalName(),
+			References:    mg.Spec.InitProvider.InboundRule[i3].SourceTagsRefs,
+			Selector:      mg.Spec.InitProvider.InboundRule[i3].SourceTagsSelector,
+			To: reference.To{
+				List:    &v1alpha12.TagList{},
+				Managed: &v1alpha12.Tag{},
+			},
+		})
+		if err != nil {
+			return errors.Wrap(err, "mg.Spec.InitProvider.InboundRule[i3].SourceTags")
+		}
+		mg.Spec.InitProvider.InboundRule[i3].SourceTags = convert.ToPtrValues(mrsp.ResolvedValues)
+		mg.Spec.InitProvider.InboundRule[i3].SourceTagsRefs = mrsp.ResolvedReferences
+
+	}
+	for i3 := 0; i3 < len(mg.Spec.InitProvider.OutboundRule); i3++ {
+		mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
+			CurrentValues: convert.FromPtrValues(mg.Spec.InitProvider.OutboundRule[i3].DestinationTags),
+			Extract:       reference.ExternalName(),
+			References:    mg.Spec.InitProvider.OutboundRule[i3].DestinationTagsRefs,
+			Selector:      mg.Spec.InitProvider.OutboundRule[i3].DestinationTagsSelector,
+			To: reference.To{
+				List:    &v1alpha12.TagList{},
+				Managed: &v1alpha12.Tag{},
+			},
+		})
+		if err != nil {
+			return errors.Wrap(err, "mg.Spec.InitProvider.OutboundRule[i3].DestinationTags")
+		}
+		mg.Spec.InitProvider.OutboundRule[i3].DestinationTags = convert.ToPtrValues(mrsp.ResolvedValues)
+		mg.Spec.InitProvider.OutboundRule[i3].DestinationTagsRefs = mrsp.ResolvedReferences
+
+	}
+	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
+		CurrentValues: convert.FromPtrValues(mg.Spec.InitProvider.Tags),
+		Extract:       reference.ExternalName(),
+		References:    mg.Spec.InitProvider.TagsRefs,
+		Selector:      mg.Spec.InitProvider.TagsSelector,
+		To: reference.To{
+			List:    &v1alpha12.TagList{},
+			Managed: &v1alpha12.Tag{},
+		},
+	})
+	if err != nil {
+		return errors.Wrap(err, "mg.Spec.InitProvider.Tags")
+	}
+	mg.Spec.InitProvider.Tags = convert.ToPtrValues(mrsp.ResolvedValues)
+	mg.Spec.InitProvider.TagsRefs = mrsp.ResolvedReferences
 
 	return nil
 }
@@ -382,8 +487,8 @@ func (mg *Loadbalancer) ResolveReferences(ctx context.Context, c client.Reader) 
 		Reference:    mg.Spec.ForProvider.ProjectIDRef,
 		Selector:     mg.Spec.ForProvider.ProjectIDSelector,
 		To: reference.To{
-			List:    &v1alpha12.ProjectList{},
-			Managed: &v1alpha12.Project{},
+			List:    &v1alpha13.ProjectList{},
+			Managed: &v1alpha13.Project{},
 		},
 	})
 	if err != nil {
@@ -398,8 +503,8 @@ func (mg *Loadbalancer) ResolveReferences(ctx context.Context, c client.Reader) 
 		Reference:    mg.Spec.ForProvider.VPCUUIDRef,
 		Selector:     mg.Spec.ForProvider.VPCUUIDSelector,
 		To: reference.To{
-			List:    &v1alpha13.VPCList{},
-			Managed: &v1alpha13.VPC{},
+			List:    &v1alpha14.VPCList{},
+			Managed: &v1alpha14.VPC{},
 		},
 	})
 	if err != nil {
@@ -448,8 +553,8 @@ func (mg *Loadbalancer) ResolveReferences(ctx context.Context, c client.Reader) 
 		Reference:    mg.Spec.InitProvider.ProjectIDRef,
 		Selector:     mg.Spec.InitProvider.ProjectIDSelector,
 		To: reference.To{
-			List:    &v1alpha12.ProjectList{},
-			Managed: &v1alpha12.Project{},
+			List:    &v1alpha13.ProjectList{},
+			Managed: &v1alpha13.Project{},
 		},
 	})
 	if err != nil {
@@ -464,8 +569,8 @@ func (mg *Loadbalancer) ResolveReferences(ctx context.Context, c client.Reader) 
 		Reference:    mg.Spec.InitProvider.VPCUUIDRef,
 		Selector:     mg.Spec.InitProvider.VPCUUIDSelector,
 		To: reference.To{
-			List:    &v1alpha13.VPCList{},
-			Managed: &v1alpha13.VPC{},
+			List:    &v1alpha14.VPCList{},
+			Managed: &v1alpha14.VPC{},
 		},
 	})
 	if err != nil {

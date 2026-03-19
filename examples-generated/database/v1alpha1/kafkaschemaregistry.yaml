@@ -42,6 +42,6 @@ spec:
     nodeCount: 3
     region: blr1
     size: gd-2vcpu-8gb
-    tags:
-    - production
+    tagsRefs:
+    - name: example
     version: "3.5"

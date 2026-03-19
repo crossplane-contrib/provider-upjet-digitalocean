@@ -99,8 +99,17 @@ type ClusterInitParameters struct {
 	StorageSizeMib *string `json:"storageSizeMib,omitempty" tf:"storage_size_mib,omitempty"`
 
 	// A list of tag names to be applied to the database cluster.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1.Tag
 	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
+
+	// References to Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsRefs []v1.Reference `json:"tagsRefs,omitempty" tf:"-"`
+
+	// Selector for a list of Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsSelector *v1.Selector `json:"tagsSelector,omitempty" tf:"-"`
 
 	// Engine version used by the cluster (ex. 14 for PostgreSQL 14).
 	// When this value is changed, a call to the Upgrade major Version for a Database API operation is made with the new version.
@@ -259,9 +268,18 @@ type ClusterParameters struct {
 	StorageSizeMib *string `json:"storageSizeMib,omitempty" tf:"storage_size_mib,omitempty"`
 
 	// A list of tag names to be applied to the database cluster.
+	// +crossplane:generate:reference:type=github.com/crossplane-contrib/provider-upjet-digitalocean/apis/digitalocean/v1alpha1.Tag
 	// +kubebuilder:validation:Optional
 	// +listType=set
 	Tags []*string `json:"tags,omitempty" tf:"tags,omitempty"`
+
+	// References to Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsRefs []v1.Reference `json:"tagsRefs,omitempty" tf:"-"`
+
+	// Selector for a list of Tag in digitalocean to populate tags.
+	// +kubebuilder:validation:Optional
+	TagsSelector *v1.Selector `json:"tagsSelector,omitempty" tf:"-"`
 
 	// Engine version used by the cluster (ex. 14 for PostgreSQL 14).
 	// When this value is changed, a call to the Upgrade major Version for a Database API operation is made with the new version.

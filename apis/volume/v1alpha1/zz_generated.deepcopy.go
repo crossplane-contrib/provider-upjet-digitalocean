@@ -273,6 +273,18 @@ func (in *SnapshotInitParameters) DeepCopyInto(out *SnapshotInitParameters) {
 			}
 		}
 	}
+	if in.TagsRefs != nil {
+		in, out := &in.TagsRefs, &out.TagsRefs
+		*out = make([]v1.Reference, len(*in))
+		for i := range *in {
+			(*in)[i].DeepCopyInto(&(*out)[i])
+		}
+	}
+	if in.TagsSelector != nil {
+		in, out := &in.TagsSelector, &out.TagsSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
+	}
 	if in.VolumeID != nil {
 		in, out := &in.VolumeID, &out.VolumeID
 		*out = new(string)
@@ -417,6 +429,18 @@ func (in *SnapshotParameters) DeepCopyInto(out *SnapshotParameters) {
 				**out = **in
 			}
 		}
+	}
+	if in.TagsRefs != nil {
+		in, out := &in.TagsRefs, &out.TagsRefs
+		*out = make([]v1.Reference, len(*in))
+		for i := range *in {
+			(*in)[i].DeepCopyInto(&(*out)[i])
+		}
+	}
+	if in.TagsSelector != nil {
+		in, out := &in.TagsSelector, &out.TagsSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
 	}
 	if in.VolumeID != nil {
 		in, out := &in.VolumeID, &out.VolumeID
@@ -570,6 +594,18 @@ func (in *VolumeInitParameters) DeepCopyInto(out *VolumeInitParameters) {
 				**out = **in
 			}
 		}
+	}
+	if in.TagsRefs != nil {
+		in, out := &in.TagsRefs, &out.TagsRefs
+		*out = make([]v1.Reference, len(*in))
+		for i := range *in {
+			(*in)[i].DeepCopyInto(&(*out)[i])
+		}
+	}
+	if in.TagsSelector != nil {
+		in, out := &in.TagsSelector, &out.TagsSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
 	}
 }
 
@@ -770,6 +806,18 @@ func (in *VolumeParameters) DeepCopyInto(out *VolumeParameters) {
 				**out = **in
 			}
 		}
+	}
+	if in.TagsRefs != nil {
+		in, out := &in.TagsRefs, &out.TagsRefs
+		*out = make([]v1.Reference, len(*in))
+		for i := range *in {
+			(*in)[i].DeepCopyInto(&(*out)[i])
+		}
+	}
+	if in.TagsSelector != nil {
+		in, out := &in.TagsSelector, &out.TagsSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
 	}
 }
 
