@@ -368,6 +368,13 @@ func GetProvider() *ujconfig.Provider {
 		r.References["grant.bucket"] = ujconfig.Reference{
 			TerraformName: "digitalocean_spaces_bucket",
 		}
+		r.Sensitive.AdditionalConnectionDetailsFn = func(attr map[string]any) (map[string][]byte, error) {
+			conn := map[string][]byte{}
+			if v, ok := attr["access_key"].(string); ok {
+				conn["access_key"] = []byte(v)
+			}
+			return conn, nil
+		}
 	})
 	pc.AddResourceConfigurator("digitalocean_spaces_bucket_logging", func(r *ujconfig.Resource) {
 		r.ShortGroup = "spaces"
