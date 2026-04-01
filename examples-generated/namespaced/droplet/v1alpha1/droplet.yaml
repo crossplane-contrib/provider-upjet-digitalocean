@@ -1,0 +1,22 @@
+apiVersion: droplet.digitalocean.m.crossplane.io/v1alpha1
+kind: Droplet
+metadata:
+  annotations:
+    meta.upbound.io/example-id: droplet/v1alpha1/droplet
+  labels:
+    testing.upbound.io/example-name: web
+  name: web
+  namespace: upbound-system
+spec:
+  forProvider:
+    backupPolicy:
+    - hour: 8
+      plan: weekly
+      weekday: TUE
+    backups: true
+    imageSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example
+    name: web-1
+    region: nyc2
+    size: s-1vcpu-1gb

@@ -1,0 +1,11 @@
+apiVersion: spaces.digitalocean.m.crossplane.io/v1alpha1
+kind: Key
+metadata:
+  annotations:
+    meta.upbound.io/example-id: spaces/v1alpha1/key
+  labels:
+    testing.upbound.io/example-name: foobar
+  name: foobar
+  namespace: upbound-system
+spec:
+  forProvider: {}

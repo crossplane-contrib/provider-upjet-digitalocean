@@ -1,0 +1,30 @@
+apiVersion: spaces.digitalocean.m.crossplane.io/v1alpha1
+kind: Cdn
+metadata:
+  annotations:
+    meta.upbound.io/example-id: spaces/v1alpha1/cdn
+  labels:
+    testing.upbound.io/example-name: mycdn
+  name: mycdn
+  namespace: upbound-system
+spec:
+  forProvider:
+    bucketDomainName:
+      matchLabels:
+        testing.upbound.io/example-name: mybucket
+
+---
+
+apiVersion: spaces.digitalocean.m.crossplane.io/v1alpha1
+kind: Bucket
+metadata:
+  annotations:
+    meta.upbound.io/example-id: spaces/v1alpha1/cdn
+  labels:
+    testing.upbound.io/example-name: mybucket
+  name: mybucket
+  namespace: upbound-system
+spec:
+  forProvider:
+    acl: public-read
+    region: sfo2

@@ -1,0 +1,49 @@
+apiVersion: database.digitalocean.m.crossplane.io/v1alpha1
+kind: KafkaSchemaRegistry
+metadata:
+  annotations:
+    meta.upbound.io/example-id: database/v1alpha1/kafkaschemaregistry
+  labels:
+    testing.upbound.io/example-name: schema-01
+  name: schema-01
+  namespace: upbound-system
+spec:
+  forProvider:
+    clusterIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: kafka-example
+    schema: |
+      {
+        "type": "record",
+        "namespace": "example",
+        "name": "TestRecord",
+        "fields": [
+          {"name": "id", "type": "string"},
+          {"name": "name", "type": "string"},
+          {"name": "value", "type": "int"}
+        ]
+      }
+    schemaType: avro
+    subjectName: test-schema
+
+---
+
+apiVersion: database.digitalocean.m.crossplane.io/v1alpha1
+kind: Cluster
+metadata:
+  annotations:
+    meta.upbound.io/example-id: database/v1alpha1/kafkaschemaregistry
+  labels:
+    testing.upbound.io/example-name: kafka-example
+  name: kafka-example
+  namespace: upbound-system
+spec:
+  forProvider:
+    engine: kafka
+    name: example-kafka-cluster
+    nodeCount: 3
+    region: blr1
+    size: gd-2vcpu-8gb
+    tagsRefs:
+    - name: example
+    version: "3.5"

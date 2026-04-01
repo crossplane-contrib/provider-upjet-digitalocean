@@ -1,0 +1,36 @@
+apiVersion: vpc.digitalocean.m.crossplane.io/v1alpha1
+kind: NATGateway
+metadata:
+  annotations:
+    meta.upbound.io/example-id: vpc/v1alpha1/natgateway
+  labels:
+    testing.upbound.io/example-name: my-vpc-nat-gateway
+  name: my-vpc-nat-gateway
+  namespace: upbound-system
+spec:
+  forProvider:
+    icmpTimeoutSeconds: 30
+    name: terraform-example
+    region: nyc3
+    size: "1"
+    tcpTimeoutSeconds: 30
+    type: PUBLIC
+    udpTimeoutSeconds: 30
+    vpcs:
+    - vpcUuid: ${digitalocean_vpc.my-vpc.id}
+
+---
+
+apiVersion: vpc.digitalocean.m.crossplane.io/v1alpha1
+kind: VPC
+metadata:
+  annotations:
+    meta.upbound.io/example-id: vpc/v1alpha1/natgateway
+  labels:
+    testing.upbound.io/example-name: my-vpc
+  name: my-vpc
+  namespace: upbound-system
+spec:
+  forProvider:
+    name: terraform-example
+    region: nyc3

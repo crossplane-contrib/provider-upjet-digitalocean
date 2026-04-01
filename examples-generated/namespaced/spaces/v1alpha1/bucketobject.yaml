@@ -1,0 +1,31 @@
+apiVersion: spaces.digitalocean.m.crossplane.io/v1alpha1
+kind: BucketObject
+metadata:
+  annotations:
+    meta.upbound.io/example-id: spaces/v1alpha1/bucketobject
+  labels:
+    testing.upbound.io/example-name: index
+  name: index
+  namespace: upbound-system
+spec:
+  forProvider:
+    bucket: ${digitalocean_spaces_bucket.foobar.name}
+    content: <html><body><p>This page is empty.</p></body></html>
+    contentType: text/html
+    key: index.html
+    region: ${digitalocean_spaces_bucket.foobar.region}
+
+---
+
+apiVersion: spaces.digitalocean.m.crossplane.io/v1alpha1
+kind: Bucket
+metadata:
+  annotations:
+    meta.upbound.io/example-id: spaces/v1alpha1/bucketobject
+  labels:
+    testing.upbound.io/example-name: foobar
+  name: foobar
+  namespace: upbound-system
+spec:
+  forProvider:
+    region: nyc3

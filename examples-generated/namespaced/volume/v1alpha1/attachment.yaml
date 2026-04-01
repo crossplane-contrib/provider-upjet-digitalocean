@@ -1,0 +1,56 @@
+apiVersion: volume.digitalocean.m.crossplane.io/v1alpha1
+kind: Attachment
+metadata:
+  annotations:
+    meta.upbound.io/example-id: volume/v1alpha1/attachment
+  labels:
+    testing.upbound.io/example-name: foobar
+  name: foobar
+  namespace: upbound-system
+spec:
+  forProvider:
+    dropletIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: foobar
+    volumeIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: foobar
+
+---
+
+apiVersion: droplet.digitalocean.m.crossplane.io/v1alpha1
+kind: Droplet
+metadata:
+  annotations:
+    meta.upbound.io/example-id: volume/v1alpha1/attachment
+  labels:
+    testing.upbound.io/example-name: foobar
+  name: foobar
+  namespace: upbound-system
+spec:
+  forProvider:
+    imageSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example
+    name: baz
+    region: nyc1
+    size: s-1vcpu-1gb
+
+---
+
+apiVersion: volume.digitalocean.m.crossplane.io/v1alpha1
+kind: Volume
+metadata:
+  annotations:
+    meta.upbound.io/example-id: volume/v1alpha1/attachment
+  labels:
+    testing.upbound.io/example-name: foobar
+  name: foobar
+  namespace: upbound-system
+spec:
+  forProvider:
+    description: an example volume
+    initialFilesystemType: ext4
+    name: baz
+    region: nyc1
+    size: 100

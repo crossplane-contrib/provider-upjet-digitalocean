@@ -4,7 +4,7 @@ Copyright 2022 Upbound Inc.
 
 package config
 
-import "github.com/crossplane/upjet/pkg/config"
+import "github.com/crossplane/upjet/v2/pkg/config"
 
 // ExternalNameConfigurations applies all external name configs listed in the
 // table ExternalNameConfigs and sets the version of those resources to v1beta1

@@ -1,0 +1,38 @@
+apiVersion: database.digitalocean.m.crossplane.io/v1alpha1
+kind: LogSinkRsyslog
+metadata:
+  annotations:
+    meta.upbound.io/example-id: database/v1alpha1/logsinkrsyslog
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+  namespace: upbound-system
+spec:
+  forProvider:
+    clusterIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: postgres-example
+    format: rfc5424
+    name: rsyslog-prod
+    port: 514
+    server: 192.0.2.10
+
+---
+
+apiVersion: database.digitalocean.m.crossplane.io/v1alpha1
+kind: Cluster
+metadata:
+  annotations:
+    meta.upbound.io/example-id: database/v1alpha1/logsinkrsyslog
+  labels:
+    testing.upbound.io/example-name: postgres-example
+  name: postgres-example
+  namespace: upbound-system
+spec:
+  forProvider:
+    engine: pg
+    name: example-postgres-cluster
+    nodeCount: 1
+    region: nyc1
+    size: db-s-1vcpu-1gb
+    version: "15"

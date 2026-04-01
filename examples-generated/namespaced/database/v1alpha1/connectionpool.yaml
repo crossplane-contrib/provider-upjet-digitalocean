@@ -1,0 +1,39 @@
+apiVersion: database.digitalocean.m.crossplane.io/v1alpha1
+kind: ConnectionPool
+metadata:
+  annotations:
+    meta.upbound.io/example-id: database/v1alpha1/connectionpool
+  labels:
+    testing.upbound.io/example-name: pool-01
+  name: pool-01
+  namespace: upbound-system
+spec:
+  forProvider:
+    clusterIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: postgres-example
+    dbName: defaultdb
+    mode: transaction
+    name: pool-01
+    size: 20
+    user: doadmin
+
+---
+
+apiVersion: database.digitalocean.m.crossplane.io/v1alpha1
+kind: Cluster
+metadata:
+  annotations:
+    meta.upbound.io/example-id: database/v1alpha1/connectionpool
+  labels:
+    testing.upbound.io/example-name: postgres-example
+  name: postgres-example
+  namespace: upbound-system
+spec:
+  forProvider:
+    engine: pg
+    name: example-postgres-cluster
+    nodeCount: 1
+    region: nyc1
+    size: db-s-1vcpu-1gb
+    version: "15"

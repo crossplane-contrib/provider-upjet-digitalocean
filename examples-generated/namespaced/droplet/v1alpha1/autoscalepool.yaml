@@ -1,0 +1,65 @@
+apiVersion: droplet.digitalocean.m.crossplane.io/v1alpha1
+kind: AutoscalePool
+metadata:
+  annotations:
+    meta.upbound.io/example-id: droplet/v1alpha1/autoscalepool
+  labels:
+    testing.upbound.io/example-name: my-autoscale-pool
+  name: my-autoscale-pool
+  namespace: upbound-system
+spec:
+  forProvider:
+    config:
+    - cooldownMinutes: 5
+      maxInstances: 50
+      minInstances: 10
+      targetCpuUtilization: 0.5
+      targetMemoryUtilization: 0.5
+    dropletTemplate:
+    - image: ubuntu-24-04-x64
+      ipv6: true
+      region: nyc3
+      size: c-2
+      sshKeys:
+      - ${digitalocean_ssh_key.my-ssh-key.id}
+      tags:
+      - ${digitalocean_tag.my-tag.id}
+      userData: |2
+
+        #cloud-config
+        runcmd:
+        - apt-get update
+        - apt-get install -y stress-ng
+      withDropletAgent: true
+    name: terraform-example
+
+---
+
+apiVersion: ssh.digitalocean.m.crossplane.io/v1alpha1
+kind: Key
+metadata:
+  annotations:
+    meta.upbound.io/example-id: droplet/v1alpha1/autoscalepool
+  labels:
+    testing.upbound.io/example-name: my-ssh-key
+  name: my-ssh-key
+  namespace: upbound-system
+spec:
+  forProvider:
+    name: terraform-example
+    publicKey: ${file("/Users/terraform/.ssh/id_rsa.pub")}
+
+---
+
+apiVersion: digitalocean.digitalocean.m.crossplane.io/v1alpha1
+kind: Tag
+metadata:
+  annotations:
+    meta.upbound.io/example-id: droplet/v1alpha1/autoscalepool
+  labels:
+    testing.upbound.io/example-name: my-tag
+  name: my-tag
+  namespace: upbound-system
+spec:
+  forProvider:
+    name: terraform-example
