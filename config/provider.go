@@ -114,6 +114,9 @@ func newProvider(rootGroup string) *ujconfig.Provider {
 		ujconfig.WithShortName("do"),
 		ujconfig.WithIncludeList(ExternalNameConfigured()),
 		ujconfig.WithFeaturesPackage("internal/features"),
+		ujconfig.WithExampleManifestConfiguration(ujconfig.ExampleManifestConfiguration{
+			ManagedResourceNamespace: "crossplane-system",
+		}),
 		ujconfig.WithDefaultResourceOptions(
 			ExternalNameConfigurations(),
 		))
