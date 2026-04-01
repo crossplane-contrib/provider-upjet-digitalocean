@@ -54,15 +54,16 @@ GO_SUBDIRS += cmd internal apis
 # ====================================================================================
 # Setup Kubernetes tools
 
-# Pinned to match crossplane/upjet-provider-template for CI and local e2e parity.
+# crossplane/build defaults USE_HELM=false (Helm 2). Helm 3 is required for controlplane.up.
+USE_HELM = true
+
+# Pinned to match crossplane/upjet-provider-template (overrides crossplane/build defaults where needed).
 KIND_VERSION = v0.31.0
-UP_CHANNEL = stable
-UP_VERSION = v0.41.0
 UPTEST_VERSION = v2.2.0
-# crddiff is run via go run; module path is github.com/upbound/uptest (crossplane/uptest does not ship cmd/crddiff).
+# crddiff via go run; v0.12.1 is published under github.com/upbound/uptest (not crossplane/uptest).
 CRDDIFF_VERSION = v0.12.1
 CROSSPLANE_CLI_VERSION = v2.1.3
-# Referenced by uptest/e2e docs and upstream template; install path uses CROSSPLANE_CLI.
+# Helm chart version for local-deploy / e2e (see build/makelib/controlplane.mk).
 CROSSPLANE_VERSION = 2.1.3
 -include build/makelib/k8s_tools.mk
 
@@ -101,9 +102,8 @@ fallthrough: submodules
 # we ensure image is present in daemon.
 xpkg.build.provider-upjet-digitalocean: do.build.images
 
-# NOTE(hasheddan): we ensure up is installed prior to running platform-specific
-# build steps in parallel to avoid encountering an installation race condition.
-build.init: $(UP) $(CROSSPLANE_CLI) check-terraform-version
+# NOTE(hasheddan): install Crossplane CLI before parallel platform builds (local.xpkg / e2e).
+build.init: $(CROSSPLANE_CLI) check-terraform-version
 
 # ====================================================================================
 # Setup Terraform for fetching provider schema
@@ -180,7 +180,7 @@ run: go.build
 
 # ====================================================================================
 # End to End Testing
-CROSSPLANE_NAMESPACE = upbound-system
+CROSSPLANE_NAMESPACE = crossplane-system
 -include build/makelib/local.xpkg.mk
 -include build/makelib/controlplane.mk
 
@@ -206,12 +206,12 @@ uptest: $(UPTEST) $(KUBECTL) $(CHAINSAW) $(CROSSPLANE_CLI)
 local-deploy: build controlplane.up local.xpkg.deploy.provider.$(PROJECT_NAME)
 	@$(INFO) running locally built provider
 	@$(KUBECTL) wait provider.pkg $(PROJECT_NAME) --for condition=Healthy --timeout 5m
-	@$(KUBECTL) -n upbound-system wait --for=condition=Available deployment --all --timeout=5m
+	@$(KUBECTL) -n $(CROSSPLANE_NAMESPACE) wait --for=condition=Available deployment --all --timeout=5m
 	@$(OK) running locally built provider
 
 e2e: local-deploy uptest
 
-crddiff: $(UPTEST)
+crddiff:
 	@$(INFO) Checking breaking CRD schema changes
 	@for crd in $${MODIFIED_CRD_LIST}; do \
 		if ! git cat-file -e "$${GITHUB_BASE_REF}:$${crd}" 2>/dev/null; then \

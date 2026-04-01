@@ -6,7 +6,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: example
   name: example
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     bucketSelector:
@@ -28,7 +28,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: assets
   name: assets
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     region: nyc3
@@ -43,7 +43,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: logs
   name: logs
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     region: nyc3

@@ -6,7 +6,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: foobar
   name: foobar
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     name: example-snapshot
@@ -25,7 +25,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: foobar
   name: foobar
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     name: example-nfs
@@ -46,7 +46,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: foobar
   name: foobar
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     name: example-vpc

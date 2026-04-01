@@ -6,7 +6,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: mycdn
   name: mycdn
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     bucketDomainName:
@@ -23,7 +23,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: mybucket
   name: mybucket
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     acl: public-read

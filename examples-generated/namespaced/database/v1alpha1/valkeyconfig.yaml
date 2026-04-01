@@ -6,7 +6,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: example
   name: example
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     clusterIdSelector:
@@ -26,7 +26,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: example
   name: example
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     engine: valkey

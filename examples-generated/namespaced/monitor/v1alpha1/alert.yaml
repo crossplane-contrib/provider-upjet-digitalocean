@@ -6,7 +6,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: cpu_alert
   name: cpu-alert
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     alerts:
@@ -34,7 +34,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: web
   name: web
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     imageSelector:

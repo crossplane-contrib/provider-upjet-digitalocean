@@ -6,7 +6,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: cert
   name: cert
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     certificateChain: ${file("/Users/terraform/certs/fullchain.pem")}

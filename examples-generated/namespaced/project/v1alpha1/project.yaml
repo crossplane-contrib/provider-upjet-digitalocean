@@ -6,7 +6,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: playground
   name: playground
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     description: A project to represent development resources.

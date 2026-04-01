@@ -6,7 +6,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: database-example
   name: database-example
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     clusterIdSelector:
@@ -24,7 +24,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: postgres-example
   name: postgres-example
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     engine: pg

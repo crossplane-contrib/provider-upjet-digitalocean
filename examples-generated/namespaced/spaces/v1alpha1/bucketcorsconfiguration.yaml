@@ -6,7 +6,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: test
   name: test
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     bucket: ${digitalocean_spaces_bucket.foobar.id}
@@ -33,7 +33,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: foobar
   name: foobar
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     region: nyc3

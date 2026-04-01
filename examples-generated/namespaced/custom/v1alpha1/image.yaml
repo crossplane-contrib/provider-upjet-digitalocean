@@ -6,7 +6,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: flatcar
   name: flatcar
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     name: flatcar
@@ -24,7 +24,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: example
   name: example
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     imageSelector:

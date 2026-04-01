@@ -6,7 +6,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: topic-01
   name: topic-01
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     clusterIdSelector:
@@ -50,7 +50,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: kafka-example
   name: kafka-example
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     engine: kafka

@@ -6,7 +6,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: web-snapshot
   name: web-snapshot
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     dropletIdSelector:
@@ -24,7 +24,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: from-snapshot
   name: from-snapshot
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     imageSelector:
@@ -44,7 +44,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: web
   name: web
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     imageSelector:

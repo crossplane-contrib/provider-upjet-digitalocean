@@ -6,7 +6,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: my-vpc-nat-gateway
   name: my-vpc-nat-gateway
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     icmpTimeoutSeconds: 30
@@ -29,7 +29,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: my-vpc
   name: my-vpc
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     name: terraform-example

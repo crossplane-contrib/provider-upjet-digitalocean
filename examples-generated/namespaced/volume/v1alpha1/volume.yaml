@@ -6,7 +6,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: foobar
   name: foobar
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     description: an example volume
@@ -25,7 +25,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: foobar
   name: foobar
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     imageSelector:
@@ -45,7 +45,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: foobar
   name: foobar
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     dropletIdSelector:

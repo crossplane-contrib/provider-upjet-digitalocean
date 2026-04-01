@@ -6,7 +6,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: my-autoscale-pool
   name: my-autoscale-pool
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     config:
@@ -43,7 +43,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: my-ssh-key
   name: my-ssh-key
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     name: terraform-example
@@ -59,7 +59,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: my-tag
   name: my-tag
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     name: terraform-example

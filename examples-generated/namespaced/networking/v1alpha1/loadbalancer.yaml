@@ -6,7 +6,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: public
   name: public
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     dropletIdsRefs:
@@ -32,7 +32,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: web
   name: web
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     imageSelector:

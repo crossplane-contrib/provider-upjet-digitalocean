@@ -6,7 +6,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: replica-example
   name: replica-example
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     clusterIdSelector:
@@ -26,7 +26,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: postgres-example
   name: postgres-example
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     engine: pg
@@ -46,7 +46,7 @@ metadata:
   labels:
     testing.upbound.io/example-name: example-fw
   name: example-fw
-  namespace: upbound-system
+  namespace: crossplane-system
 spec:
   forProvider:
     clusterIdSelector:
