@@ -83,7 +83,10 @@ var ExternalNameConfigs = map[string]ujconfig.ExternalName{
 	// an empty schema after upjet parsing; skipped intentionally.
 
 	"digitalocean_byoip_prefix":              ujconfig.IdentifierFromProvider,
-	"digitalocean_container_registries":      ujconfig.IdentifierFromProvider,
+	// digitalocean_container_registries removed: its Kind "Registries" collides
+	// with Kind "Registry" (both pluralise to "registries"), producing a
+	// duplicate CRD name and a cache-sync crash loop at startup.
+	// https://github.com/crossplane-contrib/provider-upjet-digitalocean/issues/81
 	"digitalocean_database_online_migration": ujconfig.IdentifierFromProvider,
 	"digitalocean_droplet_autoscale":         ujconfig.IdentifierFromProvider,
 	// digitalocean_partner_attachment produces an empty schema after upjet
@@ -485,9 +488,8 @@ func newProvider(rootGroup string) *ujconfig.Provider {
 		r.ShortGroup = networkingShortGroup
 		r.Kind = "BYOIPPrefix"
 	})
-	pc.AddResourceConfigurator("digitalocean_container_registries", func(r *ujconfig.Resource) {
-		r.Kind = "Registries"
-	})
+	// digitalocean_container_registries configurator removed.
+	// https://github.com/crossplane-contrib/provider-upjet-digitalocean/issues/81
 	pc.AddResourceConfigurator("digitalocean_database_online_migration", func(r *ujconfig.Resource) {
 		r.Kind = "OnlineMigration"
 		r.References["cluster_id"] = ujconfig.Reference{
