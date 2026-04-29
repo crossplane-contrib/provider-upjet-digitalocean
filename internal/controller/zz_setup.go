@@ -9,7 +9,6 @@ import (
 
 	"github.com/crossplane/upjet/pkg/controller"
 
-	registries "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/container/registries"
 	registry "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/container/registry"
 	registrydockercredentials "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/container/registrydockercredentials"
 	image "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/custom/image"
@@ -85,7 +84,6 @@ import (
 // the supplied manager.
 func Setup(mgr ctrl.Manager, o controller.Options) error {
 	for _, setup := range []func(ctrl.Manager, controller.Options) error{
-		registries.Setup,
 		registry.Setup,
 		registrydockercredentials.Setup,
 		image.Setup,
