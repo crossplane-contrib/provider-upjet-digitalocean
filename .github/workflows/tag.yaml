@@ -16,3 +16,16 @@ jobs:
     with:
       version: ${{ github.event.inputs.version }}
       message: ${{ github.event.inputs.message }}
+
+  release:
+    needs: tag
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.version }}
+      - run: gh release create "${{ github.event.inputs.version }}" --title "${{ github.event.inputs.version }}" --generate-notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
