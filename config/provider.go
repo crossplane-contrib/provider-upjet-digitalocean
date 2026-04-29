@@ -82,7 +82,7 @@ var ExternalNameConfigs = map[string]ujconfig.ExternalName{
 	// deprecated aliases for reserved_ip/reserved_ip_assignment and produce
 	// an empty schema after upjet parsing; skipped intentionally.
 
-	"digitalocean_byoip_prefix":              ujconfig.IdentifierFromProvider,
+	"digitalocean_byoip_prefix": ujconfig.IdentifierFromProvider,
 	// digitalocean_container_registries: Kind "Registries" collides with Kind
 	// "Registry" (both pluralise to "registries"), producing a duplicate CRD
 	// name and a cache-sync crash loop at startup.
