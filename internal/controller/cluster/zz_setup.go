@@ -9,7 +9,6 @@ import (
 
 	"github.com/crossplane/upjet/v2/pkg/controller"
 
-	registries "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/cluster/container/registries"
 	registry "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/cluster/container/registry"
 	registrydockercredentials "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/cluster/container/registrydockercredentials"
 	image "github.com/crossplane-contrib/provider-upjet-digitalocean/internal/controller/cluster/custom/image"
@@ -85,7 +84,6 @@ import (
 // the supplied manager.
 func Setup(mgr ctrl.Manager, o controller.Options) error {
 	for _, setup := range []func(ctrl.Manager, controller.Options) error{
-		registries.Setup,
 		registry.Setup,
 		registrydockercredentials.Setup,
 		image.Setup,
@@ -167,7 +165,6 @@ func Setup(mgr ctrl.Manager, o controller.Options) error {
 // the supplied manager gated.
 func SetupGated(mgr ctrl.Manager, o controller.Options) error {
 	for _, setup := range []func(ctrl.Manager, controller.Options) error{
-		registries.SetupGated,
 		registry.SetupGated,
 		registrydockercredentials.SetupGated,
 		image.SetupGated,
