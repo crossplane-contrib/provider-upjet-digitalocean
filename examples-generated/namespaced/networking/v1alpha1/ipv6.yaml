@@ -1,0 +1,12 @@
+apiVersion: networking.digitalocean.m.crossplane.io/v1alpha1
+kind: IPv6
+metadata:
+  annotations:
+    meta.upbound.io/example-id: networking/v1alpha1/ipv6
+  labels:
+    testing.upbound.io/example-name: foobar
+  name: foobar
+  namespace: crossplane-system
+spec:
+  forProvider:
+    regionSlug: nyc3

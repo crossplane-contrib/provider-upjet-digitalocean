@@ -6,3 +6,6 @@ metadata:
     meta.crossplane.io/source: github.com/crossplane-contrib/provider-upjet-digitalocean
     meta.crossplane.io/license: Apache-2.0
     meta.crossplane.io/description: The DigitalOcean Crossplane Provider based on Upjet framework.
+spec:
+  capabilities:
+    - SafeStart

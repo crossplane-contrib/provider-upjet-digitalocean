@@ -1,0 +1,24 @@
+apiVersion: gradientai.digitalocean.m.crossplane.io/v1alpha1
+kind: Agent
+metadata:
+  annotations:
+    meta.upbound.io/example-id: gradientai/v1alpha1/agent
+  labels:
+    testing.upbound.io/example-name: terraform-testing
+  name: terraform-testing
+  namespace: crossplane-system
+spec:
+  forProvider:
+    deployment:
+    - visibility: VISIBILITY_PRIVATE
+    description: Agent for testing update and delete functionality.
+    instruction: You are DigitalOcean's Solutions Architect Assistant, designed to
+      help users find the perfect solution for their technical needs.
+    modelUuid: d754f2d7-d1f0-11ef-bf8f-4e013e2ddde4
+    name: terraform-testing
+    projectIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example
+    region: tor1
+    tags:
+    - marketplace-agent-terraform

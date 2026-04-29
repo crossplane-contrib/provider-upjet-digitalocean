@@ -1,0 +1,13 @@
+apiVersion: container.digitalocean.m.crossplane.io/v1alpha1
+kind: Registry
+metadata:
+  annotations:
+    meta.upbound.io/example-id: container/v1alpha1/registry
+  labels:
+    testing.upbound.io/example-name: foobar
+  name: foobar
+  namespace: crossplane-system
+spec:
+  forProvider:
+    name: foobar
+    subscriptionTierSlug: starter

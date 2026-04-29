@@ -1,0 +1,36 @@
+apiVersion: project.digitalocean.m.crossplane.io/v1alpha1
+kind: Resources
+metadata:
+  annotations:
+    meta.upbound.io/example-id: project/v1alpha1/resources
+  labels:
+    testing.upbound.io/example-name: barfoo
+  name: barfoo
+  namespace: crossplane-system
+spec:
+  forProvider:
+    projectSelector:
+      matchLabels:
+        testing.upbound.io/example-name: digitalocean_project
+    resources:
+    - ${digitalocean_droplet.foobar.urn}
+
+---
+
+apiVersion: droplet.digitalocean.m.crossplane.io/v1alpha1
+kind: Droplet
+metadata:
+  annotations:
+    meta.upbound.io/example-id: project/v1alpha1/resources
+  labels:
+    testing.upbound.io/example-name: foobar
+  name: foobar
+  namespace: crossplane-system
+spec:
+  forProvider:
+    imageSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example
+    name: example
+    region: nyc3
+    size: s-1vcpu-1gb

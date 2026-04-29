@@ -1,0 +1,15 @@
+apiVersion: networking.digitalocean.m.crossplane.io/v1alpha1
+kind: BYOIPPrefix
+metadata:
+  annotations:
+    meta.upbound.io/example-id: networking/v1alpha1/byoipprefix
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+  namespace: crossplane-system
+spec:
+  forProvider:
+    advertised: false
+    prefix: 192.0.2.0/24
+    region: nyc3
+    signature: ${var.prefix_signature}

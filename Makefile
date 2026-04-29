@@ -54,9 +54,17 @@ GO_SUBDIRS += cmd internal apis
 # ====================================================================================
 # Setup Kubernetes tools
 
-KIND_VERSION = v0.23.0
-UP_CHANNEL = stable
-UPTEST_VERSION = v0.11.1
+# crossplane/build defaults USE_HELM=false (Helm 2). Helm 3 is required for controlplane.up.
+USE_HELM = true
+
+# Pinned to match crossplane/upjet-provider-template (overrides crossplane/build defaults where needed).
+KIND_VERSION = v0.31.0
+UPTEST_VERSION = v2.2.0
+# crddiff via go run; v0.12.1 is published under github.com/upbound/uptest (not crossplane/uptest).
+CRDDIFF_VERSION = v0.12.1
+CROSSPLANE_CLI_VERSION = v2.1.3
+# Helm chart version for local-deploy / e2e (see build/makelib/controlplane.mk).
+CROSSPLANE_VERSION = 2.1.3
 -include build/makelib/k8s_tools.mk
 
 # ====================================================================================
@@ -94,9 +102,8 @@ fallthrough: submodules
 # we ensure image is present in daemon.
 xpkg.build.provider-upjet-digitalocean: do.build.images
 
-# NOTE(hasheddan): we ensure up is installed prior to running platform-specific
-# build steps in parallel to avoid encountering an installation race condition.
-build.init: $(UP) check-terraform-version
+# NOTE(hasheddan): install Crossplane CLI before parallel platform builds (local.xpkg / e2e).
+build.init: $(CROSSPLANE_CLI) check-terraform-version
 
 # ====================================================================================
 # Setup Terraform for fetching provider schema
@@ -133,7 +140,16 @@ pull-docs:
 	fi
 	@git -C "$(WORK_DIR)/$(TERRAFORM_PROVIDER_SOURCE)" sparse-checkout set "$(TERRAFORM_DOCS_PATH)"
 
-generate.init: $(TERRAFORM_PROVIDER_SCHEMA) pull-docs
+# Terraform resource names for schema-version-diff (native state schema versions).
+config/generated.lst: $(TERRAFORM_PROVIDER_SCHEMA)
+	@$(INFO) writing config/generated.lst from provider schema
+	@python3 -c "import json; \
+s=json.load(open('$(TERRAFORM_PROVIDER_SCHEMA)')); \
+k=next(iter(s['provider_schemas'])); \
+n=sorted(s['provider_schemas'][k]['resource_schemas'].keys()); \
+o=open('config/generated.lst','w'); json.dump(n,o,indent=2); o.write('\n'); o.close()"
+
+generate.init: $(TERRAFORM_PROVIDER_SCHEMA) config/generated.lst pull-docs
 
 .PHONY: $(TERRAFORM_PROVIDER_SCHEMA) pull-docs check-terraform-version
 # ====================================================================================
@@ -173,14 +189,14 @@ run: go.build
 
 # ====================================================================================
 # End to End Testing
-CROSSPLANE_NAMESPACE = upbound-system
+CROSSPLANE_NAMESPACE = crossplane-system
 -include build/makelib/local.xpkg.mk
 -include build/makelib/controlplane.mk
 
 # This target requires the following environment variables to be set:
 # - UPTEST_EXAMPLE_LIST, a comma-separated list of examples to test
 #   To ensure the proper functioning of the end-to-end test resource pre-deletion hook, it is crucial to arrange your resources appropriately.
-#   You can check the basic implementation here: https://github.com/upbound/uptest/blob/main/internal/digitaloceans/01-delete.yaml.tmpl.
+#   See https://github.com/crossplane/uptest/blob/main/internal/templates/03-delete.yaml.tmpl.
 # - UPTEST_CLOUD_CREDENTIALS (optional), multiple sets of AWS IAM User credentials specified as key=value pairs.
 #   The support keys are currently `DEFAULT` and `PEER`. So, an example for the value of this env. variable is:
 #   DEFAULT='[default]
@@ -191,20 +207,20 @@ CROSSPLANE_NAMESPACE = upbound-system
 #   aws_secret_access_key = REDACTED'
 #   The associated `ProviderConfig`s will be named as `default` and `peer`.
 # - UPTEST_DATASOURCE_PATH (optional), see https://github.com/upbound/uptest#injecting-dynamic-values-and-datasource
-uptest: $(UPTEST) $(KUBECTL) $(KUTTL)
+uptest: $(UPTEST) $(KUBECTL) $(CHAINSAW) $(CROSSPLANE_CLI)
 	@$(INFO) running automated tests
-	@KUBECTL=$(KUBECTL) KUTTL=$(KUTTL) $(UPTEST) e2e "${UPTEST_EXAMPLE_LIST}" --data-source="${UPTEST_DATASOURCE_PATH}" --setup-script=cluster/test/setup.sh --default-conditions="Test" || $(FAIL)
+	@KUBECTL=$(KUBECTL) CHAINSAW=$(CHAINSAW) CROSSPLANE_CLI=$(CROSSPLANE_CLI) CROSSPLANE_NAMESPACE=$(CROSSPLANE_NAMESPACE) $(UPTEST) e2e "${UPTEST_EXAMPLE_LIST}" --data-source="${UPTEST_DATASOURCE_PATH}" --setup-script=cluster/test/setup.sh --default-conditions="Test" || $(FAIL)
 	@$(OK) running automated tests
 
 local-deploy: build controlplane.up local.xpkg.deploy.provider.$(PROJECT_NAME)
 	@$(INFO) running locally built provider
 	@$(KUBECTL) wait provider.pkg $(PROJECT_NAME) --for condition=Healthy --timeout 5m
-	@$(KUBECTL) -n upbound-system wait --for=condition=Available deployment --all --timeout=5m
+	@$(KUBECTL) -n $(CROSSPLANE_NAMESPACE) wait --for=condition=Available deployment --all --timeout=5m
 	@$(OK) running locally built provider
 
 e2e: local-deploy uptest
 
-crddiff: $(UPTEST)
+crddiff:
 	@$(INFO) Checking breaking CRD schema changes
 	@for crd in $${MODIFIED_CRD_LIST}; do \
 		if ! git cat-file -e "$${GITHUB_BASE_REF}:$${crd}" 2>/dev/null; then \
@@ -212,7 +228,7 @@ crddiff: $(UPTEST)
 			continue ; \
 		fi ; \
 		echo "Checking $${crd} for breaking API changes..." ; \
-		changes_detected=$$($(UPTEST) crddiff revision <(git cat-file -p "$${GITHUB_BASE_REF}:$${crd}") "$${crd}" 2>&1) ; \
+		changes_detected=$$(go run github.com/upbound/uptest/cmd/crddiff@$(CRDDIFF_VERSION) revision --enable-upjet-extensions <(git cat-file -p "$${GITHUB_BASE_REF}:$${crd}") "$${crd}" 2>&1) ; \
 		if [[ $$? != 0 ]] ; then \
 			printf "\033[31m"; echo "Breaking change detected!"; printf "\033[0m" ; \
 			echo "$${changes_detected}" ; \
@@ -223,12 +239,12 @@ crddiff: $(UPTEST)
 
 schema-version-diff:
 	@$(INFO) Checking for native state schema version changes
-	@export PREV_PROVIDER_VERSION=$$(git cat-file -p "${GITHUB_BASE_REF}:Makefile" | sed -nr 's/^export[[:space:]]*TERRAFORM_PROVIDER_VERSION[[:space:]]*:=[[:space:]]*(.+)/\1/p'); \
+	@export PREV_PROVIDER_VERSION=$$(git cat-file -p "${GITHUB_BASE_REF}:Makefile" | sed -nr 's/^export[[:space:]]*TERRAFORM_PROVIDER_VERSION[[:space:]]*[^=]*=[[:space:]]*([^[:space:]#]+).*/\1/p'); \
 	echo Detected previous Terraform provider version: $${PREV_PROVIDER_VERSION}; \
 	echo Current Terraform provider version: $${TERRAFORM_PROVIDER_VERSION}; \
 	mkdir -p $(WORK_DIR); \
 	git cat-file -p "$${GITHUB_BASE_REF}:config/schema.json" > "$(WORK_DIR)/schema.json.$${PREV_PROVIDER_VERSION}"; \
-	./scripts/version_diff.py config/generated.lst "$(WORK_DIR)/schema.json.$${PREV_PROVIDER_VERSION}" config/schema.json
+	python3 scripts/version_diff.py config/generated.lst "$(WORK_DIR)/schema.json.$${PREV_PROVIDER_VERSION}" config/schema.json
 	@$(OK) Checking for native state schema version changes
 
 .PHONY: cobertura submodules fallthrough run crds.clean

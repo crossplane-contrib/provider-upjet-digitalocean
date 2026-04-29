@@ -1,0 +1,32 @@
+apiVersion: dns.digitalocean.m.crossplane.io/v1alpha1
+kind: Record
+metadata:
+  annotations:
+    meta.upbound.io/example-id: dns/v1alpha1/record
+  labels:
+    testing.upbound.io/example-name: www
+  name: www
+  namespace: crossplane-system
+spec:
+  forProvider:
+    domainSelector:
+      matchLabels:
+        testing.upbound.io/example-name: default
+    name: www
+    type: A
+    value: 192.168.0.11
+
+---
+
+apiVersion: dns.digitalocean.m.crossplane.io/v1alpha1
+kind: Domain
+metadata:
+  annotations:
+    meta.upbound.io/example-id: dns/v1alpha1/record
+  labels:
+    testing.upbound.io/example-name: default
+  name: default
+  namespace: crossplane-system
+spec:
+  forProvider:
+    name: example.com

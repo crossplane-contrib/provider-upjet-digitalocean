@@ -1,0 +1,39 @@
+apiVersion: database.digitalocean.m.crossplane.io/v1alpha1
+kind: MongoDBConfig
+metadata:
+  annotations:
+    meta.upbound.io/example-id: database/v1alpha1/mongodbconfig
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+  namespace: crossplane-system
+spec:
+  forProvider:
+    clusterIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example
+    defaultReadConcern: majority
+    defaultWriteConcern: majority
+    slowOpThresholdMs: 100
+    transactionLifetimeLimitSeconds: 100
+    verbosity: 3
+
+---
+
+apiVersion: database.digitalocean.m.crossplane.io/v1alpha1
+kind: Cluster
+metadata:
+  annotations:
+    meta.upbound.io/example-id: database/v1alpha1/mongodbconfig
+  labels:
+    testing.upbound.io/example-name: example
+  name: example
+  namespace: crossplane-system
+spec:
+  forProvider:
+    engine: mongodb
+    name: example-mongodb-cluster
+    nodeCount: 1
+    region: nyc3
+    size: db-s-1vcpu-1gb
+    version: "7"

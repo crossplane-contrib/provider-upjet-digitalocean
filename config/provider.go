@@ -8,7 +8,7 @@ import (
 	// Note(turkenh): we are importing this to embed provider schema document
 	_ "embed"
 
-	ujconfig "github.com/crossplane/upjet/pkg/config"
+	ujconfig "github.com/crossplane/upjet/v2/pkg/config"
 )
 
 const (
@@ -108,13 +108,15 @@ var ExternalNameConfigs = map[string]ujconfig.ExternalName{
 	"digitalocean_database_logsink_rsyslog":    ujconfig.IdentifierFromProvider,
 }
 
-// GetProvider returns provider configuration
-func GetProvider() *ujconfig.Provider {
+func newProvider(rootGroup string) *ujconfig.Provider {
 	pc := ujconfig.NewProvider([]byte(providerSchema), resourcePrefix, modulePath, []byte(providerMetadata),
-		ujconfig.WithRootGroup("digitalocean.crossplane.io"),
+		ujconfig.WithRootGroup(rootGroup),
 		ujconfig.WithShortName("do"),
 		ujconfig.WithIncludeList(ExternalNameConfigured()),
 		ujconfig.WithFeaturesPackage("internal/features"),
+		ujconfig.WithExampleManifestConfiguration(ujconfig.ExampleManifestConfiguration{
+			ManagedResourceNamespace: "crossplane-system",
+		}),
 		ujconfig.WithDefaultResourceOptions(
 			ExternalNameConfigurations(),
 		))
@@ -562,4 +564,14 @@ func GetProvider() *ujconfig.Provider {
 
 	pc.ConfigureResources()
 	return pc
+}
+
+// GetProvider returns cluster-scoped provider configuration.
+func GetProvider() *ujconfig.Provider {
+	return newProvider("digitalocean.crossplane.io")
+}
+
+// GetProviderNamespaced returns namespaced MR provider configuration.
+func GetProviderNamespaced() *ujconfig.Provider {
+	return newProvider("digitalocean.m.crossplane.io")
 }

@@ -1,0 +1,1190 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.18.0
+  name: postgresqlconfigs.database.digitalocean.m.crossplane.io
+spec:
+  group: database.digitalocean.m.crossplane.io
+  names:
+    categories:
+    - crossplane
+    - managed
+    - do
+    kind: PostgreSQLConfig
+    listKind: PostgreSQLConfigList
+    plural: postgresqlconfigs
+    singular: postgresqlconfig
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.conditions[?(@.type=='Synced')].status
+      name: SYNCED
+      type: string
+    - jsonPath: .status.conditions[?(@.type=='Ready')].status
+      name: READY
+      type: string
+    - jsonPath: .metadata.annotations.crossplane\.io/external-name
+      name: EXTERNAL-NAME
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: AGE
+      type: date
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: PostgreSQLConfig is the Schema for the PostgreSQLConfigs API.
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: PostgreSQLConfigSpec defines the desired state of PostgreSQLConfig
+            properties:
+              forProvider:
+                properties:
+                  autovacuumAnalyzeScaleFactor:
+                    description: Specifies a fraction, in a decimal value, of the
+                      table size to add to autovacuum_analyze_threshold when deciding
+                      whether to trigger an ANALYZE. The default is 0.2 (20% of table
+                      size).
+                    type: number
+                  autovacuumAnalyzeThreshold:
+                    description: Specifies the minimum number of inserted, updated,
+                      or deleted tuples needed to trigger an ANALYZE in any one table.
+                      The default is 50 tuples.
+                    type: number
+                  autovacuumFreezeMaxAge:
+                    description: Specifies the maximum age (in transactions) that
+                      a table's pg_class.relfrozenxid field can attain before a VACUUM
+                      operation is forced to prevent transaction ID wraparound within
+                      the table. Note that the system will launch autovacuum processes
+                      to prevent wraparound even when autovacuum is otherwise disabled.
+                      This parameter will cause the server to be restarted.
+                    type: number
+                  autovacuumMaxWorkers:
+                    description: Specifies the maximum number of autovacuum processes
+                      (other than the autovacuum launcher) that may be running at
+                      any one time. The default is three. This parameter can only
+                      be set at server start.
+                    type: number
+                  autovacuumNaptime:
+                    description: Specifies the minimum delay, in seconds, between
+                      autovacuum runs on any given database. The default is one minute.
+                    type: number
+                  autovacuumVacuumCostDelay:
+                    description: Specifies the cost delay value, in milliseconds,
+                      that will be used in automatic VACUUM operations. If -1, uses
+                      the regular vacuum_cost_delay value, which is 20 milliseconds.
+                    type: number
+                  autovacuumVacuumCostLimit:
+                    description: Specifies the cost limit value that will be used
+                      in automatic VACUUM operations. If -1 is specified (which is
+                      the default), the regular vacuum_cost_limit value will be used.
+                    type: number
+                  autovacuumVacuumScaleFactor:
+                    description: Specifies a fraction, in a decimal value, of the
+                      table size to add to autovacuum_vacuum_threshold when deciding
+                      whether to trigger a VACUUM. The default is 0.2 (20% of table
+                      size).
+                    type: number
+                  autovacuumVacuumThreshold:
+                    description: Specifies the minimum number of updated or deleted
+                      tuples needed to trigger a VACUUM in any one table. The default
+                      is 50 tuples.
+                    type: number
+                  backupHour:
+                    description: The hour of day (in UTC) when backup for the service
+                      starts. New backup only starts if previous backup has already
+                      completed.
+                    type: number
+                  backupMinute:
+                    description: The minute of the backup hour when backup for the
+                      service starts. New backup is only started if previous backup
+                      has already completed.
+                    type: number
+                  bgwriterDelay:
+                    description: Specifies the delay, in milliseconds, between activity
+                      rounds for the background writer. Default is 200 ms.
+                    type: number
+                  bgwriterFlushAfter:
+                    description: The amount of kilobytes that need to be written by
+                      the background writer before attempting to force the OS to issue
+                      these writes to underlying storage. Specified in kilobytes,
+                      default is 512. Setting of 0 disables forced writeback.
+                    type: number
+                  bgwriterLruMaxpages:
+                    description: The maximum number of buffers that the background
+                      writer can write. Setting this to zero disables background writing.
+                      Default is 100.
+                    type: number
+                  bgwriterLruMultiplier:
+                    description: The average recent need for new buffers is multiplied
+                      by bgwriter_lru_multiplier to arrive at an estimate of the number
+                      that will be needed during the next round, (up to bgwriter_lru_maxpages).
+                      1.0 represents a “just in time” policy of writing exactly the
+                      number of buffers predicted to be needed. Larger values provide
+                      some cushion against spikes in demand, while smaller values
+                      intentionally leave writes to be done by server processes. The
+                      default is 2.0.
+                    type: number
+                  clusterId:
+                    description: The ID of the target PostgreSQL cluster.
+                    type: string
+                  clusterIdRef:
+                    description: Reference to a Cluster in database to populate clusterId.
+                    properties:
+                      name:
+                        description: Name of the referenced object.
+                        type: string
+                      namespace:
+                        description: Namespace of the referenced object
+                        type: string
+                      policy:
+                        description: Policies for referencing.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    required:
+                    - name
+                    type: object
+                  clusterIdSelector:
+                    description: Selector for a Cluster in database to populate clusterId.
+                    properties:
+                      matchControllerRef:
+                        description: |-
+                          MatchControllerRef ensures an object with the same controller reference
+                          as the selecting object is selected.
+                        type: boolean
+                      matchLabels:
+                        additionalProperties:
+                          type: string
+                        description: MatchLabels ensures an object with matching labels
+                          is selected.
+                        type: object
+                      namespace:
+                        description: Namespace for the selector
+                        type: string
+                      policy:
+                        description: Policies for selection.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    type: object
+                  deadlockTimeout:
+                    description: The amount of time, in milliseconds, to wait on a
+                      lock before checking to see if there is a deadlock condition.
+                    type: number
+                  defaultToastCompression:
+                    description: 'Specifies the default TOAST compression method for
+                      values of compressible columns (the default is lz4). Supported
+                      values are: lz4, pglz.'
+                    type: string
+                  idleInTransactionSessionTimeout:
+                    description: Time out sessions with open transactions after this
+                      number of milliseconds
+                    type: number
+                  jit:
+                    description: Activates, in a boolean, the system-wide use of Just-in-Time
+                      Compilation (JIT).
+                    type: boolean
+                  logAutovacuumMinDuration:
+                    description: Causes each action executed by autovacuum to be logged
+                      if it ran for at least the specified number of milliseconds.
+                      Setting this to zero logs all autovacuum actions. Minus-one
+                      (the default) disables logging autovacuum actions.
+                    type: number
+                  logErrorVerbosity:
+                    description: 'Controls the amount of detail written in the server
+                      log for each message that is logged. Supported values are: TERSE,
+                      DEFAULT, VERBOSE.'
+                    type: string
+                  logLinePrefix:
+                    description: 'Selects one of the available log-formats. These
+                      can support popular log analyzers like pgbadger, pganalyze,
+                      etc. Supported values are: pid=%p,user=%u,db=%d,app=%a,client=%h,
+                      %m [%p] %q[user=%u,db=%d,app=%a], %t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h.'
+                    type: string
+                  logMinDurationStatement:
+                    description: Log statements that take more than this number of
+                      milliseconds to run. If -1, disables.
+                    type: number
+                  maxFilesPerProcess:
+                    description: PostgreSQL maximum number of files that can be open
+                      per process.
+                    type: number
+                  maxLocksPerTransaction:
+                    description: PostgreSQL maximum locks per transaction. Once increased,
+                      this parameter cannot be lowered from its set value.
+                    type: number
+                  maxLogicalReplicationWorkers:
+                    description: PostgreSQL maximum logical replication workers (taken
+                      from the pool of max_parallel_workers).
+                    type: number
+                  maxParallelWorkers:
+                    description: Sets the maximum number of workers that the system
+                      can support for parallel queries.
+                    type: number
+                  maxParallelWorkersPerGather:
+                    description: Sets the maximum number of workers that can be started
+                      by a single Gather or Gather Merge node.
+                    type: number
+                  maxPredLocksPerTransaction:
+                    description: PostgreSQL maximum predicate locks per transaction.
+                    type: number
+                  maxPreparedTransactions:
+                    description: PostgreSQL maximum prepared transactions. Once increased,
+                      this parameter cannot be lowered from its set value.
+                    type: number
+                  maxReplicationSlots:
+                    description: PostgreSQL maximum replication slots.
+                    type: number
+                  maxStackDepth:
+                    description: Maximum depth of the stack in bytes.
+                    type: number
+                  maxStandbyArchiveDelay:
+                    description: Max standby archive delay in milliseconds.
+                    type: number
+                  maxStandbyStreamingDelay:
+                    description: Max standby streaming delay in milliseconds.
+                    type: number
+                  maxWalSenders:
+                    description: PostgreSQL maximum WAL senders. Once increased, this
+                      parameter cannot be lowered from its set value.
+                    type: number
+                  maxWorkerProcesses:
+                    description: Sets the maximum number of background processes that
+                      the system can support. Once increased, this parameter cannot
+                      be lowered from its set value.
+                    type: number
+                  pgPartmanBgwInterval:
+                    description: Sets the time interval to run pg_partman's scheduled
+                      tasks.
+                    type: number
+                  pgPartmanBgwRole:
+                    description: Controls which role to use for pg_partman's scheduled
+                      background tasks. Must consist of alpha-numeric characters,
+                      dots, underscores, or dashes. May not start with dash or dot.
+                      Maximum of 64 characters.
+                    type: string
+                  pgStatStatementsTrack:
+                    description: 'Controls which statements are counted. Specify ''top''
+                      to track top-level statements (those issued directly by clients),
+                      ''all'' to also track nested statements (such as statements
+                      invoked within functions), or ''none'' to disable statement
+                      statistics collection. The default value is top. Supported values
+                      are: all, top, none.'
+                    type: string
+                  pgbouncer:
+                    description: PGBouncer connection pooling settings
+                    items:
+                      properties:
+                        autodbIdleTimeout:
+                          type: number
+                        autodbMaxDbConnections:
+                          type: number
+                        autodbPoolMode:
+                          type: string
+                        autodbPoolSize:
+                          type: number
+                        ignoreStartupParameters:
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
+                        minPoolSize:
+                          type: number
+                        serverIdleTimeout:
+                          type: number
+                        serverLifetime:
+                          type: number
+                        serverResetQueryAlways:
+                          type: boolean
+                      type: object
+                    type: array
+                  sharedBuffersPercentage:
+                    description: Percentage of total RAM that the database server
+                      uses for shared memory buffers. Valid range is 20-60 (float),
+                      which corresponds to 20% - 60%. This setting adjusts the shared_buffers
+                      configuration value.
+                    type: number
+                  tempFileLimit:
+                    description: PostgreSQL temporary file limit in KiB. If -1, sets
+                      to unlimited.
+                    type: number
+                  timescaledb:
+                    description: TimescaleDB extension configuration values
+                    items:
+                      properties:
+                        maxBackgroundWorkers:
+                          type: number
+                      type: object
+                    type: array
+                  timezone:
+                    description: PostgreSQL service timezone
+                    type: string
+                  trackActivityQuerySize:
+                    description: Specifies the number of bytes reserved to track the
+                      currently executing command for each active session.
+                    type: number
+                  trackCommitTimestamp:
+                    description: 'Record commit time of transactions. The default
+                      value is top. Supported values are: off, on.'
+                    type: string
+                  trackFunctions:
+                    description: 'Enables tracking of function call counts and time
+                      used. The default value is top. Supported values are: all, pl,
+                      none.'
+                    type: string
+                  trackIoTiming:
+                    description: 'Enables timing of database I/O calls. This parameter
+                      is off by default, because it will repeatedly query the operating
+                      system for the current time, which may cause significant overhead
+                      on some platforms. The default value is top. Supported values
+                      are: off, on.'
+                    type: string
+                  walSenderTimeout:
+                    description: Terminate replication connections that are inactive
+                      for longer than this amount of time, in milliseconds. Setting
+                      this value to zero disables the timeout. Must be either 0 or
+                      between 5000 and 10800000.
+                    type: number
+                  walWriterDelay:
+                    description: WAL flush interval in milliseconds. Note that setting
+                      this value to lower than the default 200ms may negatively impact
+                      performance
+                    type: number
+                  workMem:
+                    description: The maximum amount of memory, in MB, used by a query
+                      operation (such as a sort or hash table) before writing to temporary
+                      disk files. Default is 1MB + 0.075% of total RAM (up to 32MB).
+                    type: number
+                type: object
+              initProvider:
+                description: |-
+                  THIS IS A BETA FIELD. It will be honored
+                  unless the Management Policies feature flag is disabled.
+                  InitProvider holds the same fields as ForProvider, with the exception
+                  of Identifier and other resource reference fields. The fields that are
+                  in InitProvider are merged into ForProvider when the resource is created.
+                  The same fields are also added to the terraform ignore_changes hook, to
+                  avoid updating them after creation. This is useful for fields that are
+                  required on creation, but we do not desire to update them after creation,
+                  for example because of an external controller is managing them, like an
+                  autoscaler.
+                properties:
+                  autovacuumAnalyzeScaleFactor:
+                    description: Specifies a fraction, in a decimal value, of the
+                      table size to add to autovacuum_analyze_threshold when deciding
+                      whether to trigger an ANALYZE. The default is 0.2 (20% of table
+                      size).
+                    type: number
+                  autovacuumAnalyzeThreshold:
+                    description: Specifies the minimum number of inserted, updated,
+                      or deleted tuples needed to trigger an ANALYZE in any one table.
+                      The default is 50 tuples.
+                    type: number
+                  autovacuumFreezeMaxAge:
+                    description: Specifies the maximum age (in transactions) that
+                      a table's pg_class.relfrozenxid field can attain before a VACUUM
+                      operation is forced to prevent transaction ID wraparound within
+                      the table. Note that the system will launch autovacuum processes
+                      to prevent wraparound even when autovacuum is otherwise disabled.
+                      This parameter will cause the server to be restarted.
+                    type: number
+                  autovacuumMaxWorkers:
+                    description: Specifies the maximum number of autovacuum processes
+                      (other than the autovacuum launcher) that may be running at
+                      any one time. The default is three. This parameter can only
+                      be set at server start.
+                    type: number
+                  autovacuumNaptime:
+                    description: Specifies the minimum delay, in seconds, between
+                      autovacuum runs on any given database. The default is one minute.
+                    type: number
+                  autovacuumVacuumCostDelay:
+                    description: Specifies the cost delay value, in milliseconds,
+                      that will be used in automatic VACUUM operations. If -1, uses
+                      the regular vacuum_cost_delay value, which is 20 milliseconds.
+                    type: number
+                  autovacuumVacuumCostLimit:
+                    description: Specifies the cost limit value that will be used
+                      in automatic VACUUM operations. If -1 is specified (which is
+                      the default), the regular vacuum_cost_limit value will be used.
+                    type: number
+                  autovacuumVacuumScaleFactor:
+                    description: Specifies a fraction, in a decimal value, of the
+                      table size to add to autovacuum_vacuum_threshold when deciding
+                      whether to trigger a VACUUM. The default is 0.2 (20% of table
+                      size).
+                    type: number
+                  autovacuumVacuumThreshold:
+                    description: Specifies the minimum number of updated or deleted
+                      tuples needed to trigger a VACUUM in any one table. The default
+                      is 50 tuples.
+                    type: number
+                  backupHour:
+                    description: The hour of day (in UTC) when backup for the service
+                      starts. New backup only starts if previous backup has already
+                      completed.
+                    type: number
+                  backupMinute:
+                    description: The minute of the backup hour when backup for the
+                      service starts. New backup is only started if previous backup
+                      has already completed.
+                    type: number
+                  bgwriterDelay:
+                    description: Specifies the delay, in milliseconds, between activity
+                      rounds for the background writer. Default is 200 ms.
+                    type: number
+                  bgwriterFlushAfter:
+                    description: The amount of kilobytes that need to be written by
+                      the background writer before attempting to force the OS to issue
+                      these writes to underlying storage. Specified in kilobytes,
+                      default is 512. Setting of 0 disables forced writeback.
+                    type: number
+                  bgwriterLruMaxpages:
+                    description: The maximum number of buffers that the background
+                      writer can write. Setting this to zero disables background writing.
+                      Default is 100.
+                    type: number
+                  bgwriterLruMultiplier:
+                    description: The average recent need for new buffers is multiplied
+                      by bgwriter_lru_multiplier to arrive at an estimate of the number
+                      that will be needed during the next round, (up to bgwriter_lru_maxpages).
+                      1.0 represents a “just in time” policy of writing exactly the
+                      number of buffers predicted to be needed. Larger values provide
+                      some cushion against spikes in demand, while smaller values
+                      intentionally leave writes to be done by server processes. The
+                      default is 2.0.
+                    type: number
+                  clusterId:
+                    description: The ID of the target PostgreSQL cluster.
+                    type: string
+                  clusterIdRef:
+                    description: Reference to a Cluster in database to populate clusterId.
+                    properties:
+                      name:
+                        description: Name of the referenced object.
+                        type: string
+                      namespace:
+                        description: Namespace of the referenced object
+                        type: string
+                      policy:
+                        description: Policies for referencing.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    required:
+                    - name
+                    type: object
+                  clusterIdSelector:
+                    description: Selector for a Cluster in database to populate clusterId.
+                    properties:
+                      matchControllerRef:
+                        description: |-
+                          MatchControllerRef ensures an object with the same controller reference
+                          as the selecting object is selected.
+                        type: boolean
+                      matchLabels:
+                        additionalProperties:
+                          type: string
+                        description: MatchLabels ensures an object with matching labels
+                          is selected.
+                        type: object
+                      namespace:
+                        description: Namespace for the selector
+                        type: string
+                      policy:
+                        description: Policies for selection.
+                        properties:
+                          resolution:
+                            default: Required
+                            description: |-
+                              Resolution specifies whether resolution of this reference is required.
+                              The default is 'Required', which means the reconcile will fail if the
+                              reference cannot be resolved. 'Optional' means this reference will be
+                              a no-op if it cannot be resolved.
+                            enum:
+                            - Required
+                            - Optional
+                            type: string
+                          resolve:
+                            description: |-
+                              Resolve specifies when this reference should be resolved. The default
+                              is 'IfNotPresent', which will attempt to resolve the reference only when
+                              the corresponding field is not present. Use 'Always' to resolve the
+                              reference on every reconcile.
+                            enum:
+                            - Always
+                            - IfNotPresent
+                            type: string
+                        type: object
+                    type: object
+                  deadlockTimeout:
+                    description: The amount of time, in milliseconds, to wait on a
+                      lock before checking to see if there is a deadlock condition.
+                    type: number
+                  defaultToastCompression:
+                    description: 'Specifies the default TOAST compression method for
+                      values of compressible columns (the default is lz4). Supported
+                      values are: lz4, pglz.'
+                    type: string
+                  idleInTransactionSessionTimeout:
+                    description: Time out sessions with open transactions after this
+                      number of milliseconds
+                    type: number
+                  jit:
+                    description: Activates, in a boolean, the system-wide use of Just-in-Time
+                      Compilation (JIT).
+                    type: boolean
+                  logAutovacuumMinDuration:
+                    description: Causes each action executed by autovacuum to be logged
+                      if it ran for at least the specified number of milliseconds.
+                      Setting this to zero logs all autovacuum actions. Minus-one
+                      (the default) disables logging autovacuum actions.
+                    type: number
+                  logErrorVerbosity:
+                    description: 'Controls the amount of detail written in the server
+                      log for each message that is logged. Supported values are: TERSE,
+                      DEFAULT, VERBOSE.'
+                    type: string
+                  logLinePrefix:
+                    description: 'Selects one of the available log-formats. These
+                      can support popular log analyzers like pgbadger, pganalyze,
+                      etc. Supported values are: pid=%p,user=%u,db=%d,app=%a,client=%h,
+                      %m [%p] %q[user=%u,db=%d,app=%a], %t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h.'
+                    type: string
+                  logMinDurationStatement:
+                    description: Log statements that take more than this number of
+                      milliseconds to run. If -1, disables.
+                    type: number
+                  maxFilesPerProcess:
+                    description: PostgreSQL maximum number of files that can be open
+                      per process.
+                    type: number
+                  maxLocksPerTransaction:
+                    description: PostgreSQL maximum locks per transaction. Once increased,
+                      this parameter cannot be lowered from its set value.
+                    type: number
+                  maxLogicalReplicationWorkers:
+                    description: PostgreSQL maximum logical replication workers (taken
+                      from the pool of max_parallel_workers).
+                    type: number
+                  maxParallelWorkers:
+                    description: Sets the maximum number of workers that the system
+                      can support for parallel queries.
+                    type: number
+                  maxParallelWorkersPerGather:
+                    description: Sets the maximum number of workers that can be started
+                      by a single Gather or Gather Merge node.
+                    type: number
+                  maxPredLocksPerTransaction:
+                    description: PostgreSQL maximum predicate locks per transaction.
+                    type: number
+                  maxPreparedTransactions:
+                    description: PostgreSQL maximum prepared transactions. Once increased,
+                      this parameter cannot be lowered from its set value.
+                    type: number
+                  maxReplicationSlots:
+                    description: PostgreSQL maximum replication slots.
+                    type: number
+                  maxStackDepth:
+                    description: Maximum depth of the stack in bytes.
+                    type: number
+                  maxStandbyArchiveDelay:
+                    description: Max standby archive delay in milliseconds.
+                    type: number
+                  maxStandbyStreamingDelay:
+                    description: Max standby streaming delay in milliseconds.
+                    type: number
+                  maxWalSenders:
+                    description: PostgreSQL maximum WAL senders. Once increased, this
+                      parameter cannot be lowered from its set value.
+                    type: number
+                  maxWorkerProcesses:
+                    description: Sets the maximum number of background processes that
+                      the system can support. Once increased, this parameter cannot
+                      be lowered from its set value.
+                    type: number
+                  pgPartmanBgwInterval:
+                    description: Sets the time interval to run pg_partman's scheduled
+                      tasks.
+                    type: number
+                  pgPartmanBgwRole:
+                    description: Controls which role to use for pg_partman's scheduled
+                      background tasks. Must consist of alpha-numeric characters,
+                      dots, underscores, or dashes. May not start with dash or dot.
+                      Maximum of 64 characters.
+                    type: string
+                  pgStatStatementsTrack:
+                    description: 'Controls which statements are counted. Specify ''top''
+                      to track top-level statements (those issued directly by clients),
+                      ''all'' to also track nested statements (such as statements
+                      invoked within functions), or ''none'' to disable statement
+                      statistics collection. The default value is top. Supported values
+                      are: all, top, none.'
+                    type: string
+                  pgbouncer:
+                    description: PGBouncer connection pooling settings
+                    items:
+                      properties:
+                        autodbIdleTimeout:
+                          type: number
+                        autodbMaxDbConnections:
+                          type: number
+                        autodbPoolMode:
+                          type: string
+                        autodbPoolSize:
+                          type: number
+                        ignoreStartupParameters:
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
+                        minPoolSize:
+                          type: number
+                        serverIdleTimeout:
+                          type: number
+                        serverLifetime:
+                          type: number
+                        serverResetQueryAlways:
+                          type: boolean
+                      type: object
+                    type: array
+                  sharedBuffersPercentage:
+                    description: Percentage of total RAM that the database server
+                      uses for shared memory buffers. Valid range is 20-60 (float),
+                      which corresponds to 20% - 60%. This setting adjusts the shared_buffers
+                      configuration value.
+                    type: number
+                  tempFileLimit:
+                    description: PostgreSQL temporary file limit in KiB. If -1, sets
+                      to unlimited.
+                    type: number
+                  timescaledb:
+                    description: TimescaleDB extension configuration values
+                    items:
+                      properties:
+                        maxBackgroundWorkers:
+                          type: number
+                      type: object
+                    type: array
+                  timezone:
+                    description: PostgreSQL service timezone
+                    type: string
+                  trackActivityQuerySize:
+                    description: Specifies the number of bytes reserved to track the
+                      currently executing command for each active session.
+                    type: number
+                  trackCommitTimestamp:
+                    description: 'Record commit time of transactions. The default
+                      value is top. Supported values are: off, on.'
+                    type: string
+                  trackFunctions:
+                    description: 'Enables tracking of function call counts and time
+                      used. The default value is top. Supported values are: all, pl,
+                      none.'
+                    type: string
+                  trackIoTiming:
+                    description: 'Enables timing of database I/O calls. This parameter
+                      is off by default, because it will repeatedly query the operating
+                      system for the current time, which may cause significant overhead
+                      on some platforms. The default value is top. Supported values
+                      are: off, on.'
+                    type: string
+                  walSenderTimeout:
+                    description: Terminate replication connections that are inactive
+                      for longer than this amount of time, in milliseconds. Setting
+                      this value to zero disables the timeout. Must be either 0 or
+                      between 5000 and 10800000.
+                    type: number
+                  walWriterDelay:
+                    description: WAL flush interval in milliseconds. Note that setting
+                      this value to lower than the default 200ms may negatively impact
+                      performance
+                    type: number
+                  workMem:
+                    description: The maximum amount of memory, in MB, used by a query
+                      operation (such as a sort or hash table) before writing to temporary
+                      disk files. Default is 1MB + 0.075% of total RAM (up to 32MB).
+                    type: number
+                type: object
+              managementPolicies:
+                default:
+                - '*'
+                description: |-
+                  THIS IS A BETA FIELD. It is on by default but can be opted out
+                  through a Crossplane feature flag.
+                  ManagementPolicies specify the array of actions Crossplane is allowed to
+                  take on the managed and external resources.
+                  See the design doc for more information: https://github.com/crossplane/crossplane/blob/499895a25d1a1a0ba1604944ef98ac7a1a71f197/design/design-doc-observe-only-resources.md?plain=1#L223
+                  and this one: https://github.com/crossplane/crossplane/blob/444267e84783136daa93568b364a5f01228cacbe/design/one-pager-ignore-changes.md
+                items:
+                  description: |-
+                    A ManagementAction represents an action that the Crossplane controllers
+                    can take on an external resource.
+                  enum:
+                  - Observe
+                  - Create
+                  - Update
+                  - Delete
+                  - LateInitialize
+                  - '*'
+                  type: string
+                type: array
+              providerConfigRef:
+                default:
+                  kind: ClusterProviderConfig
+                  name: default
+                description: |-
+                  ProviderConfigReference specifies how the provider that will be used to
+                  create, observe, update, and delete this managed resource should be
+                  configured.
+                properties:
+                  kind:
+                    description: Kind of the referenced object.
+                    type: string
+                  name:
+                    description: Name of the referenced object.
+                    type: string
+                required:
+                - kind
+                - name
+                type: object
+              writeConnectionSecretToRef:
+                description: |-
+                  WriteConnectionSecretToReference specifies the namespace and name of a
+                  Secret to which any connection details for this managed resource should
+                  be written. Connection details frequently include the endpoint, username,
+                  and password required to connect to the managed resource.
+                properties:
+                  name:
+                    description: Name of the secret.
+                    type: string
+                required:
+                - name
+                type: object
+            required:
+            - forProvider
+            type: object
+          status:
+            description: PostgreSQLConfigStatus defines the observed state of PostgreSQLConfig.
+            properties:
+              atProvider:
+                properties:
+                  autovacuumAnalyzeScaleFactor:
+                    description: Specifies a fraction, in a decimal value, of the
+                      table size to add to autovacuum_analyze_threshold when deciding
+                      whether to trigger an ANALYZE. The default is 0.2 (20% of table
+                      size).
+                    type: number
+                  autovacuumAnalyzeThreshold:
+                    description: Specifies the minimum number of inserted, updated,
+                      or deleted tuples needed to trigger an ANALYZE in any one table.
+                      The default is 50 tuples.
+                    type: number
+                  autovacuumFreezeMaxAge:
+                    description: Specifies the maximum age (in transactions) that
+                      a table's pg_class.relfrozenxid field can attain before a VACUUM
+                      operation is forced to prevent transaction ID wraparound within
+                      the table. Note that the system will launch autovacuum processes
+                      to prevent wraparound even when autovacuum is otherwise disabled.
+                      This parameter will cause the server to be restarted.
+                    type: number
+                  autovacuumMaxWorkers:
+                    description: Specifies the maximum number of autovacuum processes
+                      (other than the autovacuum launcher) that may be running at
+                      any one time. The default is three. This parameter can only
+                      be set at server start.
+                    type: number
+                  autovacuumNaptime:
+                    description: Specifies the minimum delay, in seconds, between
+                      autovacuum runs on any given database. The default is one minute.
+                    type: number
+                  autovacuumVacuumCostDelay:
+                    description: Specifies the cost delay value, in milliseconds,
+                      that will be used in automatic VACUUM operations. If -1, uses
+                      the regular vacuum_cost_delay value, which is 20 milliseconds.
+                    type: number
+                  autovacuumVacuumCostLimit:
+                    description: Specifies the cost limit value that will be used
+                      in automatic VACUUM operations. If -1 is specified (which is
+                      the default), the regular vacuum_cost_limit value will be used.
+                    type: number
+                  autovacuumVacuumScaleFactor:
+                    description: Specifies a fraction, in a decimal value, of the
+                      table size to add to autovacuum_vacuum_threshold when deciding
+                      whether to trigger a VACUUM. The default is 0.2 (20% of table
+                      size).
+                    type: number
+                  autovacuumVacuumThreshold:
+                    description: Specifies the minimum number of updated or deleted
+                      tuples needed to trigger a VACUUM in any one table. The default
+                      is 50 tuples.
+                    type: number
+                  backupHour:
+                    description: The hour of day (in UTC) when backup for the service
+                      starts. New backup only starts if previous backup has already
+                      completed.
+                    type: number
+                  backupMinute:
+                    description: The minute of the backup hour when backup for the
+                      service starts. New backup is only started if previous backup
+                      has already completed.
+                    type: number
+                  bgwriterDelay:
+                    description: Specifies the delay, in milliseconds, between activity
+                      rounds for the background writer. Default is 200 ms.
+                    type: number
+                  bgwriterFlushAfter:
+                    description: The amount of kilobytes that need to be written by
+                      the background writer before attempting to force the OS to issue
+                      these writes to underlying storage. Specified in kilobytes,
+                      default is 512. Setting of 0 disables forced writeback.
+                    type: number
+                  bgwriterLruMaxpages:
+                    description: The maximum number of buffers that the background
+                      writer can write. Setting this to zero disables background writing.
+                      Default is 100.
+                    type: number
+                  bgwriterLruMultiplier:
+                    description: The average recent need for new buffers is multiplied
+                      by bgwriter_lru_multiplier to arrive at an estimate of the number
+                      that will be needed during the next round, (up to bgwriter_lru_maxpages).
+                      1.0 represents a “just in time” policy of writing exactly the
+                      number of buffers predicted to be needed. Larger values provide
+                      some cushion against spikes in demand, while smaller values
+                      intentionally leave writes to be done by server processes. The
+                      default is 2.0.
+                    type: number
+                  clusterId:
+                    description: The ID of the target PostgreSQL cluster.
+                    type: string
+                  deadlockTimeout:
+                    description: The amount of time, in milliseconds, to wait on a
+                      lock before checking to see if there is a deadlock condition.
+                    type: number
+                  defaultToastCompression:
+                    description: 'Specifies the default TOAST compression method for
+                      values of compressible columns (the default is lz4). Supported
+                      values are: lz4, pglz.'
+                    type: string
+                  id:
+                    type: string
+                  idleInTransactionSessionTimeout:
+                    description: Time out sessions with open transactions after this
+                      number of milliseconds
+                    type: number
+                  jit:
+                    description: Activates, in a boolean, the system-wide use of Just-in-Time
+                      Compilation (JIT).
+                    type: boolean
+                  logAutovacuumMinDuration:
+                    description: Causes each action executed by autovacuum to be logged
+                      if it ran for at least the specified number of milliseconds.
+                      Setting this to zero logs all autovacuum actions. Minus-one
+                      (the default) disables logging autovacuum actions.
+                    type: number
+                  logErrorVerbosity:
+                    description: 'Controls the amount of detail written in the server
+                      log for each message that is logged. Supported values are: TERSE,
+                      DEFAULT, VERBOSE.'
+                    type: string
+                  logLinePrefix:
+                    description: 'Selects one of the available log-formats. These
+                      can support popular log analyzers like pgbadger, pganalyze,
+                      etc. Supported values are: pid=%p,user=%u,db=%d,app=%a,client=%h,
+                      %m [%p] %q[user=%u,db=%d,app=%a], %t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h.'
+                    type: string
+                  logMinDurationStatement:
+                    description: Log statements that take more than this number of
+                      milliseconds to run. If -1, disables.
+                    type: number
+                  maxFilesPerProcess:
+                    description: PostgreSQL maximum number of files that can be open
+                      per process.
+                    type: number
+                  maxLocksPerTransaction:
+                    description: PostgreSQL maximum locks per transaction. Once increased,
+                      this parameter cannot be lowered from its set value.
+                    type: number
+                  maxLogicalReplicationWorkers:
+                    description: PostgreSQL maximum logical replication workers (taken
+                      from the pool of max_parallel_workers).
+                    type: number
+                  maxParallelWorkers:
+                    description: Sets the maximum number of workers that the system
+                      can support for parallel queries.
+                    type: number
+                  maxParallelWorkersPerGather:
+                    description: Sets the maximum number of workers that can be started
+                      by a single Gather or Gather Merge node.
+                    type: number
+                  maxPredLocksPerTransaction:
+                    description: PostgreSQL maximum predicate locks per transaction.
+                    type: number
+                  maxPreparedTransactions:
+                    description: PostgreSQL maximum prepared transactions. Once increased,
+                      this parameter cannot be lowered from its set value.
+                    type: number
+                  maxReplicationSlots:
+                    description: PostgreSQL maximum replication slots.
+                    type: number
+                  maxStackDepth:
+                    description: Maximum depth of the stack in bytes.
+                    type: number
+                  maxStandbyArchiveDelay:
+                    description: Max standby archive delay in milliseconds.
+                    type: number
+                  maxStandbyStreamingDelay:
+                    description: Max standby streaming delay in milliseconds.
+                    type: number
+                  maxWalSenders:
+                    description: PostgreSQL maximum WAL senders. Once increased, this
+                      parameter cannot be lowered from its set value.
+                    type: number
+                  maxWorkerProcesses:
+                    description: Sets the maximum number of background processes that
+                      the system can support. Once increased, this parameter cannot
+                      be lowered from its set value.
+                    type: number
+                  pgPartmanBgwInterval:
+                    description: Sets the time interval to run pg_partman's scheduled
+                      tasks.
+                    type: number
+                  pgPartmanBgwRole:
+                    description: Controls which role to use for pg_partman's scheduled
+                      background tasks. Must consist of alpha-numeric characters,
+                      dots, underscores, or dashes. May not start with dash or dot.
+                      Maximum of 64 characters.
+                    type: string
+                  pgStatStatementsTrack:
+                    description: 'Controls which statements are counted. Specify ''top''
+                      to track top-level statements (those issued directly by clients),
+                      ''all'' to also track nested statements (such as statements
+                      invoked within functions), or ''none'' to disable statement
+                      statistics collection. The default value is top. Supported values
+                      are: all, top, none.'
+                    type: string
+                  pgbouncer:
+                    description: PGBouncer connection pooling settings
+                    items:
+                      properties:
+                        autodbIdleTimeout:
+                          type: number
+                        autodbMaxDbConnections:
+                          type: number
+                        autodbPoolMode:
+                          type: string
+                        autodbPoolSize:
+                          type: number
+                        ignoreStartupParameters:
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
+                        minPoolSize:
+                          type: number
+                        serverIdleTimeout:
+                          type: number
+                        serverLifetime:
+                          type: number
+                        serverResetQueryAlways:
+                          type: boolean
+                      type: object
+                    type: array
+                  sharedBuffersPercentage:
+                    description: Percentage of total RAM that the database server
+                      uses for shared memory buffers. Valid range is 20-60 (float),
+                      which corresponds to 20% - 60%. This setting adjusts the shared_buffers
+                      configuration value.
+                    type: number
+                  tempFileLimit:
+                    description: PostgreSQL temporary file limit in KiB. If -1, sets
+                      to unlimited.
+                    type: number
+                  timescaledb:
+                    description: TimescaleDB extension configuration values
+                    items:
+                      properties:
+                        maxBackgroundWorkers:
+                          type: number
+                      type: object
+                    type: array
+                  timezone:
+                    description: PostgreSQL service timezone
+                    type: string
+                  trackActivityQuerySize:
+                    description: Specifies the number of bytes reserved to track the
+                      currently executing command for each active session.
+                    type: number
+                  trackCommitTimestamp:
+                    description: 'Record commit time of transactions. The default
+                      value is top. Supported values are: off, on.'
+                    type: string
+                  trackFunctions:
+                    description: 'Enables tracking of function call counts and time
+                      used. The default value is top. Supported values are: all, pl,
+                      none.'
+                    type: string
+                  trackIoTiming:
+                    description: 'Enables timing of database I/O calls. This parameter
+                      is off by default, because it will repeatedly query the operating
+                      system for the current time, which may cause significant overhead
+                      on some platforms. The default value is top. Supported values
+                      are: off, on.'
+                    type: string
+                  walSenderTimeout:
+                    description: Terminate replication connections that are inactive
+                      for longer than this amount of time, in milliseconds. Setting
+                      this value to zero disables the timeout. Must be either 0 or
+                      between 5000 and 10800000.
+                    type: number
+                  walWriterDelay:
+                    description: WAL flush interval in milliseconds. Note that setting
+                      this value to lower than the default 200ms may negatively impact
+                      performance
+                    type: number
+                  workMem:
+                    description: The maximum amount of memory, in MB, used by a query
+                      operation (such as a sort or hash table) before writing to temporary
+                      disk files. Default is 1MB + 0.075% of total RAM (up to 32MB).
+                    type: number
+                type: object
+              conditions:
+                description: Conditions of the resource.
+                items:
+                  description: A Condition that may apply to a resource.
+                  properties:
+                    lastTransitionTime:
+                      description: |-
+                        LastTransitionTime is the last time this condition transitioned from one
+                        status to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: |-
+                        A Message containing details about this condition's last transition from
+                        one status to another, if any.
+                      type: string
+                    observedGeneration:
+                      description: |-
+                        ObservedGeneration represents the .metadata.generation that the condition was set based upon.
+                        For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+                        with respect to the current state of the instance.
+                      format: int64
+                      type: integer
+                    reason:
+                      description: A Reason for this condition's last transition from
+                        one status to another.
+                      type: string
+                    status:
+                      description: Status of this condition; is it currently True,
+                        False, or Unknown?
+                      type: string
+                    type:
+                      description: |-
+                        Type of this condition. At most one of each condition type may apply to
+                        a resource at any point in time.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+                x-kubernetes-list-map-keys:
+                - type
+                x-kubernetes-list-type: map
+              observedGeneration:
+                description: |-
+                  ObservedGeneration is the latest metadata.generation
+                  which resulted in either a ready state, or stalled due to error
+                  it can not recover from without human intervention.
+                format: int64
+                type: integer
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

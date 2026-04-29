@@ -1,0 +1,53 @@
+apiVersion: networking.digitalocean.m.crossplane.io/v1alpha1
+kind: IPv6Assignment
+metadata:
+  annotations:
+    meta.upbound.io/example-id: networking/v1alpha1/ipv6assignment
+  labels:
+    testing.upbound.io/example-name: foobar
+  name: foobar
+  namespace: crossplane-system
+spec:
+  forProvider:
+    dropletIdSelector:
+      matchLabels:
+        testing.upbound.io/example-name: foobar
+    ipSelector:
+      matchLabels:
+        testing.upbound.io/example-name: foobar
+
+---
+
+apiVersion: droplet.digitalocean.m.crossplane.io/v1alpha1
+kind: Droplet
+metadata:
+  annotations:
+    meta.upbound.io/example-id: networking/v1alpha1/ipv6assignment
+  labels:
+    testing.upbound.io/example-name: foobar
+  name: foobar
+  namespace: crossplane-system
+spec:
+  forProvider:
+    imageSelector:
+      matchLabels:
+        testing.upbound.io/example-name: example
+    ipv6: true
+    name: tf-acc-test-01
+    region: nyc3
+    size: s-1vcpu-1gb
+
+---
+
+apiVersion: networking.digitalocean.m.crossplane.io/v1alpha1
+kind: IPv6
+metadata:
+  annotations:
+    meta.upbound.io/example-id: networking/v1alpha1/ipv6assignment
+  labels:
+    testing.upbound.io/example-name: foobar
+  name: foobar
+  namespace: crossplane-system
+spec:
+  forProvider:
+    regionSlug: nyc3
