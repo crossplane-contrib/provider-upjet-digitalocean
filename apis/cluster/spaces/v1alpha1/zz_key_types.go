@@ -71,6 +71,10 @@ type KeyInitParameters struct {
 	// A grant for the key (documented below).
 	// A list of grants to apply to the key. Can be left empty to apply no grants.
 	Grant []GrantInitParameters `json:"grant,omitempty" tf:"grant,omitempty"`
+
+	// The name of the key
+	// A name for the key. This is used to identify the key in the DigitalOcean control panel.
+	Name *string `json:"name,omitempty" tf:"name,omitempty"`
 }
 
 type KeyObservation struct {
@@ -88,6 +92,10 @@ type KeyObservation struct {
 	Grant []GrantObservation `json:"grant,omitempty" tf:"grant,omitempty"`
 
 	ID *string `json:"id,omitempty" tf:"id,omitempty"`
+
+	// The name of the key
+	// A name for the key. This is used to identify the key in the DigitalOcean control panel.
+	Name *string `json:"name,omitempty" tf:"name,omitempty"`
 }
 
 type KeyParameters struct {
@@ -96,6 +104,11 @@ type KeyParameters struct {
 	// A list of grants to apply to the key. Can be left empty to apply no grants.
 	// +kubebuilder:validation:Optional
 	Grant []GrantParameters `json:"grant,omitempty" tf:"grant,omitempty"`
+
+	// The name of the key
+	// A name for the key. This is used to identify the key in the DigitalOcean control panel.
+	// +kubebuilder:validation:Optional
+	Name *string `json:"name,omitempty" tf:"name,omitempty"`
 }
 
 // KeySpec defines the desired state of Key
@@ -134,8 +147,9 @@ type KeyStatus struct {
 type Key struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
-	Spec              KeySpec   `json:"spec"`
-	Status            KeyStatus `json:"status,omitempty"`
+	// +kubebuilder:validation:XValidation:rule="!('*' in self.managementPolicies || 'Create' in self.managementPolicies || 'Update' in self.managementPolicies) || has(self.forProvider.name) || (has(self.initProvider) && has(self.initProvider.name))",message="spec.forProvider.name is a required parameter"
+	Spec   KeySpec   `json:"spec"`
+	Status KeyStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true

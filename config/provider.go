@@ -68,16 +68,19 @@ var ExternalNameConfigs = map[string]ujconfig.ExternalName{
 	"digitalocean_database_redis_config":                 ujconfig.IdentifierFromProvider,
 	"digitalocean_database_firewall":                     ujconfig.IdentifierFromProvider,
 	"digitalocean_project_resources":                     ujconfig.IdentifierFromProvider,
-	"digitalocean_spaces_key":                            ujconfig.NameAsIdentifier,
-	"digitalocean_spaces_bucket_logging":                 ujconfig.IdentifierFromProvider,
-	"digitalocean_database_kafka_config":                 ujconfig.IdentifierFromProvider,
-	"digitalocean_database_kafka_schema_registry":        ujconfig.IdentifierFromProvider,
-	"digitalocean_database_mongodb_config":               ujconfig.IdentifierFromProvider,
-	"digitalocean_database_opensearch_config":            ujconfig.IdentifierFromProvider,
-	"digitalocean_database_postgresql_config":            ujconfig.IdentifierFromProvider,
-	"digitalocean_database_valkey_config":                ujconfig.IdentifierFromProvider,
-	"digitalocean_reserved_ipv6":                         ujconfig.IdentifierFromProvider,
-	"digitalocean_reserved_ipv6_assignment":              ujconfig.IdentifierFromProvider,
+	// The DO API addresses Spaces keys by their generated access_key, not by
+	// name, so the external name must come from the provider.
+	// https://github.com/crossplane-contrib/provider-upjet-digitalocean/issues/84
+	"digitalocean_spaces_key":                     ujconfig.IdentifierFromProvider,
+	"digitalocean_spaces_bucket_logging":          ujconfig.IdentifierFromProvider,
+	"digitalocean_database_kafka_config":          ujconfig.IdentifierFromProvider,
+	"digitalocean_database_kafka_schema_registry": ujconfig.IdentifierFromProvider,
+	"digitalocean_database_mongodb_config":        ujconfig.IdentifierFromProvider,
+	"digitalocean_database_opensearch_config":     ujconfig.IdentifierFromProvider,
+	"digitalocean_database_postgresql_config":     ujconfig.IdentifierFromProvider,
+	"digitalocean_database_valkey_config":         ujconfig.IdentifierFromProvider,
+	"digitalocean_reserved_ipv6":                  ujconfig.IdentifierFromProvider,
+	"digitalocean_reserved_ipv6_assignment":       ujconfig.IdentifierFromProvider,
 	// digitalocean_floating_ip and digitalocean_floating_ip_assignment are
 	// deprecated aliases for reserved_ip/reserved_ip_assignment and produce
 	// an empty schema after upjet parsing; skipped intentionally.

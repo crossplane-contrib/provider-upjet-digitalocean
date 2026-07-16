@@ -8,4 +8,5 @@ metadata:
   name: foobar
   namespace: crossplane-system
 spec:
-  forProvider: {}
+  forProvider:
+    name: foobar
