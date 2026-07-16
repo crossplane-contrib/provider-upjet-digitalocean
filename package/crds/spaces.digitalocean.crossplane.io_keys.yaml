@@ -166,6 +166,11 @@ spec:
                           type: string
                       type: object
                     type: array
+                  name:
+                    description: |-
+                      The name of the key
+                      A name for the key. This is used to identify the key in the DigitalOcean control panel.
+                    type: string
                 type: object
               initProvider:
                 description: |-
@@ -274,6 +279,11 @@ spec:
                           type: string
                       type: object
                     type: array
+                  name:
+                    description: |-
+                      The name of the key
+                      A name for the key. This is used to identify the key in the DigitalOcean control panel.
+                    type: string
                 type: object
               managementPolicies:
                 default:
@@ -361,6 +371,11 @@ spec:
             required:
             - forProvider
             type: object
+            x-kubernetes-validations:
+            - message: spec.forProvider.name is a required parameter
+              rule: '!(''*'' in self.managementPolicies || ''Create'' in self.managementPolicies
+                || ''Update'' in self.managementPolicies) || has(self.forProvider.name)
+                || (has(self.initProvider) && has(self.initProvider.name))'
           status:
             description: KeyStatus defines the observed state of Key.
             properties:
@@ -395,6 +410,11 @@ spec:
                       type: object
                     type: array
                   id:
+                    type: string
+                  name:
+                    description: |-
+                      The name of the key
+                      A name for the key. This is used to identify the key in the DigitalOcean control panel.
                     type: string
                 type: object
               conditions:

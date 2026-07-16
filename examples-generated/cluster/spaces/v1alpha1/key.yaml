@@ -7,4 +7,5 @@ metadata:
     testing.upbound.io/example-name: foobar
   name: foobar
 spec:
-  forProvider: {}
+  forProvider:
+    name: foobar
