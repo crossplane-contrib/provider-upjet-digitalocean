@@ -11,7 +11,7 @@ on:
 env:
   # Toolchain and build tool versions.
   # DOCKER_BUILDX_VERSION = Docker Buildx *CLI* release from https://github.com/docker/buildx (tags look like v0.33.0, never v4.x).
-  GO_VERSION: "1.24"
+  GO_VERSION: "1.25"
   GOLANGCI_VERSION: "v2.7.2"
   DOCKER_BUILDX_VERSION: "v0.33.0"
   # Common users. We can't run a step 'if secrets.XXX != ""' but we can run a
